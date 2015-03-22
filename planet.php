@@ -180,12 +180,21 @@
 			echo '			</select><br>'."\n";
 			echo "			Schematic:\n";
 			echo '			<select name="schematic" onchange="document.args.submit();">'."\n";
+			$lastTier = 0;
 			for ($i = 0; $i < $schematicsnum; $i++) {
 				$id = mysql_result($schematicsresult, $i, 'schematicID');
 				$name = mysql_result($schematicsresult, $i, 'schematicName');
 				$tier = mysql_result($schematicsresult, $i, 'tier');
-				echo '				<option value="'.$id.'"'.($id == $schematicID ? " selected" : "").'>'."$name (Tier $tier)</option>\n";
+				if ($lastTier != $tier) {
+					if ($lastTier != 0) {
+						echo "\t\t\t\t</optgroup>\n";
+					}
+					echo "\t\t\t\t".'<optgroup label="Tier '.$tier.'">'."\n";
+					$lastTier = $tier;
+				}
+				echo "\t\t\t\t\t".'<option value="'.$id.'"'.($id == $schematicID ? " selected" : "").'>'."$name (Tier $tier)</option>\n";
 			}
+			echo "\t\t\t\t</optgroup>\n";
 			echo '			</select><br>'."\n";
 
 			echo "</form><br>\n";
