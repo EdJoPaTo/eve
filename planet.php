@@ -147,7 +147,7 @@
 			$conn = mysql_connect($host,$user,$password) or die('Error: Could not connect to database - '.mysql_error());
 			mysql_select_db($database,$conn) or die('Error in selecting the database: '.mysql_error());
 
-			$query = "SELECT planetSchematics.schematicID, schematicName, cycleTime, planetSchematicsTypeMap.quantity, planetSchematicsTypeMap.typeID, invGroups.groupID, invGroups.groupName,
+			$schematicsQuery = "SELECT planetSchematics.schematicID, schematicName, cycleTime, planetSchematicsTypeMap.quantity, planetSchematicsTypeMap.typeID, invGroups.groupID, invGroups.groupName,
 				CASE
 					WHEN invGroups.groupID=1042 THEN 1
 					WHEN invGroups.groupID=1034 THEN 2
@@ -161,7 +161,7 @@
 			JOIN invGroups ON invTypes.groupID=invGroups.groupID
 			ORDER BY tier, schematicName";
 
-			$schematicsresult = mysql_query($query);
+			$schematicsresult = mysql_query($schematicsQuery);
 			$schematicsnum = mysql_numrows($schematicsresult);
 //			printmysqlselectquerytable($schematicsresult);
 
@@ -190,6 +190,7 @@
 						echo "\t\t\t\t</optgroup>\n";
 					}
 					echo "\t\t\t\t".'<optgroup label="Tier '.$tier.'">'."\n";
+					echo "\t\t\t\t\t".'<option value="'.$tier.'"'.($tier == $schematicID ? " selected" : "").'>'."Overview Tier $tier</option>\n";
 					$lastTier = $tier;
 				}
 				echo "\t\t\t\t\t".'<option value="'.$id.'"'.($id == $schematicID ? " selected" : "").'>'."$name (Tier $tier)</option>\n";
@@ -200,20 +201,29 @@
 			echo "</form><br>\n";
 
 
-			$query = "SELECT planetSchematics.schematicID, schematicName, cycleTime, planetSchematicsTypeMap.quantity, planetSchematicsTypeMap.typeID
-			FROM planetSchematics
-			JOIN planetSchematicsTypeMap ON planetSchematics.schematicID=planetSchematicsTypeMap.schematicID AND planetSchematicsTypeMap.isInput=0
-			WHERE planetSchematics.schematicID=$schematicID";
+			if ($schematicID >= 65 && $schematicID <= 135) {
+				$query = "SELECT planetSchematics.schematicID, schematicName, cycleTime, planetSchematicsTypeMap.quantity, planetSchematicsTypeMap.typeID
+				FROM planetSchematics
+				JOIN planetSchematicsTypeMap ON planetSchematics.schematicID=planetSchematicsTypeMap.schematicID AND planetSchematicsTypeMap.isInput=0
+				WHERE planetSchematics.schematicID=$schematicID";
+			} elseif ($schematicID >= 1 && $schematicID <= 4) {
+				$query = "SELECT *
+				FROM ($schematicsQuery) schem
+				WHERE tier=$schematicID";
+			} else {
+				throw new Exception ( "Not a schematic", 0, NULL );
+			}
 
 			$schematicsresult = mysql_query($query);
 
 			$schematicsnum = mysql_numrows($schematicsresult);
 //			printmysqlselectquerytable($schematicsresult);
 
-			if ($schematicsnum > 0) {
-				$quantity = mysql_result($schematicsresult, 0, 'quantity');
-				$typeID = mysql_result($schematicsresult, 0, 'typeID');
+			for ($i = 0; $i < $schematicsnum; $i++) {
+				$quantity = mysql_result($schematicsresult, $i, 'quantity');
+				$typeID = mysql_result($schematicsresult, $i, 'typeID');
 				createtypeidtable($quantity, $typeID);
+				echo "			<br>\n";
 			}
 
 
@@ -221,7 +231,7 @@
 ?>
 
 <?php
-			echo "			<br><br>\n";
+			echo "			<br>\n";
 			echo '			price data provided by <a target="_blank" class="external" href="//eve-central.com">EVE Central</a>, ';
 
 			echo 'updated: '.gmdate('d.m.Y H:i:s e', $updated)."<br><br>\n";
