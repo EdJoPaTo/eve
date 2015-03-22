@@ -9,5 +9,5 @@ mkdir -p $logpath
 
 echo >> $logfullpath
 date >> $logfullpath
-php -r "require '/usr/share/nginx/eto/updateEVEdb.php'; updateall();" >> $logfullpath
+php -r "require '/usr/share/nginx/eve/classes/updateEVEdb.php'; updateall();" >> $logfullpath
 
