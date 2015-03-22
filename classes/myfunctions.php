@@ -236,6 +236,17 @@
 			unset($tmp);
 			$returnString .= '		<META HTTP-EQUIV="refresh" CONTENT="'.$update.'">'."\n";
 		}
+		if (!empty($_SESSION['characterID'])) {
+			$returnString .= "\t\t".'<style type="text/css">
+			.pilot64 { background-image: url(//image.eveonline.com/Character/'.$_SESSION['characterID'].'_64.jpg); }
+			@media (-webkit-min-device-pixel-ratio: 1.5) {
+				.pilot64 { background-image: url(//image.eveonline.com/Character/'.$_SESSION['characterID'].'_128.jpg); }
+			}
+			@media (-webkit-min-device-pixel-ratio: 3) {
+				.pilot64 { background-image: url(//image.eveonline.com/Character/'.$_SESSION['characterID'].'_256.jpg); }
+			}
+		</style>'."\n";
+		}
 
 		return $returnString;
 	}
@@ -267,7 +278,7 @@
 			$ssoState = "stuff";
 			$returnString .= "\t\t\t\t".'<a style="background-image: url(//images.contentful.com/idjq7aai9ylm/4fSjj56uD6CYwYyus4KmES/4f6385c91e6de56274d99496e6adebab/EVE_SSO_Login_Buttons_Large_Black.png?w=270&amp;h=45); background-repeat: no-repeat; background-position: center center; min-width: 270px; width: 270px; height: 45px; padding: 0px 10px;" href="'.OAuth::eveSSOLoginURL().'"></a>'."\n";
 		} else {
-			$returnString .= "\t\t\t\t".'<div class="img" style="background-image: url(//image.eveonline.com/Character/'.$_SESSION['characterID'].'_64.jpg); padding-left: 75px;">'.$_SESSION['characterName']."</div>\n";
+			$returnString .= "\t\t\t\t".'<div class="img pilot64" style="padding-left: 75px; background-size: 64px 64px;">'.$_SESSION['characterName']."</div>\n";
 			$returnString .= "\t\t\t\t".'<a href="eveauth.php">Settings</a>'."\n";
 		}
 /**/
