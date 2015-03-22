@@ -1,6 +1,6 @@
 ﻿<?php
-	include $_SERVER['DOCUMENT_ROOT'].'/myfunctions.php';
-	include $_SERVER['DOCUMENT_ROOT'].'/evefunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/evefunctions.php';
 	$title = "Planetary Infrastructure";
 
 	$characterID = !empty($_SESSION['characterID']) ? (int) $_SESSION['characterID'] : 0;

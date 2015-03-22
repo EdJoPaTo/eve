@@ -1,6 +1,6 @@
 ﻿<?php
-	include './myfunctions.php';
-	include './evefunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/evefunctions.php';
 
 	$systems = array(
 		'Jita' => 30000142,

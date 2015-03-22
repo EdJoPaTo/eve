@@ -1,6 +1,6 @@
 <?php
-	include './myfunctions.php';
-	include './evefunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/evefunctions.php';
 
 	$adminmode = !empty($_GET['id']) && $_GET['id'] == 1337;
 

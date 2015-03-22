@@ -1,5 +1,5 @@
 <?php
-	include $_SERVER['DOCUMENT_ROOT'].'/../myfunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
 	$title = "ETO";
 	
 	if ($_SERVER['HTTP_EVE_TRUSTED'] == 'Yes')
