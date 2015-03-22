@@ -52,7 +52,7 @@
 				}
 				if ($num > 1) {
 					echo '<div class="row" style="text-align: right;">'."\n";
-					echo "Sum: ".formatprice($sum)." ISK";
+					echo "Sum:&nbsp;".formatprice($sum)."&nbsp;ISK";
 					echo "</div>\n";
 				}
 				echo "</div>\n";
@@ -63,7 +63,7 @@
 			echo '<div class="table" style="height: 100%">'."\n";
 				if (!empty($cycleTime) && $cycleTime != 0) {
 					echo '<div class="row">'."\n";
-						echo "cycle time: ".($factor != 1 ? $factor."x " : "").($cycleTime/ 60)." min";
+						echo "cycle time:&nbsp;".($factor != 1 ? $factor."x&nbsp;" : "").($cycleTime/ 60)."&nbsp;min";
 					echo "</div>\n";
 					echo '<div class="row" style="height: 100%"></div>'."\n";
 				}
@@ -81,13 +81,13 @@
 								echo "</div>";
 							echo "<br>\n";
 							$volume = mysql_result(mysql_query("SELECT volume FROM evedump.invTypes WHERE typeID=$typeID"), 0, 'volume');
-							echo formatvolume($volume * $quantity)." m&sup3;";
+							echo formatvolume($volume * $quantity)."&nbsp;m&sup3;";
 							echo "<br>\n";
 							$singleprice = getprice($typeID, $GLOBALS['systemid'], $GLOBALS['pricetype']);
 							$stackprice = $quantity * $singleprice;
 							if (isigb())
 								echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$typeID.')">';
-							echo formatprice($stackprice)." ISK";
+							echo formatprice($stackprice)."&nbsp;ISK";
 							if (isigb())
 								echo "</div>";
 						echo "</div>\n";
@@ -96,7 +96,7 @@
 				if (!empty($cycleTime) && $cycleTime != 0) {
 					$profit += $stackprice - $sum;
 					echo '<div class="row" style="text-align: right;">'."\n";
-						echo "Profit: ".formatprice($profit)." ISK";
+						echo "Profit:&nbsp;".formatprice($profit)."&nbsp;ISK";
 					echo "</div>\n";
 				}
 				echo "</div>\n";
@@ -219,12 +219,14 @@
 			$schematicsnum = mysql_numrows($schematicsresult);
 //			printmysqlselectquerytable($schematicsresult);
 
+			echo "\t\t\t".'<div style="font-size: 90%">'."\n";
 			for ($i = 0; $i < $schematicsnum; $i++) {
 				$quantity = mysql_result($schematicsresult, $i, 'quantity');
 				$typeID = mysql_result($schematicsresult, $i, 'typeID');
 				createtypeidtable($quantity, $typeID);
-				echo "			<br>\n";
+				echo "\t\t\t\t<br>\n";
 			}
+			echo "\t\t\t</div>\n";
 
 
 			mysql_close();
