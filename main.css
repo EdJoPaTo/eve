@@ -11,22 +11,11 @@ body {
 @media (min-width:1000px) {
 	body {
 		background-image: url(/res/orcawarp_compressed.png);
-		-webkit-background-size: cover;
-		-moz-background-size: cover;
-		-o-background-size: cover;
 		background-size: cover;
 		background-repeat: no-repeat;
 		background-position: center center;
 		background-attachment: fixed;
 	}
-}
-
-* {
-	-webkit-transition: all 0.5s ease;
-	-moz-transition: all 0.5s ease;
-	-o-transition: all 0.5s ease;
-	-ms-transition: all 0.5s ease;
-	transition: all 0.5s ease;
 }
 
 /* #left #right in <div style="display: table"> */
@@ -55,9 +44,8 @@ body {
 }
 
 .bgimg{
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
+	-webkit-transition: -webkit-filter 0.5s ease;
+	transition: -webkit-filter 0.5s ease;
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center center;
@@ -145,6 +133,11 @@ div.table.bordered .cell, .border {
 	color: red;
 }
 
+div.table.hoverrow div.row {
+	-webkit-transition: background-color 0.5s ease;
+	transition: background-color 0.5s ease;
+}
+
 div.table.hoverrow div.row:hover {
 	background-color: #3F3F3F;
 }
@@ -154,6 +147,8 @@ div.table.hoverrow div.row.highlight:hover{
 }
 
 input, select, button{
+	-webkit-transition: -webkit-filter 0.5s ease, border 0.5s ease, color 0.5s ease;
+	transition: -webkit-filter 0.5s ease, border 0.5s ease, color 0.5s ease;
 	background-color: #2F2F2F;
 	border: 1px solid gray; 
 	border-radius: 4px;
@@ -183,6 +178,11 @@ input[type=checkbox]:hover, input[type=checkbox]:focus {
 input:focus, select:focus, button:focus, input:hover, select:hover, button:hover {
 	border: 1px solid #FFB000;
 	color: #FFB000;
+}
+
+a, .igbinfo, .igbmore {
+	-webkit-transition: -webkit-filter 0.5s ease;
+	transition: -webkit-filter 0.5s ease;
 }
 
 a {
@@ -246,6 +246,11 @@ a.external:hover, a.external:focus {
 	background-repeat: no-repeat;
 	background-position: 5px center;
 	padding-left: 40px;
+}
+
+#pageselection > a {
+	-webkit-transition: -webkit-filter 0.5s ease, background-color 0.5s ease, color 0.5s ease;
+	transition: -webkit-filter 0.5s ease, background-color 0.5s ease, color 0.5s ease;
 }
 
 #pageselection > a:hover {
