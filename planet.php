@@ -27,6 +27,7 @@
 	function createtypeidtable($quantity, $typeID) {
 		$typeName = mysql_result(mysql_query("SELECT typeName FROM invTypes WHERE typeID=$typeID"), 0, 'typeName');
 		$sum = 0;
+		$profit = 0;
 		echo '<div class="table" style="border: 2px solid gray;">'."\n";
 
 		$innerquery = "SELECT * FROM planetSchematicsTypeMap WHERE typeID=$typeID AND isInput=0";
@@ -43,7 +44,9 @@
 				for ($i = 0; $i < $num; $i++) {
 					echo '<div class="row">'."\n";
 //					echo '<div class="cell">'."\n";
-					$sum += createtypeidtable($factor * mysql_result($result, $i, 'quantity'), mysql_result($result, $i, 'typeID'));
+					$childtypeidresult = createtypeidtable($factor * mysql_result($result, $i, 'quantity'), mysql_result($result, $i, 'typeID'));
+					$sum += $childtypeidresult['price'];
+					$profit += $childtypeidresult['profit'];
 //					echo "</div>\n";
 					echo "</div>\n";
 				}
@@ -56,38 +59,54 @@
 				echo "</div>\n";
 			}
 		}
-		echo '<div class="cell" style="position: relative; padding: 1em 0px;">'."\n";
-			echo '<div class="cell">'."\n";
-				echo '<img src="//image.eveonline.com/Type/'.$typeID.'_64.png">';
-			echo "</div>\n";
-			echo '<div class="cell" style="width: 250px;">'."\n";
-				echo $quantity."x ";
-				if (isigb())
-					echo '<div class="igbinfo" onclick="CCPEVE.showInfo('.$typeID.')">';
-				echo $typeName;
-				if (isigb())
-					echo "</div>";
-				echo "<br>\n";
-				$singleprice = getprice($typeID, $GLOBALS['systemid'], $GLOBALS['pricetype']);
-				$stackprice = $quantity * $singleprice;
-				if (isigb())
-					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$typeID.')">';
-				echo formatprice($stackprice)." ISK";
-				if (isigb())
-					echo "</div>";
-			echo "</div>\n";
-			$profit = $stackprice - $sum;
-			if (!empty($cycleTime) && $cycleTime != 0) {
-				echo '<div style="position: absolute; top: 0px; left: 0; width: 100%">'."\n";
-					echo "cycle time: ".($factor != 1 ? $factor."x " : "").($cycleTime/ 60)." min";
+		echo '<div class="cell" style="height: 100%">'."\n";
+			echo '<div class="table" style="height: 100%">'."\n";
+				if (!empty($cycleTime) && $cycleTime != 0) {
+					echo '<div class="row">'."\n";
+						echo "cycle time: ".($factor != 1 ? $factor."x " : "").($cycleTime/ 60)." min";
+					echo "</div>\n";
+					echo '<div class="row" style="height: 100%"></div>'."\n";
+				}
+				echo '<div class="row">'."\n";
+					echo '<div class="table">'."\n";
+						echo '<div class="cell">'."\n";
+							echo '<img src="//image.eveonline.com/Type/'.$typeID.'_64.png">';
+						echo "</div>\n";
+						echo '<div class="cell" style="width: 250px;">'."\n";
+							echo $quantity."x ";
+							if (isigb())
+								echo '<div class="igbinfo" onclick="CCPEVE.showInfo('.$typeID.')">';
+							echo $typeName;
+							if (isigb())
+								echo "</div>";
+							echo "<br>\n";
+							$volume = mysql_result(mysql_query("SELECT volume FROM evedump.invTypes WHERE typeID=$typeID"), 0, 'volume');
+							echo formatvolume($volume * $quantity)." m&sup3;";
+							echo "<br>\n";
+							$singleprice = getprice($typeID, $GLOBALS['systemid'], $GLOBALS['pricetype']);
+							$stackprice = $quantity * $singleprice;
+							if (isigb())
+								echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$typeID.')">';
+							echo formatprice($stackprice)." ISK";
+							if (isigb())
+								echo "</div>";
+						echo "</div>\n";
+					echo "</div>\n";
 				echo "</div>\n";
-			}
-			echo '<div style="position: absolute; bottom: 0px; right: 2px;">'."\n";
-				echo "Profit: ".formatprice($profit)." ISK";
-			echo "</div>\n";
+				if (!empty($cycleTime) && $cycleTime != 0) {
+					$profit += $stackprice - $sum;
+					echo '<div class="row" style="text-align: right;">'."\n";
+						echo "Profit: ".formatprice($profit)." ISK";
+					echo "</div>\n";
+				}
+				echo "</div>\n";
 			echo "</div>\n";
 		echo "</div>\n";
-		return $stackprice;
+		$returnvalue = array(
+				'price' => $stackprice,
+				'profit' => $profit
+			);
+		return $returnvalue;
 	}
 ?>
 <!DOCTYPE HTML>
@@ -183,7 +202,9 @@
 //			printmysqlselectquerytable($schematicsresult);
 
 			if ($schematicsnum > 0) {
-				createtypeidtable(mysql_result($schematicsresult, 0, 'quantity'), mysql_result($schematicsresult, 0, 'typeID'))."<br><br>\n";
+				$quantity = mysql_result($schematicsresult, 0, 'quantity');
+				$typeID = mysql_result($schematicsresult, 0, 'typeID');
+				createtypeidtable($quantity, $typeID);
 			}
 
 
@@ -191,7 +212,7 @@
 ?>
 
 <?php
-			echo "			<br>\n";
+			echo "			<br><br>\n";
 			echo '			price data provided by <a target="_blank" class="external" href="//eve-central.com">EVE Central</a>, ';
 
 			echo 'updated: '.gmdate('d.m.Y H:i:s e', $updated)."<br><br>\n";
