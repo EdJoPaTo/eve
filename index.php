@@ -13,6 +13,12 @@
 	<head>
 <?php echo getHead($title); ?>
 		<style type="text/css">
+			.icon {
+				background-repeat: no-repeat;
+				background-position: center 5px;
+				background-size: 64px 64px;
+				padding-top: 75px;
+			}
 			.hoverimg {
 				-webkit-filter: grayscale(1) blur(5px);
 				filter: grayscale(1) blur(5px);
@@ -54,34 +60,22 @@
 
 			<h2>Public Tools</h2>
 			<div class="table" style="width:100%;">
-				<div class="cell" style="width: 33%;">
-					<a href="ore.php">
-						<img src="//image.eveonline.com/Type/34_64.png" alt="Ore"><br>
-						Ore Chart
-					</a>
-				</div>
-				<div class="cell" style="width: 33%;">
-					<a href="ice.php">
-						<img src="//image.eveonline.com/Type/16265_64.png" alt="Ice"><br>
-						Ice Chart
-					</a>
-				</div>
-				<div class="cell" style="width: 33%;">
-					<a href="planet.php">
-						<img src="//image.eveonline.com/Type/2398_64.png" alt="Metal"><br>
-						PI Commodity Prices
-					</a>
-				</div>
+				<a class="cell icon" style="width: 33%; background-image: url(//image.eveonline.com/Type/34_64.png);" href="ore.php">
+					Ore Chart
+				</a>
+				<a class="cell icon" style="width: 33%; background-image: url(//image.eveonline.com/Type/16265_64.png);" href="ice.php">
+					Ice Chart
+				</a>
+				<a class="cell icon" style="width: 33%; background-image: url(//image.eveonline.com/Type/2398_64.png);" href="planet.php">
+					PI Commodity Prices
+				</a>
 			</div>
 
 			<h2>Login required</h2>
 			<div class="table" style="width:100%;">
-				<div class="cell" style="width: 100%;">
-					<a href="api/planet.php">
-						<img src="//image.eveonline.com/Type/2014_64.png" alt="Planet"><br>
-						Planetary Infrastructure Overview
-					</a>
-				</div>
+				<a class="cell icon" style="width: 100%; background-image: url(//image.eveonline.com/Type/2014_64.png);" href="api/planet.php">
+					Planetary Infrastructure Overview
+				</a>
 			</div>
 
 
@@ -89,10 +83,10 @@
 			<h2>Autor</h2>
 			<div class="table" style="margin-left: auto; margin-right: auto;">
 				<div class="cell hoverimg" id="rell" onclick="CCPEVE.showInfo(1377,90419497)">
-						<div>Rell Silfani</div>
+					<div>Rell Silfani</div>
 				</div>
 				<div class="cell hoverimg" id="karnis" onclick="CCPEVE.showInfo(1377,91572014)">
-						<div>Karnis Delvari</div>
+					<div>Karnis Delvari</div>
 				</div>
 			</div>
 
