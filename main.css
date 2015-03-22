@@ -110,41 +110,38 @@ div.headrow {
 	font-weight: bold;
 }
 
-div.cell {
+.cell {
 	display: table-cell;
+	padding: 1px;
 }
 
-div.table.vmiddle div.cell {
+div.table.vmiddle .cell {
 	vertical-align: middle;
 }
 
-div.table, div.cell {
+div.table, .cell {
 	border-spacing: 0px;
 	border-collapse: collapse;
 }
 
-div.table.bordered div.cell, div.border {
+div.table.bordered .cell, .border {
 	border: 1px solid gray;
 }
 
-div.borderleft {
+.borderleft {
 	border-left: 1px solid gray;
 }
 
-div.table.border, div.headrow {
+.table.border, div.headrow {
 	border: 2px solid gray;
 }
 
-div.cell {
-	padding: 1px;
-}
-
-div.bestvalue{
+.bestvalue{
 	color: lightgreen;
 	font-weight: bold;
 }
 
-div.worstvalue{
+.worstvalue{
 	color: red;
 }
 
