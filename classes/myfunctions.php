@@ -298,8 +298,8 @@
 		$returnString .= "\t\t\t\t".'<div id="footerright">'."\n";
 		$returnString .= "\t\t\t\t\t".'<a href="/information/about.php">About</a><br>'."\n";
 		$returnString .= "\t\t\t\t\t".'<a href="https://bitbucket.org/edjopato/eve" class="external" target="_blank">BitBucket</a><br>'."\n";
-		$timeneeded = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
-		$returnString .= "\t\t\t\t\tgenerated in ".round($timeneeded,3)." ms<br>\n";
+		$timeneeded = (microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]) * 1000;
+		$returnString .= "\t\t\t\t\tgenerated in ".round($timeneeded)." ms<br>\n";
 		$returnString .= "\t\t\t\t".'</div>'."\n";
 		$returnString .= "\t\t\t\t".'<div id="footerleft">'."\n";
 		$returnString .= "\t\t\t\t\t".'All <a href="/information/legal.php">EVE related materials</a> are property of <a href="http://www.ccpgames.com" class="external">CCP Games</a><br>'."\n";
