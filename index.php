@@ -17,10 +17,10 @@
 				-webkit-filter: grayscale(1) blur(5px);
 				filter: grayscale(1) blur(5px);
 				background-repeat: no-repeat;
-				position: absolute;
-				top: 0px;
 				width: 128px;
 				height: 128px;
+				margin: 5px;
+				background-size: 100%;
 			}
 			.hoverimg:hover {
 				-webkit-filter: grayscale(0) blur(0px);
@@ -34,6 +34,16 @@
 			.hoverimg:hover div {
 				opacity: 0.9;
 				transform: translateY(110px);
+			}
+			#rell { background-image: url(//image.eveonline.com/Character/90419497_128.jpg); }
+			#karnis { background-image: url(//image.eveonline.com/Character/91572014_128.jpg); }
+			@media (-webkit-min-device-pixel-ratio: 1.5) {
+				#rell { background-image: url(//image.eveonline.com/Character/90419497_256.jpg); }
+				#karnis { background-image: url(//image.eveonline.com/Character/91572014_256.jpg); }
+			}
+			@media (-webkit-min-device-pixel-ratio: 3) {
+				#rell { background-image: url(//image.eveonline.com/Character/90419497_512.jpg); }
+				#karnis { background-image: url(//image.eveonline.com/Character/91572014_512.jpg); }
 			}
 		</style>
 	</head>
@@ -77,16 +87,12 @@
 
 			<br>
 			<h2>Autor</h2>
-			<div class="table" style="width: 100%; height: 128px;">
-				<div class="cell" style="width: 50%; position: relative;">
-					<div style="background-image: url(//image.eveonline.com/Character/90419497_128.jpg); right: 5px;" class="hoverimg" onclick="CCPEVE.showInfo(1377,90419497)">
+			<div class="table" style="margin-left: auto; margin-right: auto;">
+				<div class="cell hoverimg" id="rell" onclick="CCPEVE.showInfo(1377,90419497)">
 						<div>Rell Silfani</div>
-					</div>
 				</div>
-				<div class="cell" style="width: 50%; position: relative;">
-					<div style="background-image: url(//image.eveonline.com/Character/91572014_128.jpg); left: 5px;" class="hoverimg" onclick="CCPEVE.showInfo(1377,91572014)">
+				<div class="cell hoverimg" id="karnis" onclick="CCPEVE.showInfo(1377,91572014)">
 						<div>Karnis Delvari</div>
-					</div>
 				</div>
 			</div>
 
