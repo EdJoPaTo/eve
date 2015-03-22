@@ -20,8 +20,10 @@
 				padding-top: 75px;
 			}
 			.hoverimg {
-				-webkit-filter: grayscale(1) blur(5px);
-				filter: grayscale(1) blur(5px);
+				-webkit-transition: -webkit-filter 1s ease;
+				transition: -webkit-filter 1s ease;
+				-webkit-filter: grayscale(0.3) blur(5px);
+				filter: grayscale(0.3) blur(5px);
 				background-repeat: no-repeat;
 				width: 128px;
 				height: 128px;
@@ -33,6 +35,8 @@
 				filter: grayscale(0) blur(0px);
 			}
 			.hoverimg div {
+				-webkit-transition: all 1s ease;
+				transition: all 1s ease;
 				text-align: center;
 				color: #FFB000;
 				opacity: 0;
