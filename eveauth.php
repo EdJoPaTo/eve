@@ -1,8 +1,5 @@
 <?php
-	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/OAuth.php';
-	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Util.php';
-	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
-	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/ssoDetails.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
 
 	if (isset($_GET['logout'])) {
 		session_destroy();

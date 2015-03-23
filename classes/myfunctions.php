@@ -2,8 +2,9 @@
 	error_reporting(E_ALL);
 	ini_set('display_errors', '1');
 
-	require 'OAuth.php';
-	require 'ssoDetails.php';
+	require_once 'Util.php';
+	require_once 'OAuth.php';
+	require_once 'ssoDetails.php';
 
 	session_start();
 	if(isset($_SESSION['views']))
