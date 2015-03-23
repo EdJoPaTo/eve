@@ -262,6 +262,10 @@
 			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/16265_32.png);" href="/ice.php">Ice</a>'."\n";
 		if ($_SERVER["PHP_SELF"] != "/planet.php")
 			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/2398_32.png);" href="/planet.php">PI Commodity</a>'."\n";
+		if (!empty($_SESSION['characterID'])) {
+			if ($_SERVER["PHP_SELF"] != "/api/planet.php")
+				$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/2014_32.png);" href="/api/planet.php">PI Overview</a>'."\n";
+		}
 		if (!empty($title)) {
 			$returnString .= "\t\t\t\t".'<div class="doublespacer"></div>'."\n";
 			$returnString .= "\t\t\t\t".'<div class="wideonly title';
