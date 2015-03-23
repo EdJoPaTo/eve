@@ -27,7 +27,7 @@
 			<h2>Thanks to</h2>
 				<ul>
 					<li><a class="external" target="_blank" href="http://ccpgames.com">CCP Games</a> for <a class="external" target="_blank" href="http://eveonline.com">EVE Online</a></li>
-					<li><a class="external" target="_blank" href="https://skilled-minority.com/">Skilled-Minority</a> for hosting this website</li>
+					<li><a class="external" target="_blank" href="//skilled-minority.com/">Skilled-Minority</a> for hosting this website</li>
 					<li><a class="external" target="_blank" href="https://zkillboard.com/">zKillboard</a> for some ideas in the design and the OAuth handling</li>
 					<li><a class="external" target="_blank" href="https://www.fuzzwork.co.uk/">Fuzzwork</a> for the data dump convertion</li>
 					<li><a class="external" target="_blank" href="http://evemaps.dotlan.net/">DOTLAN</a></li>
