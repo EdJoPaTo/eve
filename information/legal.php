@@ -1,5 +1,5 @@
 <?php
-	require $_SERVER['DOCUMENT_ROOT'].'/myfunctions.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
 	$title = "CCP Copyright Notice";
 ?>
 <!DOCTYPE HTML>

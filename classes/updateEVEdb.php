@@ -1,5 +1,5 @@
 <?php
-	include 'evefunctions.php';
+	require 'evefunctions.php';
 
 	function updateall()
 	{
