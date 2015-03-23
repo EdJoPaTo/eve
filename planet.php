@@ -95,7 +95,12 @@
 				echo "</div>\n";
 				if (!empty($cycleTime) && $cycleTime != 0) {
 					$profit += $stackprice - $sum;
-					echo '<div class="row" style="text-align: right;">'."\n";
+					echo '<div class="row" style="text-align: right;';
+					if ($profit < 0)
+						echo ' color: red;';
+					elseif ($profit > 0)
+						echo ' color: green;';
+					echo '">'."\n";
 						echo "Profit:&nbsp;".formatprice($profit)."&nbsp;ISK";
 					echo "</div>\n";
 				}
