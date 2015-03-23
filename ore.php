@@ -448,7 +448,7 @@
 			echo "			<br>\n";
 			echo "			<strong>Cycleamount</strong><br>\n";
 			echo 'Current: ';
-			echo '<input name="cyclem3" type="number" value="'.$m3percycle.'" /> m&sup3; <input type="submit" value="Update!" /><br>'."\n";
+			echo '<input name="cyclem3" type="number" value="'.$m3percycle.'" /> m&sup3; <input type="submit" value="Submit" /><br>'."\n";
 
 			echo '			Venture: ';
 			echo '<a href="'.createlinktargetcycleamount(300).'">T1 (~300 m&sup3;)</a>, ';
@@ -467,7 +467,7 @@
 			echo "<br>\n";
 			echo "			<br>\n";
 			echo "			<strong>Refining</strong><br>\n";
-			echo '			<input name="refine" type="number" min="0.1" max="100" step="0.1" value="'.$refine.'" /> % <input type="submit" value="Update!" /><br>'."\n";
+			echo '			<input name="refine" type="number" min="0.1" max="100" step="0.1" value="'.$refine.'" /> % <input type="submit" value="Submit" /><br>'."\n";
 			echo "			All with Max Skills and Standing<br>\n";
 			echo '			Station: ';
 			echo '<a href="'.createlinktargetrefine(69.6).'">50%</a>, ';

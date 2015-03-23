@@ -298,7 +298,7 @@
 
 			echo "			<br>\n";
 			echo "			<strong>Refining</strong><br>\n";
-			echo '			<input name="refine" type="number" min="0.1" max="100" step="0.1" value="'.$refine.'" /> % <input type="submit" value="Update!" /><br>'."\n";
+			echo '			<input name="refine" type="number" min="0.1" max="100" step="0.1" value="'.$refine.'" /> % <input type="submit" value="Submit" /><br>'."\n";
 			echo "			All with Max Skills and Standing<br>\n";
 			echo '			Station: ';
 			echo '<a href="'.createlinktargetrefine(69.6).'">50%</a>, ';
