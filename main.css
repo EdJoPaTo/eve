@@ -232,11 +232,12 @@ a.external:hover, a.external:focus {
 .hoverpricecontainer {
 	display: none;
 	position: absolute;
-	background-color: rgba(0,0,0, 0.85);
-	box-shadow: 0px 0px 5px 5px rgba(0,0,0, 0.85);
+	background-color: rgba(0,0,0, 0.8);
+	box-shadow: 0px 0px 5px 5px rgba(0,0,0, 0.8);
 	padding: 15px;
 	margin-left: 100px;
 	text-align: left;
+	font-weight: normal;
 	color: #B0B0B0;
 }
 
