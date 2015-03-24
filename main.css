@@ -225,6 +225,28 @@ a.external:hover, a.external:focus {
 	filter: drop-shadow(0px 0px 5px white);
 }
 
+*:hover > .hoverpricecontainer {
+	display: block;
+}
+
+.hoverpricecontainer {
+	display: none;
+	position: absolute;
+	background-color: rgba(0,0,0, 0.85);
+	box-shadow: 0px 0px 5px 5px rgba(0,0,0, 0.85);
+	padding: 15px;
+	margin-left: 100px;
+	text-align: left;
+	color: #B0B0B0;
+}
+
+.hoverpricecontainer .info {
+	background-repeat: no-repeat;
+	background-position: 5px center;
+	padding-left: 70px;
+	min-height: 64px;
+}
+
 #pageselection {
 	display: table;
 	width: 100%;
