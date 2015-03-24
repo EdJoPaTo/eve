@@ -32,7 +32,7 @@
 		if ($num == 0)
 		{
 			$price = 0;
-			$query = "INSERT INTO eve.prices VALUES ($id,$systemid,$price,$price,0)";
+			$query = "INSERT INTO eve.prices VALUES ($id,$systemid,$price,$price,0,0,0)";
 			mysql_query($query);
 			$GLOBALS['updated'] = 0;
 		}
