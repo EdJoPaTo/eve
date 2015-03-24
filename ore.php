@@ -252,7 +252,7 @@
 					<div class="cell borderleft">
 						1 cycle | <?php echo formatvolume($m3percycle); ?>m&sup3;<br>
 						<div class="table" style="width: 400px;">
-							<div class="cell" style="width: 25%; color: #BAA373;">amount<br>pieces</div>
+							<div class="cell" style="width: 25%; color: #BAA373;">quantity<br>pieces</div>
 							<div class="cell borderleft" style="width: 25%;">normal<br>ISK</div>
 							<div class="cell borderleft" style="width: 25%;">compressed<br>ISK</div>
 							<div class="cell borderleft" style="width: 25%;">reprocessed<br>ISK</div>
