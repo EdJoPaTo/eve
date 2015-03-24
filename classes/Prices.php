@@ -58,14 +58,17 @@ class Prices {
 		$source = '';
 		$source .= $rowprefix.'<div class="hoverpricecontainer">'."\n";
 		$source .= $rowprefix."\t".'<div class="info" style="background-image: url(//image.eveonline.com/Type/'.$this->typeID.'_64.png)">'."\n";
-		$source .= $rowprefix."\t\t".$typeName.'<br>'."\n";
+		$source .= $rowprefix."\t\t";
+		if ($amount != 1)
+			$source .= round($amount, 2)."x&nbsp;";
+		$source .= $typeName.'<br>'."\n";
 		$source .= $rowprefix."\t\t".formatvolume($volume).'&nbsp;m&sup3;<br>'."\n";
 		$source .= $rowprefix."\t"."</div>\n";
-		
+
 		$source .= $rowprefix."\t"."<strong>Accept Buyorder ($systemName)</strong><br>\n";
 		if ($this->buyunits == 0)
 			$source .= $rowprefix."\t".'<div class="worstvalue">'."\n";
-		$source .= $rowprefix."\t".'Price: '.formatprice($this->buy).'&nbsp;ISK<br>'."\n";
+		$source .= $rowprefix."\t".'Price: '.formatprice($amount * $this->buy).'&nbsp;ISK<br>'."\n";
 		$source .= $rowprefix."\t".'Units: '.formatamount($this->buyunits).'&nbsp;Units<br>'."\n";
 		if ($this->buyunits == 0)
 			$source .= $rowprefix."\t"."</div>"."\n";
@@ -73,7 +76,7 @@ class Prices {
 		$source .= $rowprefix."\t"."<strong>Place Sellorder ($systemName)</strong><br>"."\n";
 		if ($this->sellunits == 0)
 			$source .= $rowprefix."\t".'<div class="worstvalue">'."\n";
-		$source .= $rowprefix."\t".'Price: '.formatprice($this->sell).'&nbsp;ISK<br>'."\n";
+		$source .= $rowprefix."\t".'Price: '.formatprice($amount * $this->sell).'&nbsp;ISK<br>'."\n";
 		$source .= $rowprefix."\t".'Units: '.formatamount($this->sellunits).'&nbsp;Units<br>'."\n";
 		if ($this->sellunits == 0)
 			$source .= $rowprefix."\t"."</div>"."\n";
