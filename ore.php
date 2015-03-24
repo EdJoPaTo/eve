@@ -1,6 +1,7 @@
 ﻿<?php
 	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
 	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/evefunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Prices.php';
 
 	$systems = array(
 		'Jita' => 30000142,
@@ -150,9 +151,14 @@
 		$a['name'] = $name;
 		$a['volume'] = $volume;
 
-		$price = getprice($id, $systemid, $pricetype);
+		$prices = Prices::getFromID($id, $systemid);
+		$compressedprices = Prices::getFromID(getcompressedid($id), $systemid);
+		$price = $prices->getPriceByType($pricetype)['price'];
 		$compressedprice = getcompressedprice($id, $systemid, $pricetype);
 		$refinedprice = getrefinedprice($id, $systemid, $pricetype) * $refinepercent;
+
+		$a['prices'] = $prices;
+		$a['compressedprices'] = $compressedprices;
 
 		$a['1price'] = $price;
 		$a['1compressedprice'] = $compressedprice;
@@ -310,10 +316,11 @@
 				echo '" style="width: 33%; text-align: right;">';
 				if (isigb())
 					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$id.')">';
-				echo formatprice($row['1price']);
+				echo formatprice($row['1price'])."\n";
+				echo $row['prices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
 				if (isigb())
 					echo "</div>";
-				echo "</div>\n";
+				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['1compressedprice'] == $row['1bestprice'])
 					echo " bestvalue";
@@ -322,10 +329,11 @@
 				echo '" style="width: 33%; text-align: right;">';
 				if (isigb())
 					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.getcompressedid($id).')">';
-				echo formatprice($row['1compressedprice']);
+				echo formatprice($row['1compressedprice'])."\n";
+				echo $row['compressedprices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
 				if (isigb())
 					echo "</div>";
-				echo "</div>\n";
+				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['1refinedprice'] == $row['1bestprice'])
 					echo " bestvalue";
@@ -340,7 +348,8 @@
 				echo "\t\t\t\t\t".'<div class="cell border">'."\n";
 				echo "\t\t\t\t\t\t".'<div class="table" style="width: 100%;">'."\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell" style="width: 25%; text-align: right; color: #BAA373;">';
-				echo formatamount($row['cycleamount']);
+				$cycleamount = $row['cycleamount'];
+				echo formatamount($cycleamount);
 				echo "</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['cycleprice'] == $row['cyclebestprice'])
@@ -349,7 +358,8 @@
 					echo " worstvalue";
 				echo '" style="width: 25%; text-align: right;">';
 				echo formatprice($row['cycleprice']);
-				echo "</div>\n";
+				echo $row['prices']->getMouseoverField($cycleamount, "\t\t\t\t\t\t\t\t");
+				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['cyclecompressedprice'] == $row['cyclebestprice'])
 					echo " bestvalue";
@@ -357,7 +367,8 @@
 					echo " worstvalue";
 				echo '" style="width: 25%; text-align: right;">';
 				echo formatprice($row['cyclecompressedprice']);
-				echo "</div>\n";
+				echo $row['compressedprices']->getMouseoverField($cycleamount / 100, "\t\t\t\t\t\t\t\t");
+				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['cyclerefinedprice'] == $row['cyclebestprice'])
 					echo " bestvalue";
@@ -406,14 +417,16 @@
 
 					for ($i = 0; $i < $num; $i++) {
 						$id = mysql_result($result, $i, 'typeID');
-						$curprice = getprice($id, $cursystemid, $pricetype);
-						echo '						<div class="cell';
+						$prices = Prices::getFromID($id, $cursystemid);
+						$curprice = $prices->getPriceByType($pricetype)['price'];
+						echo "\t\t\t\t\t\t".'<div class="cell';
 						if ($curprice == getbestknowprice($id, $pricetype)) {
 							echo ' bestvalue';
 						}
 						echo '">';
-						echo $curprice;
-						echo "</div>\n";
+						echo formatprice($curprice)."\n";
+						echo $prices->getMouseoverField(1, "\t\t\t\t\t\t\t");
+						echo "\t\t\t\t\t\t</div>\n";
 					}
 					echo '					</div>'."\n";
 				}

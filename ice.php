@@ -1,6 +1,7 @@
 ﻿<?php
 	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
 	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/evefunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Prices.php';
 
 	$systems = array(
 		'Jita' => 30000142,
@@ -78,9 +79,18 @@
 		$a['name'] = mysql_result($result, $i, 'typeName');
 		$a['volume'] = mysql_result($result, $i, 'volume');
 
-		$a['1price'] = getprice($id, $systemid, $pricetype);
-		$a['1compressedprice'] = getcompressedprice($id, $systemid, $pricetype);
-		$a['1refinedprice'] = getrefinedprice($id, $systemid, $pricetype) * $refinepercent;
+		$prices = Prices::getFromID($id, $systemid);
+		$compressedprices = Prices::getFromID(getcompressedid($id), $systemid);
+		$price = $prices->getPriceByType($pricetype)['price'];
+		$compressedprice = getcompressedprice($id, $systemid, $pricetype);
+		$refinedprice = getrefinedprice($id, $systemid, $pricetype) * $refinepercent;
+
+		$a['prices'] = $prices;
+		$a['compressedprices'] = $compressedprices;
+
+		$a['1price'] = $price;
+		$a['1compressedprice'] = $compressedprice;
+		$a['1refinedprice'] = $refinedprice;
 		$a['1bestprice'] = max($a['1price'], max($a['1compressedprice'], $a['1refinedprice']));
 		$a['1worstprice'] = min($a['1price'], min($a['1compressedprice'], $a['1refinedprice']));
 
@@ -202,9 +212,10 @@
 				if (isigb())
 					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$id.')">';
 				echo formatprice($row['1price']);
+				echo $row['prices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
 				if (isigb())
 					echo "</div>";
-				echo "</div>\n";
+				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['1compressedprice'] == $row['1bestprice'])
 					echo " bestvalue";
@@ -214,9 +225,10 @@
 				if (isigb())
 					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.getcompressedid($id).')">';
 				echo formatprice($row['1compressedprice']);
+				echo $row['compressedprices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
 				if (isigb())
 					echo "</div>";
-				echo "</div>\n";
+				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['1refinedprice'] == $row['1bestprice'])
 					echo " bestvalue";
@@ -264,14 +276,16 @@
 
 					for ($i = 0; $i < $num; $i++) {
 						$id = mysql_result($result, $i, 'typeID');
-						$curprice = getprice($id, $cursystemid, $pricetype);
-						echo '						<div class="cell';
+						$prices = Prices::getFromID($id, $cursystemid);
+						$curprice = $prices->getPriceByType($pricetype)['price'];
+						echo "\t\t\t\t\t\t".'<div class="cell';
 						if ($curprice == getbestknowprice($id, $pricetype)) {
 							echo ' bestvalue';
 						}
 						echo '">';
-						echo $curprice;
-						echo "</div>\n";
+						echo formatprice($curprice)."\n";
+						echo $prices->getMouseoverField(1, "\t\t\t\t\t\t\t");
+						echo "\t\t\t\t\t\t</div>\n";
 					}
 					echo '					</div>'."\n";
 				}
