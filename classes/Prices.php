@@ -23,19 +23,19 @@ class Prices {
 		$this->units = $buyunits + $sellunits;
 	}
 
-	public function getPriceByType($pricetype) {
+	public function getPriceByType($pricetype = 'bestcase') {
 		$price = 0;
 		$units = 0;
 
-		if ($pricetype == 'bestcase') {
-			$price = $this->maxprice;
-			$units = $this->units;
-		} elseif ($pricetype == 'buy') {
+		if ($pricetype == 'buy') {
 			$price = $this->buy;
 			$units = $this->buyunits;
-		} else {
+		} elseif ($pricetype == 'sell') {
 			$price = $this->sell;
 			$units = $this->sellunits;
+		} else {
+			$price = $this->maxprice;
+			$units = $this->units;
 		}
 
 		return array('price' => $price, 'units' => $units);
