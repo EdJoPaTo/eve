@@ -241,7 +241,7 @@ a.external:hover, a.external:focus {
 	color: #B0B0B0;
 }
 
-.hoverpricecontainer .info {
+.iteminfo {
 	background-repeat: no-repeat;
 	background-position: 5px center;
 	padding-left: 70px;

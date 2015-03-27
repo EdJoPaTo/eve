@@ -57,7 +57,7 @@ class Prices {
 
 		$source = '';
 		$source .= $rowprefix.'<div class="hoverpricecontainer">'."\n";
-		$source .= $rowprefix."\t".'<div class="info" style="background-image: url(//image.eveonline.com/Type/'.$this->typeID.'_64.png)">'."\n";
+		$source .= $rowprefix."\t".'<div class="iteminfo" style="background-image: url(//image.eveonline.com/Type/'.$this->typeID.'_64.png)">'."\n";
 		$source .= $rowprefix."\t\t";
 		if ($amount != 1)
 			$source .= round($amount, 2)."x&nbsp;";
