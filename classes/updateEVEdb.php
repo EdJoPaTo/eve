@@ -11,7 +11,6 @@
 		updateallbalance();
 		updateallplanets();
 		updateallplanetinfos();
-
 		echo mysql_error();
 	}
 	function generatemissingtable()
@@ -198,6 +197,7 @@
 	}
 	function updateallprices()
 	{
+		require_once 'Prices.php';
 		$host = 'localhost';
 		$user = 'eto';
 		$password = 'eto';
@@ -221,11 +221,8 @@
 
 		$systemids = array();
 
-		$i=0;
-		while ($i < $num)
-		{
+		for ($i = 0; $i < $num; $i++) {
 			$systemids[] = mysql_result($result, $i,'systemid');
-			$i++;
 		}
 
 		foreach ($systemids as $systemid) {
@@ -240,32 +237,11 @@
 
 			$ids = array();
 
-			$i=0;
-			while ($i < $num)
-			{
+			for ($i = 0; $i < $num; $i++) {
 				$ids[] = mysql_result($result, $i,'id');
-				$i++;
 			}
 
-			$url = 'http://api.eve-central.com/api/marketstat?usesystem='.$systemid.'&typeid='.implode(',',$ids);
-			try {
-				$source = file_get_contents($url);
-				$xml = simplexml_load_string($source);
-
-				foreach($ids as $id) {
-					$buy = (float) $xml->xpath('/evec_api/marketstat/type[@id='.$id.']/buy/percentile')[0];
-					$sell = (float) $xml->xpath('/evec_api/marketstat/type[@id='.$id.']/sell/percentile')[0];
-					$buyunits = (int) $xml->xpath('/evec_api/marketstat/type[@id='.$id.']/buy/volume')[0];
-					$sellunits = (int) $xml->xpath('/evec_api/marketstat/type[@id='.$id.']/sell/volume')[0];
-
-					echo "  item ".$id."\tbuy: ".$buy."\tsell: ".$sell."\n";
-
-					$query = "UPDATE ".$table." SET buy='".$buy."',sell='".$sell."',buyunits='".$buyunits."',sellunits='".$sellunits."',stamp='".time()."' WHERE id='".$id."' and systemid='".$systemid."'";
-					mysql_query($query);
-				}
-			} catch (Exception $e) {
-				echo "Error updateallprices: ".$e->getMessage()."\n";
-			}
+			Prices::updatePricesOfIDs($systemid, $ids);
 		}
 		echo mysql_error();
 		mysql_close();
