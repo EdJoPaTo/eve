@@ -132,7 +132,7 @@ class Prices {
 		if (is_numeric($ids))
 			$ids = array($ids);
 
-		$url = 'http://api.eve-central.com/api/marketstat?usesystem='.$systemID.'&typeid='.implode(',',$ids);
+		$url = 'https://eve-central.com/api/marketstat?usesystem='.$systemID.'&typeid='.implode(',',$ids);
 		try {
 			$source = Util::postData($url);
 			$xml = simplexml_load_string($source);
