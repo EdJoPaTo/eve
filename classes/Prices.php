@@ -125,6 +125,34 @@ class Prices {
 
 		return new Prices($typeID, $systemID, $buy, $sell, $updated, $buyunits, $sellunits);
 	}
+
+	public static function updatePricesOfIDs($systemID, $ids) {
+		if (is_numeric($ids))
+			$ids = array($ids);
+
+		$url = 'http://api.eve-central.com/api/marketstat?usesystem='.$systemID.'&typeid='.implode(',',$ids);
+		try {
+			$source = Util::postData($url);
+			$xml = simplexml_load_string($source);
+
+			foreach($ids as $id) {
+				$buy = (float) $xml->xpath('/evec_api/marketstat/type[@id='.$id.']/buy/percentile')[0];
+				$sell = (float) $xml->xpath('/evec_api/marketstat/type[@id='.$id.']/sell/percentile')[0];
+				$buyunits = (int) $xml->xpath('/evec_api/marketstat/type[@id='.$id.']/buy/volume')[0];
+				$sellunits = (int) $xml->xpath('/evec_api/marketstat/type[@id='.$id.']/sell/volume')[0];
+
+				echo "  item ".$id."\tbuy: ".$buy."\tsell: ".$sell."\tbuyunits: ".$buyunits."\tsellunits: ".$sellunits."\n";
+
+				$stamp = time();
+				$query = "INSERT INTO eve.prices (ID, systemID, buy, sell, buyunits, sellunits, stamp)
+				VALUES ('$id', '$systemID', '$buy', '$sell', '$buyunits', '$sellunits', '$stamp')
+				ON DUPLICATE KEY UPDATE buy='$buy',sell='$sell',buyunits='$buyunits',sellunits='$sellunits',stamp='$stamp'";
+				mysql_query($query);
+			}
+		} catch (Exception $e) {
+			echo "Error updateallprices: ".$e->getMessage()."\n";
+		}
+	}
 }
 
 ?>
