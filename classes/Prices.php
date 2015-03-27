@@ -127,6 +127,8 @@ class Prices {
 	}
 
 	public static function updatePricesOfIDs($systemID, $ids) {
+		require_once 'Util.php';
+
 		if (is_numeric($ids))
 			$ids = array($ids);
 
