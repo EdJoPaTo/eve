@@ -11,7 +11,8 @@ class Util {
 	 */
 	public static function postData($url, $postData = array(), $headers = array())
 	{
-		$userAgent = $_SERVER['SERVER_NAME']." - edjopato@gmail.com";
+		$hostname = empty($_SERVER['SERVER_NAME']) ? gethostname() : $_SERVER['SERVER_NAME'];
+		$userAgent = $hostname." - edjopato@gmail.com";
 		if(!isset($headers))
 			$headers = array("Connection: keep-alive", "Keep-Alive: timeout=10, max=1000");
 		$curl = curl_init();
