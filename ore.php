@@ -153,24 +153,27 @@
 		$a['volume'] = $volume;
 
 		$prices = Prices::getFromID($id, $systemid);
-		$compressedprices = Prices::getFromID(getcompressedid($id), $systemid);
 		$price = $prices->getPriceByType($pricetype)['price'];
-		$compressedprice = getcompressedprice($id, $systemid, $pricetype);
+
+		$compressedprices = Prices::getFromID(getcompressedid($id), $systemid);
+		$compressedprice = $compressedprices->getPriceByType($pricetype)['price'];
 
 		$a['prices'] = $prices;
 		$a['compressedprices'] = $compressedprices;
 
 		$a['1price'] = $price;
-		$a['1compressedprice'] = $compressedprice;
-		$a['1reprocessed'] = new Reprocess($id, $refinepercent, 1);
-		$a['1reprocessedprice'] = $a['1reprocessed']->mineralStack->getPrice($systemid, $pricetype);
-		$a['1bestprice'] = max($a['1price'], max($a['1compressedprice'], $a['1reprocessedprice']));
-		$a['1worstprice'] = min($a['1price'], min($a['1compressedprice'], $a['1reprocessedprice']));
+
+		$a['batchprice'] = $price * 100;
+		$a['batchcompressedprice'] = $compressedprice;
+		$a['batchreprocessed'] = new Reprocess($id, $refinepercent, 100);
+		$a['batchreprocessedprice'] = $a['batchreprocessed']->mineralStack->getPrice($systemid, $pricetype);
+		$a['batchbestprice'] = max($a['batchprice'], max($a['batchreprocessedprice'], $a['batchcompressedprice']));
+		$a['batchworstprice'] = min($a['batchprice'], min($a['batchreprocessedprice'], $a['batchcompressedprice']));
 
 		$minedpercycle = $m3percycle / $volume;
 		$a['cycleamount'] = $minedpercycle;
 		$a['cycleprice'] = $price * $minedpercycle;
-		$a['cyclecompressedprice'] = getcompressedprice($id, $systemid, $pricetype) * $minedpercycle;
+		$a['cyclecompressedprice'] = $compressedprice * $minedpercycle / 100;
 		$a['cyclereprocessed'] = new Reprocess($id, $refinepercent, $minedpercycle);
 		$a['cyclereprocessedprice'] = $a['cyclereprocessed']->mineralStack->getPrice($systemid, $pricetype);
 		$a['cyclebestprice'] = max($a['cycleprice'], max($a['cyclecompressedprice'], $a['cyclereprocessedprice']));
@@ -242,9 +245,9 @@
 				<div class="headrow">
 					<div class="cell border">Name</div>
 					<div class="cell border">Found&nbsp;in<br><br>Security</div>
-					<div class="cell border">Volume<br><br>m&sup3;</div>
+					<div class="cell border" style="width: 80px;">1 item<br><br>ISK</div>
 					<div class="cell borderleft">
-						1 item<br>
+						1 batch | 100 items<br>
 						<div class="table" style="width: 300px;">
 							<div class="cell" style="width: 33%;">normal<br>ISK</div>
 							<div class="cell borderleft" style="width: 33%;">compressed<br>ISK</div>
@@ -304,47 +307,52 @@
 						break;
 				}
 				echo "</div>\n";
-				echo "\t\t\t\t\t".'<div class="cell border">';
-				echo formatvolume($row['volume']);
-				echo "</div>\n";
+
+				echo "\t\t\t\t\t".'<div class="cell border">'."\n";
+				if (isigb())
+					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$id.')">';
+				echo formatprice($row['1price']);
+				if (isigb())
+					echo "</div>";
+				echo "\n";
+				echo $row['prices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
+				echo "\t\t\t\t\t</div>\n";
 
 				echo "\t\t\t\t\t".'<div class="cell border">'."\n";
 				echo "\t\t\t\t\t\t".'<div class="table" style="width: 100%;">'."\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
-				if ($row['1price'] == $row['1bestprice'])
+				if ($row['batchprice'] == $row['batchbestprice'])
 					echo " bestvalue";
-				if ($row['1price'] == $row['1worstprice'])
+				if ($row['batchprice'] == $row['batchworstprice'])
 					echo " worstvalue";
 				echo '" style="width: 33%; text-align: right;">';
-				if (isigb())
-					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$id.')">';
-				echo formatprice($row['1price'])."\n";
-				echo $row['prices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
-				if (isigb())
-					echo "</div>";
+				echo formatprice($row['batchprice'])."\n";
+				echo $row['prices']->getMouseoverField(100, "\t\t\t\t\t\t\t\t");
 				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
-				if ($row['1compressedprice'] == $row['1bestprice'])
+				if ($row['batchcompressedprice'] == $row['batchbestprice'])
 					echo " bestvalue";
-				if ($row['1compressedprice'] == $row['1worstprice'])
+				if ($row['batchcompressedprice'] == $row['batchworstprice'])
 					echo " worstvalue";
 				echo '" style="width: 33%; text-align: right;">';
 				if (isigb())
 					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.getcompressedid($id).')">';
-				echo formatprice($row['1compressedprice'])."\n";
-				echo $row['compressedprices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
+				echo formatprice($row['batchcompressedprice']);
 				if (isigb())
 					echo "</div>";
+				echo "\n";
+				echo $row['compressedprices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
 				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
-				if ($row['1reprocessedprice'] == $row['1bestprice'])
+				if ($row['batchreprocessedprice'] == $row['batchbestprice'])
 					echo " bestvalue";
-				if ($row['1reprocessedprice'] == $row['1worstprice'])
+				if ($row['batchreprocessedprice'] == $row['batchworstprice'])
 					echo " worstvalue";
 				echo '" style="width: 33%; text-align: right;">';
-				echo formatprice($row['1reprocessedprice']);
-				echo $row['1reprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
-				echo "</div>\n";
+				echo formatprice($row['batchreprocessedprice']);
+				echo "\n";
+				echo $row['batchreprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
+				echo "\t\t\t\t\t\t\t</div>\n";
 				echo "\t\t\t\t\t\t</div>\n";
 				echo "\t\t\t\t\t</div>\n";
 
@@ -361,6 +369,7 @@
 					echo " worstvalue";
 				echo '" style="width: 25%; text-align: right;">';
 				echo formatprice($row['cycleprice']);
+				echo "\n";
 				echo $row['prices']->getMouseoverField($cycleamount, "\t\t\t\t\t\t\t\t");
 				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
@@ -370,6 +379,7 @@
 					echo " worstvalue";
 				echo '" style="width: 25%; text-align: right;">';
 				echo formatprice($row['cyclecompressedprice']);
+				echo "\n";
 				echo $row['compressedprices']->getMouseoverField($cycleamount / 100, "\t\t\t\t\t\t\t\t");
 				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
@@ -379,8 +389,9 @@
 					echo " worstvalue";
 				echo '" style="width: 25%; text-align: right;">';
 				echo formatprice($row['cyclereprocessedprice']);
+				echo "\n";
 				echo $row['cyclereprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
-				echo "</div>\n";
+				echo "\t\t\t\t\t\t\t</div>\n";
 				echo "\t\t\t\t\t\t</div>\n";
 				echo "\t\t\t\t\t</div>\n";
 
@@ -516,4 +527,3 @@
 		</div>
 	</body>
 </html>
-
