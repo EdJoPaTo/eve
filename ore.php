@@ -30,7 +30,7 @@
 	if (!is_numeric($m3percycle) || $m3percycle == 0) {$m3percycle = 1000;}
 
 	$refine = !empty($_GET['refine']) ? (float)htmlspecialchars($_GET['refine']) : 0.0;
-	if (!is_float($refine) || $refine == 0) {$refine = 69.6;}
+	if (!is_float($refine) || $refine == 0) {$refine = 69.575;}
 	$refinepercent = $refine * 0.01;
 
 
