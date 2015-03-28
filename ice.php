@@ -149,7 +149,6 @@
 			<div class="table hoverrow border" style="font-size: 90%; text-align: right;">
 				<div class="headrow">
 					<div class="cell border">Name</div>
-					<div class="cell border">Volume<br><br>m&sup3;</div>
 					<div class="cell border">Type</div>
 					<div class="cell border">Faction</div>
 					<div class="cell border">Found&nbsp;in<br><br>Security</div>
@@ -173,9 +172,6 @@
 				echo $row['name'];
 				if (isigb())
 					echo "</div>";
-				echo "</div>\n";
-				echo "\t\t\t\t\t".'<div class="cell border">';
-				echo formatvolume($row['volume']);
 				echo "</div>\n";
 				echo "\t\t\t\t\t".'<div class="cell border">';
 				echo $iceinfo[$id]['type'];
