@@ -2,6 +2,7 @@
 	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
 	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/evefunctions.php';
 	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Prices.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Reprocess.php';
 
 	$systems = array(
 		'Jita' => 30000142,
@@ -83,16 +84,18 @@
 		$compressedprices = Prices::getFromID(getcompressedid($id), $systemid);
 		$price = $prices->getPriceByType($pricetype)['price'];
 		$compressedprice = getcompressedprice($id, $systemid, $pricetype);
-		$refinedprice = getrefinedprice($id, $systemid, $pricetype) * $refinepercent;
+		$reprocess = new Reprocess($id, $refinepercent, 1);
+		$reprocessedprice = $reprocess->mineralStack->getPrice($systemid, $pricetype);
 
 		$a['prices'] = $prices;
 		$a['compressedprices'] = $compressedprices;
+		$a['reprocessed'] = $reprocess;
 
 		$a['1price'] = $price;
 		$a['1compressedprice'] = $compressedprice;
-		$a['1refinedprice'] = $refinedprice;
-		$a['1bestprice'] = max($a['1price'], max($a['1compressedprice'], $a['1refinedprice']));
-		$a['1worstprice'] = min($a['1price'], min($a['1compressedprice'], $a['1refinedprice']));
+		$a['1reprocessedprice'] = $reprocessedprice;
+		$a['1bestprice'] = max($a['1price'], max($a['1compressedprice'], $a['1reprocessedprice']));
+		$a['1worstprice'] = min($a['1price'], min($a['1compressedprice'], $a['1reprocessedprice']));
 
 		$icetable[] = $a;
 	}
@@ -230,12 +233,13 @@
 					echo "</div>";
 				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
-				if ($row['1refinedprice'] == $row['1bestprice'])
+				if ($row['1reprocessedprice'] == $row['1bestprice'])
 					echo " bestvalue";
-				if ($row['1refinedprice'] == $row['1worstprice'])
+				if ($row['1reprocessedprice'] == $row['1worstprice'])
 					echo " worstvalue";
 				echo '" style="width: 33%; text-align: right;">';
-				echo formatprice($row['1refinedprice']);
+				echo formatprice($row['1reprocessedprice']);
+				echo $row['reprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
 				echo "</div>\n";
 				echo "\t\t\t\t\t\t</div>\n";
 				echo "\t\t\t\t\t</div>\n";
