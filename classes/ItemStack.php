@@ -29,14 +29,14 @@ class ItemStack {
 		return $sumVolume;		
 	}
 
-	function getPrice($systemID) {
+	function getPrice($systemID, $pricetype = 'bestcase') {
 		require_once 'Prices.php';
 		$sumPrice = 0;
 		$updated = time();
 
 		foreach ($this->items as $typeID => $quantity) {
 			$prices = Prices::getFromID($typeID, $systemID);
-			$price = $quantity * $prices->maxprice;
+			$price = $quantity * $prices->getPriceByType($pricetype)['price'];
 			$updated = min($updated, $prices->updated);
 
 			$sumPrice += $price;
