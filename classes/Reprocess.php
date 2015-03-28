@@ -27,7 +27,7 @@ class Reprocess {
 			$materialTypeID = mysql_result($result, $i, 'materialTypeID');
 			$materialQuantity = mysql_result($result, $i, 'quantity');
 
-			$this->mineralStack->addItem($materialTypeID, ($quantity / $batchSize) * floor($materialQuantity * $reprocessPercentage));
+			$this->mineralStack->addItem($materialTypeID, floor(($quantity / $batchSize) * ($materialQuantity * $reprocessPercentage)));
 		}
 	}
 
