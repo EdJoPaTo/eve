@@ -184,9 +184,13 @@
 		echo mysql_error();
 
 		$query = 'CREATE OR REPLACE VIEW planetroutesbypins AS
-		SELECT planetpins.ownerID, planetpins.planetID, planetpins.pinID, planetpins.typeID, planetpins.typeName, planetpins.schematicID, planetpins.cycleTime, planetpins.quantityPerCycle, planetroutes.routeID, planetroutes.contentTypeID, planetroutes.contentTypeName, CASE WHEN planetpins.pinID=planetroutes.destinationPinID THEN planetroutes.quantity ELSE (0 - planetroutes.quantity) END as quantity, CASE WHEN planetpins.pinID=planetroutes.destinationPinID THEN ROUND(planetroutes.quantity/planetpins.cycleTime*60) ELSE ROUND((0 - planetroutes.quantity)/planetpins.cycleTime*60) END as quantityPerHour
+		SELECT planetpins.ownerID, planetpins.planetID, planetpins.pinID, planetpins.typeID, planetpins.typeName, planetpins.schematicID, planetpins.cycleTime, planetpins.quantityPerCycle, planetroutes.routeID, planetroutes.contentTypeID, planetroutes.contentTypeName, invTypes.volume,
+		CASE WHEN planetpins.pinID=planetroutes.destinationPinID THEN planetroutes.quantity ELSE (0 - planetroutes.quantity) END as quantity,
+		CASE WHEN planetpins.pinID=planetroutes.destinationPinID THEN ROUND(planetroutes.quantity/planetpins.cycleTime*60) ELSE ROUND((0 - planetroutes.quantity)/planetpins.cycleTime*60) END as quantityPerHour,
+		CASE WHEN planetpins.pinID=planetroutes.destinationPinID THEN ROUND(planetroutes.quantity*invTypes.volume/planetpins.cycleTime*60,2) ELSE ROUND((0 - planetroutes.quantity)*invTypes.volume/planetpins.cycleTime*60,2) END as volumePerHour
 		FROM planetpins
 		LEFT JOIN planetroutes ON planetpins.ownerID=planetroutes.ownerID AND planetpins.planetID=planetroutes.planetID AND (planetpins.pinID=planetroutes.sourcePinID OR planetpins.pinID=planetroutes.destinationPinID)
+		JOIN evedump.invTypes ON invTypes.typeID=planetroutes.contentTypeID
 		GROUP BY planetpins.ownerID, planetpins.planetID, planetpins.pinID, planetroutes.routeID
 		ORDER BY planetpins.ownerID, planetpins.planetID, planetpins.typeName, planetroutes.contentTypeName
 		';
