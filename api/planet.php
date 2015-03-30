@@ -75,7 +75,7 @@
 				SUM(planetroutesbypins.volumePerHour) as volumeIncomePerHour
 				FROM planetstoragepins
 				LEFT JOIN planetroutesbypins ON planetroutesbypins.ownerID=planetstoragepins.ownerID AND planetroutesbypins.planetID=planetstoragepins.planetID AND planetroutesbypins.pinID=planetstoragepins.pinID
-				JOIN planets ON planetstoragepins.planetID=planets.planetID
+				JOIN planets ON planetstoragepins.ownerID=planets.ownerID AND planetstoragepins.planetID=planets.planetID
 				WHERE planetstoragepins.ownerID=$characterID
 				GROUP BY planetstoragepins.ownerID, planetstoragepins.planetID, planetstoragepins.pinID
 				";
