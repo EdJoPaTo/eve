@@ -71,6 +71,15 @@
 					ON planetproductions.ownerID=planetstorage.ownerID AND planetproductions.planetID=planetstorage.planetID AND planetproductions.typeID=planetstorage.typeID
 				WHERE planetproductions.ownerID=$characterID";
 
+				$planetstoragefillingquery = "SELECT planetName, planetstoragepins.typeName, planetstoragepins.capacity, planetstoragepins.contentVolume,
+				SUM(planetroutesbypins.volumePerHour) as volumeIncomePerHour
+				FROM planetstoragepins
+				LEFT JOIN planetroutesbypins ON planetroutesbypins.ownerID=planetstoragepins.ownerID AND planetroutesbypins.planetID=planetstoragepins.planetID AND planetroutesbypins.pinID=planetstoragepins.pinID
+				JOIN planets ON planetstoragepins.planetID=planets.planetID
+				WHERE planetstoragepins.ownerID=$characterID
+				GROUP BY planetstoragepins.ownerID, planetstoragepins.planetID, planetstoragepins.pinID
+				";
+
 				$queries = array(
 					"Planets" => "SELECT * FROM planets WHERE ownerID=$characterID",
 					"Planetpins" => "SELECT * FROM planetpins WHERE ownerID=$characterID",
@@ -80,7 +89,8 @@
 					"Pinroutes" => "SELECT * FROM planetroutesbypins WHERE ownerID=$characterID",
 					"planetproductions" => "SELECT * FROM planetproductions WHERE ownerID=$characterID",
 					"planetstorage" => "SELECT * FROM planetstorage WHERE ownerID=$characterID",
-					"planetproductions with storages" => $productionwithstoragequery
+					"planetproductions with storages" => $productionwithstoragequery,
+					"planetstoragefilling" => $planetstoragefillingquery
 				);
 
 				$result = mysql_query("SELECT * FROM planetindustrypins WHERE ownerID=$characterID");
@@ -102,7 +112,7 @@
 						printmysqlselectquerytable($result);
 					}
 
-					echo "<h2>Extractor Units</h2>";
+					echo "<h2>Extractor Units</h2>\n";
 					$result = mysql_query("SELECT planetName, typeName, expiryTime FROM planetpins, planets WHERE planetpins.ownerID=planets.ownerID AND planetpins.planetID=planets.planetID AND typeName LIKE '%Extractor%' AND planetpins.ownerID=$characterID");
 					$num = mysql_numrows($result);
 		//			printmysqlselectquerytable($result);
@@ -121,6 +131,47 @@
 						if ($expiryTime < time()) { echo ' style="color:red;"'; }
 						echo ">";
 						echo gmdate('d.m.Y H:i:s', $expiryTime)."</div>";
+						echo "</div>\n";
+					}
+					echo '</div>'."\n";
+
+					echo "<h2>Storages</h2>\n";
+					$result = mysql_query($planetstoragefillingquery);
+					$num = mysql_numrows($result);
+//					printmysqlselectquerytable($result);
+					echo '<div class="table hoverrow bordered">'."\n";
+					echo '<div class="headrow">'."\n";
+					echo '<div class="cell">Planet</div>'."\n";
+					echo '<div class="cell">Storage</div>'."\n";
+					echo '<div class="cell">Capacity<br>m&sup3;</div>'."\n";
+					echo '<div class="cell">Content<br>m&sup3;</div>'."\n";
+					echo '<div class="cell">Income Per Hour<br>m&sup3;</div>'."\n";
+					echo '<div class="cell">Date/Time when Full</div>'."\n";
+					echo '</div>'."\n";
+					for ($i = 0; $i < $num; $i++) {
+						echo '<div class="row">'."\n";
+						echo '<div class="cell">'.mysql_result($result, $i, 'planetName')."</div>";
+						echo '<div class="cell">'.mysql_result($result, $i, 'typeName')."</div>";
+						$capacity = mysql_result($result, $i, 'capacity');
+						$contentVolume = mysql_result($result, $i, 'contentVolume');
+						$income = mysql_result($result, $i, 'volumeIncomePerHour');
+						echo '<div class="cell">'.$capacity."</div>";
+						echo '<div class="cell">'.$contentVolume."</div>";
+						echo '<div class="cell">'.$income."</div>";
+
+						$cellstart = '<div class="cell"';
+						$fullUntilTime = ($capacity - $contentVolume) / $income;
+						$fullTime = $cachedUntil + $fullUntilTime * 60 * 60;
+						if ($fullTime < time() + 60 * 60 * 1) { $cellstart .= ' style="color:red;"'; }
+						elseif ($fullTime < time() + 60 * 60 * 24) { $cellstart .= ' style="color:orange;"'; }
+						$cellstart .= ">";
+
+						if ($income == 0) {
+							echo '<div class="cell">';
+							echo "</div>";
+						} else {
+							echo $cellstart.gmdate('d.m.Y H:i:s', $fullTime)."</div>";
+						}
 						echo "</div>\n";
 					}
 					echo '</div>'."\n";
