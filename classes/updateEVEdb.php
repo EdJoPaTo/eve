@@ -184,13 +184,17 @@
 		echo mysql_error();
 
 		$query = 'CREATE OR REPLACE VIEW planetroutesbypins AS
-		SELECT planetpins.ownerID, planetpins.planetID, planetpins.pinID, planetpins.typeID, planetpins.typeName, planetpins.schematicID, planetpins.cycleTime, planetpins.quantityPerCycle, planetroutes.routeID, planetroutes.contentTypeID, planetroutes.contentTypeName, invTypes.volume,
+		SELECT planetpins.ownerID, planetpins.planetID, planetpins.pinID, planetpins.typeID, planetpins.typeName, planetpins.schematicID,
+		CASE WHEN sourcepin.cycleTime!=0 THEN sourcepin.cycleTime ELSE destinationpin.cycleTime END as cycleTime,
+		planetpins.quantityPerCycle, planetroutes.routeID, planetroutes.contentTypeID, planetroutes.contentTypeName,
 		CASE WHEN planetpins.pinID=planetroutes.destinationPinID THEN planetroutes.quantity ELSE (0 - planetroutes.quantity) END as quantity,
-		CASE WHEN planetpins.pinID=planetroutes.destinationPinID THEN ROUND(planetroutes.quantity/planetpins.cycleTime*60) ELSE ROUND((0 - planetroutes.quantity)/planetpins.cycleTime*60) END as quantityPerHour,
-		CASE WHEN planetpins.pinID=planetroutes.destinationPinID THEN ROUND(planetroutes.quantity*invTypes.volume/planetpins.cycleTime*60,2) ELSE ROUND((0 - planetroutes.quantity)*invTypes.volume/planetpins.cycleTime*60,2) END as volumePerHour
+		ROUND((CASE WHEN planetpins.pinID=planetroutes.destinationPinID THEN planetroutes.quantity ELSE (0 - planetroutes.quantity) END) / (CASE WHEN sourcepin.cycleTime!=0 THEN sourcepin.cycleTime ELSE destinationpin.cycleTime END) *60) as quantityPerHour,
+		ROUND((CASE WHEN planetpins.pinID=planetroutes.destinationPinID THEN planetroutes.quantity ELSE (0 - planetroutes.quantity) END) *contenttype.volume/ (CASE WHEN sourcepin.cycleTime!=0 THEN sourcepin.cycleTime ELSE destinationpin.cycleTime END) *60 ,2) as volumePerHour
 		FROM planetpins
 		LEFT JOIN planetroutes ON planetpins.ownerID=planetroutes.ownerID AND planetpins.planetID=planetroutes.planetID AND (planetpins.pinID=planetroutes.sourcePinID OR planetpins.pinID=planetroutes.destinationPinID)
-		JOIN evedump.invTypes ON invTypes.typeID=planetroutes.contentTypeID
+		JOIN evedump.invTypes AS contenttype ON contenttype.typeID=planetroutes.contentTypeID
+		JOIN planetpins AS sourcepin ON sourcepin.ownerID=planetpins.ownerID AND sourcepin.planetID=planetpins.planetID AND sourcepin.pinID=planetroutes.sourcePinID
+		JOIN planetpins AS destinationpin ON destinationpin.ownerID=planetpins.ownerID AND destinationpin.planetID=planetpins.planetID AND destinationpin.pinID=planetroutes.destinationPinID
 		GROUP BY planetpins.ownerID, planetpins.planetID, planetpins.pinID, planetroutes.routeID
 		ORDER BY planetpins.ownerID, planetpins.planetID, planetpins.typeName, planetroutes.contentTypeName
 		';
@@ -200,7 +204,7 @@
 		$query = "CREATE OR REPLACE VIEW planetproductions AS
 		SELECT ownerID, planetID, contentTypeID as typeID, contentTypeName as typeName, SUM(0-quantityPerHour) as productionPerHour
 		FROM planetroutesbypins
-		WHERE quantityPerHour IS NOT NULL
+		WHERE (typeName LIKE '%Extractor%' OR typeName LIKE '%Industry Facility' OR typeName LIKE '%High-Tech Production Plant')
 		GROUP BY ownerID, planetID, contentTypeID
 		ORDER BY ownerID, planetID, contentTypeName
 		";
