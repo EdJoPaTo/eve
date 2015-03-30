@@ -159,17 +159,17 @@
 						echo '<div class="cell">'.$contentVolume."</div>";
 						echo '<div class="cell">'.$income."</div>";
 
-						$cellstart = '<div class="cell"';
-						$fullUntilTime = ($capacity - $contentVolume) / $income;
-						$fullTime = $cachedUntil + $fullUntilTime * 60 * 60;
-						if ($fullTime < time() + 60 * 60 * 1) { $cellstart .= ' style="color:red;"'; }
-						elseif ($fullTime < time() + 60 * 60 * 24) { $cellstart .= ' style="color:orange;"'; }
-						$cellstart .= ">";
-
 						if ($income == 0) {
 							echo '<div class="cell">';
 							echo "</div>";
 						} else {
+							$cellstart = '<div class="cell"';
+							$fullUntilTime = ($capacity - $contentVolume) / $income;
+							$fullTime = $cachedUntil + $fullUntilTime * 60 * 60;
+							if ($fullTime < time() + 60 * 60 * 1) { $cellstart .= ' style="color:red;"'; }
+							elseif ($fullTime < time() + 60 * 60 * 24) { $cellstart .= ' style="color:orange;"'; }
+							$cellstart .= ">";
+
 							echo $cellstart.gmdate('d.m.Y H:i:s', $fullTime)."</div>";
 						}
 						echo "</div>\n";
