@@ -103,7 +103,7 @@
 					}
 
 					echo "<h2>Extractor Units</h2>";
-					$result = mysql_query("SELECT planetName, typeName, expiryTime FROM planetpins, planets WHERE planetpins.planetID=planets.planetID AND typeName LIKE '%Extractor%' AND planetpins.ownerID=$characterID");
+					$result = mysql_query("SELECT planetName, typeName, expiryTime FROM planetpins, planets WHERE planetpins.ownerID=planets.ownerID AND planetpins.planetID=planets.planetID AND typeName LIKE '%Extractor%' AND planetpins.ownerID=$characterID");
 					$num = mysql_numrows($result);
 		//			printmysqlselectquerytable($result);
 					echo '<div class="table hoverrow bordered">'."\n";
@@ -214,7 +214,7 @@
 								}
 								echo "</div><br>\n";
 							}
-							
+
 							echo "</div><br>\n";
 						}
 
@@ -281,4 +281,3 @@
 		</div>
 	</body>
 </html>
-
