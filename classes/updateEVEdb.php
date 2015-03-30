@@ -164,6 +164,16 @@
 		mysql_query($query);
 		echo mysql_error();
 
+		$query = 'CREATE OR REPLACE VIEW planetstoragepins AS
+		SELECT planetpins.ownerID, planetpins.planetID, planetpins.pinID, planetpins.typeID, planetpins.typeName, pintype.capacity, ROUND(SUM(planetpins.contentQuantity * contenttype.volume),2) AS contentVolume
+		FROM planetpins, evedump.invTypes pintype, evedump.invTypes contenttype
+		WHERE pintype.capacity!=0
+		AND planetpins.typeID=pintype.typeID AND planetpins.contentTypeID=contenttype.typeID
+		GROUP BY ownerID, planetID, pinID
+		';
+		mysql_query($query);
+		echo mysql_error();
+
 		$query = "CREATE OR REPLACE VIEW planetindustrypins AS
 		SELECT ownerID, planetID, pinID, typeID, typeName, schematicID, lastLaunchTime, cycleTime, quantityPerCycle, installTime, expiryTime
 		FROM planetpins
@@ -542,7 +552,7 @@
 
 			echo "    $table of ".$num." planets to update\n";
 
-			for ($i = 0; $i < $num; $i++) {			
+			for ($i = 0; $i < $num; $i++) {
 				$planetID = mysql_result($result, $i, 'planetID');
 				echo "      planetID ".$planetID."\n";
 				$xml = callAPI($api, array('keyID' => $keyID, 'vCode' => $vCode, 'characterID' => $ownerID, 'planetID' => $planetID));
@@ -573,7 +583,6 @@
 				$query = "UPDATE planets SET $cachedUntilColumnName=".$cachedUntil." WHERE ownerID=".$ownerID." AND planetID=".$planetID;
 				mysql_query($query);
 			}
-		}		
+		}
 	}
 ?>
-
