@@ -71,7 +71,7 @@
 					ON planetproductions.ownerID=planetstorage.ownerID AND planetproductions.planetID=planetstorage.planetID AND planetproductions.typeID=planetstorage.typeID
 				WHERE planetproductions.ownerID=$characterID";
 
-				$planetstoragefillingquery = "SELECT planetName, planetstoragepins.typeName, planetstoragepins.capacity, planetstoragepins.contentVolume,
+				$planetstoragefillingquery = "SELECT planetName, lastUpdate, planetstoragepins.typeName, planetstoragepins.capacity, planetstoragepins.contentVolume,
 				SUM(planetroutesbypins.volumePerHour) as volumeIncomePerHour
 				FROM planetstoragepins
 				LEFT JOIN planetroutesbypins ON planetroutesbypins.ownerID=planetstoragepins.ownerID AND planetroutesbypins.planetID=planetstoragepins.planetID AND planetroutesbypins.pinID=planetstoragepins.pinID
@@ -113,7 +113,7 @@
 					}
 
 					echo "<h2>Extractor Units</h2>\n";
-					$result = mysql_query("SELECT planetName, typeName, expiryTime FROM planetpins, planets WHERE planetpins.ownerID=planets.ownerID AND planetpins.planetID=planets.planetID AND typeName LIKE '%Extractor%' AND planetpins.ownerID=$characterID");
+					$result = mysql_query("SELECT planetName, typeName, expiryTime FROM planetpins, planets WHERE planetpins.ownerID=$characterID AND planetpins.ownerID=planets.ownerID AND planetpins.planetID=planets.planetID AND typeName LIKE '%Extractor%'");
 					$num = mysql_numrows($result);
 		//			printmysqlselectquerytable($result);
 					echo '<div class="table hoverrow bordered">'."\n";
@@ -155,6 +155,7 @@
 						$capacity = mysql_result($result, $i, 'capacity');
 						$contentVolume = mysql_result($result, $i, 'contentVolume');
 						$income = mysql_result($result, $i, 'volumeIncomePerHour');
+						$lastUpdate = mysql_result($result, $i, 'lastUpdate');
 						echo '<div class="cell">'.$capacity."</div>";
 						echo '<div class="cell">'.$contentVolume."</div>";
 						echo '<div class="cell">'.$income."</div>";
@@ -165,7 +166,7 @@
 						} else {
 							$cellstart = '<div class="cell"';
 							$fullUntilTime = ($capacity - $contentVolume) / $income;
-							$fullTime = $cachedUntil + $fullUntilTime * 60 * 60;
+							$fullTime = $lastUpdate + $fullUntilTime * 60 * 60;
 							if ($fullTime < time() + 60 * 60 * 1) { $cellstart .= ' style="color:red;"'; }
 							elseif ($fullTime < time() + 60 * 60 * 24) { $cellstart .= ' style="color:orange;"'; }
 							$cellstart .= ">";
@@ -269,7 +270,7 @@
 							echo "</div><br>\n";
 						}
 
-						$result = mysql_query("SELECT typeName as Item, quantity as Quantity FROM planetstorage WHERE planetID=$planetID");
+						$result = mysql_query("SELECT typeName as Item, quantity as Quantity FROM planetstorage WHERE ownerID=$characterID and planetID=$planetID");
 						echo mysql_error();
 						if (mysql_numrows($result) > 0) {
 							echo '<div style="display: table-cell; padding: 2px;">'."\n";
