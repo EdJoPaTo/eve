@@ -113,15 +113,6 @@
 		17870	=> array('found' => 'NS', 'bonus' => 10)
 	);
 
-	$host = 'localhost';
-	$user = 'eto';
-	$password = 'eto';
-	$database = 'eve';
-
-	$conn = mysql_connect($host,$user,$password) or die('Error: Could not connect to database - '.mysql_error());
-	mysql_select_db($database,$conn) or die('Error in selecting the database: '.mysql_error());
-
-
 	//refinered: SELECT * FROM invTypeMaterials WHERE typeID=$id;
 	//volume: SELECT volume FROM invTypes WHERE typeID=$id;
 	//name: SELECT typeName FROM invTypes WHERE typeID=$id;
@@ -135,13 +126,12 @@
 	$mineralquery = "SELECT typeID, typeName, volume FROM evedump.invTypes WHERE published=1 AND groupID=18";
 
 	$oretable = array();
-	$result = mysql_query($orequery);
-	$num = mysql_num_rows($result);
-	for ($i=0; $i < $num; $i++) {
+	$result = $mysqli->query($orequery);
+	while ($row = $result->fetch_object()) {
 		$a = array();
-		$id = mysql_result($result, $i, 'typeID');
-		$name = mysql_result($result, $i, 'typeName');
-		$volume = mysql_result($result, $i, 'volume');
+		$id = $row->typeID;
+		$name = $row->typeName;
+		$volume = $row->volume;
 
 		if  ($security == 'high'                        && $ore[$id]['found'] == 'LS') { continue; }
 		if (($security == 'high' || $security == 'low') && $ore[$id]['found'] == 'NS') { continue; }
@@ -181,6 +171,7 @@
 
 		$oretable[] = $a;
 	}
+	$result->close();
 	usort($oretable, build_sorter('cyclebestprice', true));
 
 	function createlinktarget($system, $m3percycle, $refine)
@@ -406,11 +397,10 @@
 				<div class="headrow">
 					<div class="cell">System</div>
 <?php
-					$result = mysql_query($mineralquery);
-					$num = mysql_num_rows($result);
-					for ($i=0; $i < $num; $i++) {
-						$id = mysql_result($result, $i, 'typeID');
-						$name = mysql_result($result, $i, 'typeName');
+					$result = $mysqli->query($mineralquery);
+					while ($row = $result->fetch_object()) {
+						$id = $row->typeID;
+						$name = $row->typeName;
 						echo "\t\t\t\t\t".'<div class="cell">';
 						if (isigb())
 							echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$id.')">';
@@ -419,6 +409,7 @@
 							echo "</div>";
 						echo "</div>\n";
 					}
+					$result->close();
 ?>
 				</div>
 <?php
@@ -430,8 +421,9 @@
 					echo '">'."\n";
 					echo '						<div class="cell"><a href="'.createlinktargetsystem($cursystemname).'">'.$cursystemname.'</a></div>'."\n";
 
-					for ($i = 0; $i < $num; $i++) {
-						$id = mysql_result($result, $i, 'typeID');
+					$result = $mysqli->query($mineralquery);
+					while ($row = $result->fetch_object()) {
+						$id = $row->typeID;
 						$prices = Prices::getFromID($id, $cursystemid);
 						$curprice = $prices->getPriceByType($pricetype)['price'];
 						echo "\t\t\t\t\t\t".'<div class="cell';
@@ -443,11 +435,12 @@
 						echo $prices->getMouseoverField(1, "\t\t\t\t\t\t\t");
 						echo "\t\t\t\t\t\t</div>\n";
 					}
+					$result->close();
 					echo '					</div>'."\n";
 				}
 
 
-				mysql_close();
+				$mysqli->close();
 ?>
 			</div><br>
 

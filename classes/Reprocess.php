@@ -1,6 +1,7 @@
 <?php
 
 require_once 'ItemStack.php';
+require_once 'mysqlDetails.php';
 
 class Reprocess {
 	var $itemID;
@@ -11,24 +12,24 @@ class Reprocess {
 	var $mineralStack;
 
 	function __construct($itemID, $reprocessPercentage, $quantity = 100) {
+		global $mysqli;
+
 		$this->itemID = $itemID;
 		$this->reprocessPercentage = $reprocessPercentage;
 		$this->quantity = $quantity;
 
 		$this->mineralStack = new ItemStack();
 
-		$batchSize = mysql_result(mysql_query("SELECT * FROM evedump.invTypes WHERE typeID=$itemID"), 0, 'portionSize');
-		echo mysql_error();
+		$batchSize = $mysqli->query("SELECT * FROM evedump.invTypes WHERE typeID=$itemID")->fetch_object()->portionSize;
 
-		$result = mysql_query("SELECT * FROM evedump.invTypeMaterials WHERE typeID=$itemID");
-		echo mysql_error();
-		$num = mysql_num_rows($result);
-		for ($i = 0; $i < $num; $i++) {
-			$materialTypeID = mysql_result($result, $i, 'materialTypeID');
-			$materialQuantity = mysql_result($result, $i, 'quantity');
+		$result = $mysqli->query("SELECT * FROM evedump.invTypeMaterials WHERE typeID=$itemID");
+		while ($row = $result->fetch_object()) {
+			$materialTypeID = $row->materialTypeID;
+			$materialQuantity = $row->quantity;
 
 			$this->mineralStack->addItem($materialTypeID, floor(($quantity / $batchSize) * ($materialQuantity * $reprocessPercentage)));
 		}
+		$result->close();
 	}
 
 	public function getMouseoverField($systemID, $rowprefix = "", $pricetype = 'bestcase') {
@@ -42,14 +43,17 @@ class Reprocess {
 	}
 
 	public function toHtml($systemID, $rowprefix = "", $pricetype = 'bestcase') {
+		global $mysqli;
 		$source = "";
 
 		$query = "SELECT typeName, volume
 		FROM evedump.invTypes
 		WHERE typeID=$this->itemID";
-		$result = mysql_query($query);
-		$typeName = mysql_result($result, 0, 'typeName');
-		$volume = $this->quantity * mysql_result($result, 0, 'volume');
+		$result = $mysqli->query($query);
+		$row = $result->fetch_object();
+		$typeName = $row->typeName;
+		$volume = $this->quantity * $row->volume;
+		$result->close();
 
 		$prices = Prices::getFromID($this->itemID, $systemID);
 		$price = $this->quantity * $prices->maxprice;

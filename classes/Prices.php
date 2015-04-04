@@ -1,4 +1,5 @@
 <?php
+require_once 'mysqlDetails.php';
 
 class Prices {
 	var $typeID;
@@ -42,18 +43,21 @@ class Prices {
 	}
 
 	public function getMouseoverField($amount = 1, $rowprefix = "") {
+		global $mysqli;
+
 		$query = "SELECT typeName, volume
 		FROM evedump.invTypes
 		WHERE typeID=$this->typeID";
-		$result = mysql_query($query);
-		$typeName = mysql_result($result, 0, 'typeName');
-		$volume = $amount * mysql_result($result, 0, 'volume');
+		$result = $mysqli->query($query);
+		$row = $result->fetch_object();
+		$typeName = $row->typeName;
+		$volume = $amount * $row->volume;
+		$result->close();
 
 		$query = "SELECT solarSystemName
 		FROM evedump.mapSolarSystems
 		WHERE solarSystemID=$this->systemID";
-		$result = mysql_query($query);
-		$systemName = mysql_result($result, 0, 'solarSystemName');
+		$systemName = $mysqli->query($query)->fetch_object()->solarSystemName;
 
 		$source = '';
 		$source .= $rowprefix.'<div class="hoverpricecontainer">'."\n";
@@ -94,9 +98,9 @@ class Prices {
 	}
 
 	public static function getFromID($typeID, $systemID) {
+		global $mysqli;
 		$query="SELECT * FROM eve.prices WHERE id=$typeID and systemid=$systemID";
-		$result=mysql_query($query);
-		$num=mysql_numrows($result);
+		$result = $mysqli->query($query);
 
 		$buy = 0;
 		$sell = 0;
@@ -104,29 +108,32 @@ class Prices {
 		$sellunits = 0;
 		$updated = 0;
 
-		if ($num == 0)
+		if ($result->num_rows == 0)
 		{
 			$query = "INSERT INTO eve.prices VALUES ($typeID,$systemID,0,0,0,0,0)";
-			mysql_query($query);
+			$mysqli->query($query);
 		}
-		elseif ($num == 1)
+		elseif ($result->num_rows == 1)
 		{
-			$buy = mysql_result($result, 0, 'buy');
-			$sell = mysql_result($result, 0, 'sell');
-			$buyunits = mysql_result($result, 0, 'buyunits');
-			$sellunits = mysql_result($result, 0, 'sellunits');
-			$updated = mysql_result($result, 0, 'stamp');
+			$row = $result->fetch_object();
+			$buy = $row->buy;
+			$sell = $row->sell;
+			$buyunits = $row->buyunits;
+			$sellunits = $row->sellunits;
+			$updated = $row->stamp;
 		}
 		else
 		{
 			die('Error: Multiple Prices - Except only one');
 		}
+		$result->close();
 
 		return new Prices($typeID, $systemID, $buy, $sell, $updated, $buyunits, $sellunits);
 	}
 
 	public static function updatePricesOfIDs($systemID, $ids) {
 		require_once 'Util.php';
+		global $mysqli;
 
 		if (is_numeric($ids))
 			$ids = array($ids);
@@ -148,7 +155,7 @@ class Prices {
 				$query = "INSERT INTO eve.prices (ID, systemID, buy, sell, buyunits, sellunits, stamp)
 				VALUES ('$id', '$systemID', '$buy', '$sell', '$buyunits', '$sellunits', '$stamp')
 				ON DUPLICATE KEY UPDATE buy='$buy',sell='$sell',buyunits='$buyunits',sellunits='$sellunits',stamp='$stamp'";
-				mysql_query($query);
+				$mysqli->query($query);
 			}
 		} catch (Exception $e) {
 			echo "Error updateallprices: ".$e->getMessage()."\n";

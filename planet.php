@@ -25,32 +25,35 @@
 	$updated = time() + 60.0 * 60.0;
 
 	function createtypeidtable($quantity, $typeID) {
-		$typeName = mysql_result(mysql_query("SELECT typeName FROM invTypes WHERE typeID=$typeID"), 0, 'typeName');
+		global $mysqli;
+		$typeName = $mysqli->query("SELECT typeName FROM evedump.invTypes WHERE typeID=$typeID")->fetch_object()->typeName;
 		$sum = 0;
 		$profit = 0;
 		echo '<div class="table" style="border: 2px solid gray;">'."\n";
 
-		$innerquery = "SELECT * FROM planetSchematicsTypeMap WHERE typeID=$typeID AND isInput=0";
-		$result = mysql_query($innerquery);
-		if (mysql_num_rows($result)) {
-			$schematicID = mysql_result($result, 0, 'schematicID');
-			$factor = $quantity / mysql_result($result, 0, 'quantity');
-			$cycleTime = mysql_result(mysql_query("SELECT cycleTime FROM planetSchematics WHERE schematicID=$schematicID"), 0, 'cycleTime');
-			$result = mysql_query("SELECT * FROM planetSchematicsTypeMap, ($innerquery) innerquery WHERE planetSchematicsTypeMap.schematicID=innerquery.schematicID AND planetSchematicsTypeMap.isInput=1");
-			$num = mysql_numrows($result);
-			if ($num > 0) {
+		$innerquery = "SELECT * FROM evedump.planetSchematicsTypeMap WHERE typeID=$typeID AND isInput=0";
+		$result = $mysqli->query($innerquery);
+		//printmysqlselectquerytable($result);
+		if ($result->num_rows) {
+			$row = $result->fetch_object();
+			$schematicID = $row->schematicID;
+			$factor = $quantity / $row->quantity;
+			$cycleTime = $mysqli->query("SELECT cycleTime FROM evedump.planetSchematics WHERE schematicID=$schematicID")->fetch_object()->cycleTime;
+			$result = $mysqli->query("SELECT planetSchematicsTypeMap.schematicID, planetSchematicsTypeMap.typeID, planetSchematicsTypeMap.quantity FROM evedump.planetSchematicsTypeMap, ($innerquery) innerquery WHERE planetSchematicsTypeMap.schematicID=innerquery.schematicID AND planetSchematicsTypeMap.isInput=1");
+			//printmysqlselectquerytable($result);
+			if ($result->num_rows > 0) {
 				echo '<div class="cell">'."\n";
 				echo '<div class="table">'."\n";
-				for ($i = 0; $i < $num; $i++) {
+				while ($row = $result->fetch_object()) {
 					echo '<div class="row">'."\n";
 //					echo '<div class="cell">'."\n";
-					$childtypeidresult = createtypeidtable($factor * mysql_result($result, $i, 'quantity'), mysql_result($result, $i, 'typeID'));
+					$childtypeidresult = createtypeidtable($factor * $row->quantity, $row->typeID);
 					$sum += $childtypeidresult['price'];
 					$profit += $childtypeidresult['profit'];
 //					echo "</div>\n";
 					echo "</div>\n";
 				}
-				if ($num > 1) {
+				if ($result->num_rows > 1) {
 					echo '<div class="row" style="text-align: right;">'."\n";
 					echo "Sum:&nbsp;".formatprice($sum)."&nbsp;ISK";
 					echo "</div>\n";
@@ -80,7 +83,7 @@
 							if (isigb())
 								echo "</div>";
 							echo "<br>\n";
-							$volume = mysql_result(mysql_query("SELECT volume FROM evedump.invTypes WHERE typeID=$typeID"), 0, 'volume');
+							$volume = $mysqli->query("SELECT volume FROM evedump.invTypes WHERE typeID=$typeID")->fetch_object()->volume;
 							echo formatvolume($volume * $quantity)."&nbsp;m&sup3;";
 							echo "<br>\n";
 							$singleprice = getprice($typeID, $GLOBALS['systemid'], $GLOBALS['pricetype']);
@@ -144,14 +147,6 @@
 			If you already changed your Shipname ignore this until you switched it.\n';
 			}
 
-			$host = 'localhost';
-			$user = 'eto';
-			$password = 'eto';
-			$database = 'evedump';
-
-			$conn = mysql_connect($host,$user,$password) or die('Error: Could not connect to database - '.mysql_error());
-			mysql_select_db($database,$conn) or die('Error in selecting the database: '.mysql_error());
-
 			$schematicsQuery = "SELECT planetSchematics.schematicID, schematicName, cycleTime, planetSchematicsTypeMap.quantity, planetSchematicsTypeMap.typeID, invGroups.groupID, invGroups.groupName,
 				CASE
 					WHEN invGroups.groupID=1042 THEN 1
@@ -160,14 +155,13 @@
 					WHEN invGroups.groupID=1041 THEN 4
 					ELSE -1
 				END as tier
-			FROM planetSchematics
-			JOIN planetSchematicsTypeMap ON planetSchematics.schematicID=planetSchematicsTypeMap.schematicID AND planetSchematicsTypeMap.isInput=0
-			JOIN invTypes ON planetSchematicsTypeMap.typeID=invTypes.typeID
-			JOIN invGroups ON invTypes.groupID=invGroups.groupID
+			FROM evedump.planetSchematics
+			JOIN evedump.planetSchematicsTypeMap ON planetSchematics.schematicID=planetSchematicsTypeMap.schematicID AND planetSchematicsTypeMap.isInput=0
+			JOIN evedump.invTypes ON planetSchematicsTypeMap.typeID=invTypes.typeID
+			JOIN evedump.invGroups ON invTypes.groupID=invGroups.groupID
 			ORDER BY tier, schematicName";
 
-			$schematicsresult = mysql_query($schematicsQuery);
-			$schematicsnum = mysql_numrows($schematicsresult);
+			$schematicsresult = $mysqli->query($schematicsQuery);
 //			printmysqlselectquerytable($schematicsresult);
 
 
@@ -186,10 +180,10 @@
 			echo "			Schematic:\n";
 			echo '			<select name="schematic" onchange="document.args.submit();">'."\n";
 			$lastTier = 0;
-			for ($i = 0; $i < $schematicsnum; $i++) {
-				$id = mysql_result($schematicsresult, $i, 'schematicID');
-				$name = mysql_result($schematicsresult, $i, 'schematicName');
-				$tier = mysql_result($schematicsresult, $i, 'tier');
+			while ($row = $schematicsresult->fetch_object()) {
+				$id = $row->schematicID;
+				$name = $row->schematicName;
+				$tier = $row->tier;
 				if ($lastTier != $tier) {
 					if ($lastTier != 0) {
 						echo "\t\t\t\t</optgroup>\n";
@@ -208,8 +202,8 @@
 
 			if ($schematicID >= 65 && $schematicID <= 135) {
 				$query = "SELECT planetSchematics.schematicID, schematicName, cycleTime, planetSchematicsTypeMap.quantity, planetSchematicsTypeMap.typeID
-				FROM planetSchematics
-				JOIN planetSchematicsTypeMap ON planetSchematics.schematicID=planetSchematicsTypeMap.schematicID AND planetSchematicsTypeMap.isInput=0
+				FROM evedump.planetSchematics
+				JOIN evedump.planetSchematicsTypeMap ON planetSchematics.schematicID=planetSchematicsTypeMap.schematicID AND planetSchematicsTypeMap.isInput=0
 				WHERE planetSchematics.schematicID=$schematicID";
 			} elseif ($schematicID >= 1 && $schematicID <= 4) {
 				$query = "SELECT *
@@ -219,22 +213,20 @@
 				throw new Exception ( "Not a schematic", 0, NULL );
 			}
 
-			$schematicsresult = mysql_query($query);
-
-			$schematicsnum = mysql_numrows($schematicsresult);
+			$schematicsresult = $mysqli->query($query);
 //			printmysqlselectquerytable($schematicsresult);
 
 			echo "\t\t\t".'<div style="font-size: 90%">'."\n";
-			for ($i = 0; $i < $schematicsnum; $i++) {
-				$quantity = mysql_result($schematicsresult, $i, 'quantity');
-				$typeID = mysql_result($schematicsresult, $i, 'typeID');
+			while ($row = $schematicsresult->fetch_object()) {
+				$quantity = $row->quantity;
+				$typeID = $row->typeID;
 				createtypeidtable($quantity, $typeID);
 				echo "\t\t\t\t<br>\n";
 			}
 			echo "\t\t\t</div>\n";
 
 
-			mysql_close();
+			$mysqli->close();
 ?>
 
 <?php
@@ -252,4 +244,3 @@
 		</div>
 	</body>
 </html>
-

@@ -25,47 +25,52 @@
 	}
 	function getprice($id, $systemid, $pricetype)
 	{
+		global $mysqli;
 		$query="SELECT * FROM eve.prices WHERE id=$id and systemid=$systemid";
-		$result=mysql_query($query);
-		$num=mysql_numrows($result);
+		$result = $mysqli->query($query);
 
-		if ($num == 0)
+		if ($result->num_rows == 0)
 		{
 			$price = 0;
 			$query = "INSERT INTO eve.prices VALUES ($id,$systemid,$price,$price,0,0,0)";
-			mysql_query($query);
+			$mysqli->query($query);
 			$GLOBALS['updated'] = 0;
 		}
-		elseif ($num == 1)
+		elseif ($result->num_rows == 1)
 		{
-			if ($pricetype == 'bestcase') {
-				$buyprice = mysql_result($result, 0, 'buy');
-				$sellprice = mysql_result($result, 0, 'sell');
+			$row = $result->fetch_object();
+			if ($pricetype == 'buy') {
+				$price = $row->buy;
+			} elseif ($pricetype == 'sell') {
+				$price = $row->sell;
+			} else { //if ($pricetype == 'bestcase')
+				$buyprice = $row->buy;
+				$sellprice = $row->sell;
 				$price = max($buyprice, $sellprice);
-			} else {
-				$price = mysql_result($result, 0, $pricetype);
 			}
-			$GLOBALS['updated'] = min($GLOBALS['updated'], mysql_result($result, 0, 'stamp'));
+
+			$GLOBALS['updated'] = min($GLOBALS['updated'], $row->stamp);
 		}
 		else
 		{
-			die('Error: Multiple Prices - Except only one');
+			die('Error: Multiple Prices - Expected only one');
 		}
 
 		return $price;
 	}
 	function getbestknowprice($id, $pricetype)
 	{
+		global $mysqli;
+
 		if ($pricetype == 'bestcase') {
 			$buyprice = getbestknowprice($id, 'buy');
 			$sellprice = getbestknowprice($id, 'sell');
 			$price = max($buyprice, $sellprice);
 		} else {
-			$query="SELECT max(".$pricetype.") FROM eve.prices WHERE id='".$id."'";
-			$result=mysql_query($query);
-			$num=mysql_numrows($result);
-
-			$price = mysql_result($result, 0, 'max('.$pricetype.')');
+			$query = "SELECT max(".$pricetype.") as price FROM eve.prices WHERE id='".$id."'";
+			$result = $mysqli->query($query);
+			$price = $result->fetch_object()->price;
+			$result->close();
 		}
 
 		return $price;
@@ -87,24 +92,24 @@
 		return $price / $portionSize;
 	}
 	function getcompressedid($id) {
+		global $mysqli;
 		$price = 0;
 		$query = "SELECT * FROM evedump.invTypes WHERE typeID=$id";
-		$result = mysql_query($query);
-		echo mysql_error();
-		$num = mysql_num_rows($result);
-		if ($num != 1)
+		$result = $mysqli->query($query);
+		if ($result->num_rows != 1)
 			throw new Exception ( "Item not found", 0, NULL );
 
-		$typeName = mysql_result($result, 0, 'typeName');
-		$portionSize = mysql_result($result, 0, 'portionSize');
+		$row = $result->fetch_object();
+		$typeName = $row->typeName;
+		$portionSize = $row->portionSize;
+		$result->close();
 
 		$query = "SELECT * FROM evedump.invTypes WHERE typeName LIKE 'compressed ".$typeName."'";
-		$result = mysql_query($query);
-		echo mysql_error();
-		$num = mysql_num_rows($result);
-		if ($num != 1)
+		$result = $mysqli->query($query);
+		if ($result->num_rows != 1)
 			throw new Exception ( "no compressed form found", 0, NULL );
-		$compressedID = mysql_result($result, 0, 'typeID');
+		$compressedID = $result->fetch_object()->typeID;
+		$result->close();
 
 		return $compressedID;
 	}
@@ -242,4 +247,3 @@
 		return;
 	}
 ?>
-

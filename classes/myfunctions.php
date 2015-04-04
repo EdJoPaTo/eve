@@ -5,6 +5,7 @@
 	require_once 'Util.php';
 	require_once 'OAuth.php';
 	require_once 'ssoDetails.php';
+	require_once 'mysqlDetails.php';
 
 	session_start();
 	if(isset($_SESSION['views']))
@@ -60,20 +61,18 @@
 	}
 	function printmysqlselectquerytable($result)
 	{
-		$column_count = mysql_num_fields($result) or die("display_db_query:" . mysql_error());
 		print('<div class="table bordered hoverrow">'."\n");
 		print('<div class="headrow">'."\n");
-		for ($column_num = 0; $column_num < $column_count; $column_num++) {
-			$field_name = mysql_field_name($result, $column_num);
-			print('<div class="cell">'.$field_name."</div>\n");
+		while ($finfo = mysqli_fetch_field($result)) {
+			print('<div class="cell">'.$finfo->name."</div>\n");
 		}
 		print("</div>\n");
 		// print the body of the table
-		while ($row = mysql_fetch_row($result))
-		{
+		while ($row = $result->fetch_array()) {
 			print('<div class="row">'."\n");
-			for ($column_num = 0; $column_num < $column_count; $column_num++) {
-				print('<div class="cell">'.$row[$column_num]."</div>\n");
+			foreach ($row as $key => $value) {
+				if (is_numeric($key))
+					print('<div class="cell">'.$value."</div>\n");
 			}
 			print("</div>\n");
 		}
@@ -299,7 +298,7 @@
 	function getFooter() {
 		$returnString = "";
 		$returnString .= "\t\t\t".'<div id="footer">'."\n";
-		$returnString .= "\t\t\t\t<hr>\n";		
+		$returnString .= "\t\t\t\t<hr>\n";
 		$returnString .= "\t\t\t\t".'<div id="footerright">'."\n";
 		$returnString .= "\t\t\t\t\t".'<a href="/information/about.php">About</a><br>'."\n";
 		$returnString .= "\t\t\t\t\t".'<a href="https://bitbucket.org/edjopato/eve" class="external" target="_blank">BitBucket</a><br>'."\n";
@@ -333,6 +332,4 @@
 								'HTTP_EVE_WARFACTIONID',
 								'HTTP_EVE_MILITIAID','HTTP_EVE_MILITIANAME',
 								'REMOTE_ADDR','REQUEST_TIME');
-
-	
 ?>

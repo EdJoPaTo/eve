@@ -1,4 +1,5 @@
 <?php
+require_once 'mysqlDetails.php';
 
 class ItemStack {
 	var $items;
@@ -15,18 +16,19 @@ class ItemStack {
 	}
 
 	function getVolume() {
+		global $mysqli;
 		$sumVolume = 0;
 
 		foreach ($this->items as $typeID => $quantity) {
 			$query = "SELECT volume
 			FROM evedump.invTypes
 			WHERE typeID=$typeID";
-			$result = mysql_query($query);
-			$volume = $quantity * mysql_result($result, 0, 'volume');
+			$volume = $mysqli->query($query)->fetch_object()->volume;
+			$stackvolume = $quantity * $volume;
 
-			$sumVolume += $volume;
+			$sumVolume += $stackvolume;
 		}
-		return $sumVolume;		
+		return $sumVolume;
 	}
 
 	function getPrice($systemID, $pricetype = 'bestcase') {
@@ -57,6 +59,7 @@ class ItemStack {
 
 	public function toHtml($systemID, $rowprefix = "", $pricetype = 'bestcase') {
 		require_once 'Prices.php';
+		global $mysqli;
 		$source = "";
 		$sumVolume = 0;
 		$sumPrice = 0;
@@ -66,9 +69,11 @@ class ItemStack {
 			$query = "SELECT typeName, volume
 			FROM evedump.invTypes
 			WHERE typeID=$typeID";
-			$result = mysql_query($query);
-			$typeName = mysql_result($result, 0, 'typeName');
-			$volume = $quantity * mysql_result($result, 0, 'volume');
+			$result = $mysqli->query($query);
+			$row = $result->fetch_object();
+			$typeName = $row->typeName;
+			$volume = $quantity * $row->volume;
+			$result->close();
 
 			$prices = Prices::getFromID($typeID, $systemID);
 			$price = $quantity * $prices->maxprice;
@@ -98,8 +103,9 @@ class ItemStack {
 		$query = "SELECT solarSystemName
 		FROM evedump.mapSolarSystems
 		WHERE solarSystemID=$systemID";
-		$result = mysql_query($query);
-		$systemName = mysql_result($result, 0, 'solarSystemName');
+		$result = $mysqli->query($query);
+		$systemName = $result->fetch_object()->solarSystemName;
+		$result->close();
 
 		$source .= $rowprefix."<br>\n";
 		$source .= $rowprefix."All prices from $systemName"."<br>\n";

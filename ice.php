@@ -27,15 +27,6 @@
 
 	$updated = time() + 60.0 * 60.0;
 
-	$host = 'localhost';
-	$user = 'eto';
-	$password = 'eto';
-	$database = 'eve';
-
-	$conn = mysql_connect($host,$user,$password) or die('Error: Could not connect to database - '.mysql_error());
-	mysql_select_db($database,$conn) or die('Error in selecting the database: '.mysql_error());
-
-
 	$iceinfo = array(
 			16262 => array('faction' => 'Amarr', 'type' => 'Faction', 'found' => 'HS'),
 			17978 => array('faction' => 'Amarr', 'type' => 'Enriched', 'found' => 'NS'),
@@ -71,19 +62,18 @@
 	ORDER BY volume";
 
 	$icetable = array();
-	$result = mysql_query($icequery);
-	$num = mysql_num_rows($result);
-	for ($i=0; $i < $num; $i++) {
+	$result = $mysqli->query($icequery);
+	while ($row = $result->fetch_object()) {
 		$a = array();
-		$id = mysql_result($result, $i, 'typeID');
+		$id = $row->typeID;
 		$a['id'] = $id;
-		$a['name'] = mysql_result($result, $i, 'typeName');
-		$a['volume'] = mysql_result($result, $i, 'volume');
+		$a['name'] = $row->typeName;
+		$a['volume'] = $row->volume;
 
 		$prices = Prices::getFromID($id, $systemid);
-		$compressedprices = Prices::getFromID(getcompressedid($id), $systemid);
 		$price = $prices->getPriceByType($pricetype)['price'];
-		$compressedprice = getcompressedprice($id, $systemid, $pricetype);
+		$compressedprices = Prices::getFromID(getcompressedid($id), $systemid);
+		$compressedprice = $compressedprices->getPriceByType($pricetype)['price'];
 		$reprocess = new Reprocess($id, $refinepercent, 1);
 		$reprocessedprice = $reprocess->mineralStack->getPrice($systemid, $pricetype);
 
@@ -99,6 +89,7 @@
 
 		$icetable[] = $a;
 	}
+	$result->close();
 	usort($icetable, build_sorter('1bestprice', true));
 
 	function createlinktarget($system, $refine)
@@ -250,11 +241,10 @@
 				<div class="headrow">
 					<div class="cell">System</div>
 <?php
-					$result = mysql_query($icereprocessed);
-					$num = mysql_num_rows($result);
-					for ($i=0; $i < $num; $i++) {
-						$id = mysql_result($result, $i, 'typeID');
-						$name = mysql_result($result, $i, 'typeName');
+					$result = $mysqli->query($icereprocessed);
+					while ($row = $result->fetch_object()) {
+						$id = $row->typeID;
+						$name = $row->typeName;
 						echo "\t\t\t\t\t".'<div class="cell">';
 						if (isigb())
 							echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$id.')">';
@@ -263,6 +253,7 @@
 							echo "</div>";
 						echo "</div>\n";
 					}
+					$result->close();
 ?>
 				</div>
 <?php
@@ -274,8 +265,9 @@
 					echo '">'."\n";
 					echo '						<div class="cell"><a href="'.createlinktargetsystem($cursystemname).'">'.$cursystemname.'</a></div>'."\n";
 
-					for ($i = 0; $i < $num; $i++) {
-						$id = mysql_result($result, $i, 'typeID');
+					$result = $mysqli->query($icereprocessed);
+					while ($row = $result->fetch_object()) {
+						$id = $row->typeID;
 						$prices = Prices::getFromID($id, $cursystemid);
 						$curprice = $prices->getPriceByType($pricetype)['price'];
 						echo "\t\t\t\t\t\t".'<div class="cell';
@@ -287,11 +279,12 @@
 						echo $prices->getMouseoverField(1, "\t\t\t\t\t\t\t");
 						echo "\t\t\t\t\t\t</div>\n";
 					}
+					$result->close();
 					echo '					</div>'."\n";
 				}
 
 
-				mysql_close();
+				$mysqli->close();
 ?>
 			</div><br>
 
@@ -344,4 +337,3 @@
 		</div>
 	</body>
 </html>
-

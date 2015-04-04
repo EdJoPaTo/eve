@@ -5,32 +5,21 @@
 
 	$characterID = !empty($_SESSION['characterID']) ? (int) $_SESSION['characterID'] : 0;
 
-	$host = 'localhost';
-	$user = 'eto';
-	$password = 'eto';
-	$database = 'eve';
-
 	if (!empty($characterID)) {
-		$conn = mysql_connect($host,$user,$password) or die('Error: Could not connect to database - '.mysql_error());
-		mysql_select_db($database,$conn) or die('Error in selecting the database: '.mysql_error());
-
-		$result = mysql_query("SELECT keyID, vCode, accessMask, planetsCachedUntil FROM api WHERE characterID=".$characterID);
-		$num = mysql_num_rows($result);
-
-		if ($num == 1) {
-			$keyID = (int) mysql_result($result, 0, 'keyID');
-			$vCode = mysql_result($result, 0, 'vCode');
-			$cachedUntil = (int) mysql_result($result, 0, 'planetsCachedUntil');
-			$accessMask = (int) mysql_result($result, 0, 'accessMask');
+		$result = $mysqli->query("SELECT keyID, vCode, accessMask, planetsCachedUntil FROM eve.api WHERE characterID=".$characterID);
+		while ($row = $result->fetch_object()) {
+			$keyID = (int) $row->keyID;
+			$vCode = $row->vCode;
+			$cachedUntil = (int) $row->planetsCachedUntil;
+			$accessMask = (int) $row->accessMask;
 		}
-		mysql_close();
+		$result->close();
 	}
 
 	function mysqlselectquerycolumntoarray($result, $column)
 	{
 		$a = array();
-		$num = mysql_numrows($result);
-		for ($i = 0; $i < $num; $i++) {
+		for ($i = 0; $i < $result->num_rows; $i++) {
 			$a[] = mysql_result($result, $i, $column);
 		}
 		return $a;
@@ -57,43 +46,40 @@
 			} elseif (empty($keyID) || empty($vCode)) {
 				echo 'Please provide me your API Informations in the <a href="/eveauth.php">Settings</a>.';
 			} else {
-				$conn = mysql_connect($host,$user,$password) or die('Error: Could not connect to database - '.mysql_error());
-				mysql_select_db($database,$conn) or die('Error in selecting the database: '.mysql_error());
-
-				$selectpinsquery = "SELECT * FROM planetindustrypins WHERE ownerID=$characterID";
+				$selectpinsquery = "SELECT * FROM eve.planetindustrypins WHERE ownerID=$characterID";
 	//			$selectpinsquery .= " AND planetID=40176640";
 				$selectpinsquery .= " ORDER BY planetID";
 
-				$pinswithoutroutequery = "SELECT planetName, planetroutesbypins.typeName FROM planetroutesbypins, planets WHERE routeID IS NULL AND planetroutesbypins.ownerID=planets.ownerID AND planetroutesbypins.planetID=planets.planetID AND EXISTS (SELECT * FROM planetindustrypins WHERE pinID=planetroutesbypins.pinID) AND planetroutesbypins.ownerID=$characterID";
+				$pinswithoutroutequery = "SELECT planetName, planetroutesbypins.typeName FROM eve.planetroutesbypins, eve.planets WHERE routeID IS NULL AND planetroutesbypins.ownerID=planets.ownerID AND planetroutesbypins.planetID=planets.planetID AND EXISTS (SELECT * FROM planetindustrypins WHERE pinID=planetroutesbypins.pinID) AND planetroutesbypins.ownerID=$characterID";
 
 				$productionwithstoragequery = "SELECT planetproductions.ownerID, planetproductions.planetID, planetproductions.typeID, planetproductions.typeName, planetproductions.productionPerHour, coalesce(planetstorage.quantity, planetstorage.quantity, 0) as inStorage
-				FROM planetproductions LEFT JOIN planetstorage
-					ON planetproductions.ownerID=planetstorage.ownerID AND planetproductions.planetID=planetstorage.planetID AND planetproductions.typeID=planetstorage.typeID
+				FROM eve.planetproductions
+				LEFT JOIN eve.planetstorage ON planetproductions.ownerID=planetstorage.ownerID AND planetproductions.planetID=planetstorage.planetID AND planetproductions.typeID=planetstorage.typeID
 				WHERE planetproductions.ownerID=$characterID";
 
 				$planetstoragefillingquery = "SELECT planetName, lastUpdate, planetstoragepins.typeName, planetstoragepins.capacity, planetstoragepins.contentVolume,
 				SUM(planetroutesbypins.volumePerHour) as volumeIncomePerHour
-				FROM planetstoragepins
-				LEFT JOIN planetroutesbypins ON planetroutesbypins.ownerID=planetstoragepins.ownerID AND planetroutesbypins.planetID=planetstoragepins.planetID AND planetroutesbypins.pinID=planetstoragepins.pinID
-				JOIN planets ON planetstoragepins.ownerID=planets.ownerID AND planetstoragepins.planetID=planets.planetID
+				FROM eve.planetstoragepins
+				LEFT JOIN eve.planetroutesbypins ON planetroutesbypins.ownerID=planetstoragepins.ownerID AND planetroutesbypins.planetID=planetstoragepins.planetID AND planetroutesbypins.pinID=planetstoragepins.pinID
+				JOIN eve.planets ON planetstoragepins.ownerID=planets.ownerID AND planetstoragepins.planetID=planets.planetID
 				WHERE planetstoragepins.ownerID=$characterID
 				GROUP BY planetstoragepins.ownerID, planetstoragepins.planetID, planetstoragepins.pinID
 				";
 
 				$queries = array(
-					"Planets" => "SELECT * FROM planets WHERE ownerID=$characterID",
-					"Planetpins" => "SELECT * FROM planetpins WHERE ownerID=$characterID",
-					"Planetlinks" => "SELECT * FROM planetlinks WHERE ownerID=$characterID",
-					"Planetroutes" => "SELECT * FROM planetroutes WHERE ownerID=$characterID",
+					"Planets" => "SELECT * FROM eve.planets WHERE ownerID=$characterID",
+					"Planetpins" => "SELECT * FROM eve.planetpins WHERE ownerID=$characterID",
+					"Planetlinks" => "SELECT * FROM eve.planetlinks WHERE ownerID=$characterID",
+					"Planetroutes" => "SELECT * FROM eve.planetroutes WHERE ownerID=$characterID",
 					"Industry Pins without Route" => $pinswithoutroutequery,
-					"Pinroutes" => "SELECT * FROM planetroutesbypins WHERE ownerID=$characterID",
-					"planetproductions" => "SELECT * FROM planetproductions WHERE ownerID=$characterID",
-					"planetstorage" => "SELECT * FROM planetstorage WHERE ownerID=$characterID",
+					"Pinroutes" => "SELECT * FROM eve.planetroutesbypins WHERE ownerID=$characterID",
+					"planetproductions" => "SELECT * FROM eve.planetproductions WHERE ownerID=$characterID",
+					"planetstorage" => "SELECT * FROM eve.planetstorage WHERE ownerID=$characterID",
 					"planetproductions with storages" => $productionwithstoragequery,
 					"planetstoragefilling" => $planetstoragefillingquery
 				);
 
-				$result = mysql_query("SELECT * FROM planetindustrypins WHERE ownerID=$characterID");
+				$result = $mysqli->query("SELECT * FROM eve.planetindustrypins WHERE ownerID=$characterID");
 				$requiredAPIAccessMask = 3;
 
 				if ($characterID != 0 && ($cachedUntil == 0 || $cachedUntil < time())) {
@@ -102,31 +88,28 @@
 
 				if ($characterID == 0 || $cachedUntil == 0 || ($accessMask & $requiredAPIAccessMask) != $requiredAPIAccessMask) {
 					// Be silent
-				} elseif (mysql_numrows($result) == 0) {
+				} elseif ($result->num_rows == 0) {
 					echo "You really should get a planetary infrastructure!<br><br>\n\n";
 				} else {
-					$result = mysql_query($pinswithoutroutequery);
-					$num = mysql_numrows($result);
-					if ($num > 0) {
+					$result = $mysqli->query($pinswithoutroutequery);
+					while ($result && $row = $result->fetch_object()) {
 						echo '<span style="color:red; font-size:150%">Some Pins are not routed:</span>'."\n";
 						printmysqlselectquerytable($result);
 					}
 
 					echo "<h2>Extractor Units</h2>\n";
-					$result = mysql_query("SELECT planetName, typeName, expiryTime FROM planetpins, planets WHERE planetpins.ownerID=$characterID AND planetpins.ownerID=planets.ownerID AND planetpins.planetID=planets.planetID AND typeName LIKE '%Extractor%'");
-					$num = mysql_numrows($result);
-		//			printmysqlselectquerytable($result);
+					$result = $mysqli->query("SELECT planetName, typeName, expiryTime FROM eve.planetpins, eve.planets WHERE planetpins.ownerID=$characterID AND planetpins.ownerID=planets.ownerID AND planetpins.planetID=planets.planetID AND typeName LIKE '%Extractor%'");
 					echo '<div class="table hoverrow bordered">'."\n";
 					echo '<div class="headrow">'."\n";
 					echo '<div class="cell">Planet</div>'."\n";
 					echo '<div class="cell">Extractor</div>'."\n";
 					echo '<div class="cell">Finish Time</div>'."\n";
 					echo '</div>'."\n";
-					for ($i = 0; $i < $num; $i++) {
+					while ($row = $result->fetch_object()) {
 						echo '<div class="row">'."\n";
-						echo '<div class="cell">'.mysql_result($result, $i, 'planetName')."</div>";
-						echo '<div class="cell">'.mysql_result($result, $i, 'typeName')."</div>";
-						$expiryTime = mysql_result($result, $i, 'expiryTime');
+						echo '<div class="cell">'.$row->planetName."</div>";
+						echo '<div class="cell">'.$row->typeName."</div>";
+						$expiryTime = $row->expiryTime;
 						echo '<div class="cell"';
 						if ($expiryTime < time()) { echo ' style="color:red;"'; }
 						echo ">";
@@ -136,8 +119,7 @@
 					echo '</div>'."\n";
 
 					echo "<h2>Storages</h2>\n";
-					$result = mysql_query($planetstoragefillingquery);
-					$num = mysql_numrows($result);
+					$result = $mysqli->query($planetstoragefillingquery);
 //					printmysqlselectquerytable($result);
 					echo '<div class="table hoverrow bordered">'."\n";
 					echo '<div class="headrow">'."\n";
@@ -148,14 +130,14 @@
 					echo '<div class="cell">Income Per Hour<br>m&sup3;</div>'."\n";
 					echo '<div class="cell">Date/Time when Full</div>'."\n";
 					echo '</div>'."\n";
-					for ($i = 0; $i < $num; $i++) {
+					while ($row = $result->fetch_object()) {
 						echo '<div class="row">'."\n";
-						echo '<div class="cell">'.mysql_result($result, $i, 'planetName')."</div>";
-						echo '<div class="cell">'.mysql_result($result, $i, 'typeName')."</div>";
-						$capacity = mysql_result($result, $i, 'capacity');
-						$contentVolume = mysql_result($result, $i, 'contentVolume');
-						$income = mysql_result($result, $i, 'volumeIncomePerHour');
-						$lastUpdate = mysql_result($result, $i, 'lastUpdate');
+						echo '<div class="cell">'.$row->planetName."</div>";
+						echo '<div class="cell">'.$row->typeName."</div>";
+						$capacity = $row->capacity;
+						$contentVolume = $row->contentVolume;
+						$income = $row->volumeIncomePerHour;
+						$lastUpdate = $row->lastUpdate;
 						echo '<div class="cell">'.$capacity."</div>";
 						echo '<div class="cell">'.$contentVolume."</div>";
 						echo '<div class="cell">'.$income."</div>";
@@ -178,29 +160,27 @@
 					echo '</div>'."\n";
 
 					echo "<h2>Planeten</h2>\n";
-					$planetresult = mysql_query("SELECT * FROM planets WHERE ownerID=".$characterID);
+					$planetresult = $mysqli->query("SELECT * FROM eve.planets WHERE ownerID=".$characterID);
 		//			echo "<strong>Planets</strong>";
 		//			printmysqlselectquerytable($planetresult);
 
-					$planetnum=mysql_numrows($planetresult);
-					for ($i = 0; $i < $planetnum; $i++) {
-						$planetID = mysql_result($planetresult, $i, 'planetID');
-						$planetName = mysql_result($planetresult, $i, 'planetName');
-						$planetTypeID = mysql_result($planetresult, $i, 'planetTypeID');
-						$planetTypeName = mysql_result($planetresult, $i, 'planetTypeName');
-						$lastUpdate = mysql_result($planetresult, $i, 'lastUpdate');
+					while ($planetrow = $planetresult->fetch_object()) {
+						$planetID = $planetrow->planetID;
+						$planetName = $planetrow->planetName;
+						$planetTypeID = $planetrow->planetTypeID;
+						$planetTypeName = $planetrow->planetTypeName;
+						$lastUpdate = $planetrow->lastUpdate;
 						echo '<h3><img src="//image.eveonline.com/Type/'.$planetTypeID.'_32.png">'." $planetName - $planetTypeName</h3>\n";
 						echo 'last update: '.gmdate('d.m.Y H:i:s e', $lastUpdate)."<br>\n";
 						echo '<div style="display: table;">'."\n";
-						$result = mysql_query("SELECT * FROM ($productionwithstoragequery) bla WHERE planetID=".$planetID);
+						$result = $mysqli->query("SELECT * FROM ($productionwithstoragequery) bla WHERE planetID=".$planetID);
 						echo mysql_error();
 						//printmysqlselectquerytable($result);
-						if (mysql_numrows($result) > 0) {
+						if ($result->num_rows > 0) {
 							echo '<div style="display: table-cell; padding: 2px;">'."\n";
 
-							$result = mysql_query("SELECT * FROM ($productionwithstoragequery) bla WHERE planetID=$planetID AND productionPerHour>0");
-							$num = mysql_numrows($result);
-							if ($num > 0) {
+							$result = $mysqli->query("SELECT * FROM ($productionwithstoragequery) bla WHERE planetID=$planetID AND productionPerHour>0");
+							if ($result->num_rows > 0) {
 								echo '<strong style="color:green;">Produces</strong><br>'."\n";
 	//							printmysqlselectquerytable($result);
 								echo '<div class="table hoverrow bordered">'."\n";
@@ -209,10 +189,10 @@
 								echo '<div class="cell">Produces per Hour</div>'."\n";
 								echo '<div class="cell">in Storage</div>'."\n";
 								echo "</div>\n";
-								for ($j = 0; $j < $num; $j++) {
-									$typeName = mysql_result($result, $j, 'typeName');
-									$productionPerHour = mysql_result($result, $j, 'productionPerHour');
-									$inStorage = mysql_result($result, $j, 'inStorage');
+								while ($row = $result->fetch_object()) {
+									$typeName = $row->typeName;
+									$productionPerHour = $row->productionPerHour;
+									$inStorage = $row->inStorage;
 
 									echo '<div class="row">'."\n";
 									echo '<div class="cell">';
@@ -228,9 +208,8 @@
 								}
 								echo "</div><br>\n";
 							}
-							$result = mysql_query("SELECT * FROM ($productionwithstoragequery) bla WHERE planetID=$planetID AND productionPerHour<0");
-							$num = mysql_numrows($result);
-							if ($num > 0) {
+							$result = $mysqli->query("SELECT * FROM ($productionwithstoragequery) bla WHERE planetID=$planetID AND productionPerHour<0");
+							if ($result->num_rows > 0) {
 								echo '<strong style="color:red;">Needs</strong><br>'."\n";
 	//							printmysqlselectquerytable($result);
 								echo '<div class="table hoverrow bordered">'."\n";
@@ -240,10 +219,10 @@
 								echo '<div class="cell">in Storage</div>'."\n";
 								echo '<div class="cell">depletes</div>'."\n";
 								echo "</div>\n";
-								for ($j = 0; $j < $num; $j++) {
-									$typeName = mysql_result($result, $j, 'typeName');
-									$productionPerHour = 0 - mysql_result($result, $j, 'productionPerHour');
-									$inStorage = mysql_result($result, $j, 'inStorage');
+								while ($row = $result->fetch_object()) {
+									$typeName = $row->typeName;
+									$productionPerHour = 0 - $row->productionPerHour;
+									$inStorage = $row->inStorage;
 
 									echo '<div class="row">'."\n";
 									echo '<div class="cell">';
@@ -270,9 +249,9 @@
 							echo "</div><br>\n";
 						}
 
-						$result = mysql_query("SELECT typeName as Item, quantity as Quantity FROM planetstorage WHERE ownerID=$characterID AND planetID=$planetID ORDER BY typeName");
+						$result = $mysqli->query("SELECT typeName as Item, quantity as Quantity FROM eve.planetstorage WHERE ownerID=$characterID AND planetID=$planetID ORDER BY typeName");
 						echo mysql_error();
-						if (mysql_numrows($result) > 0) {
+						if ($result->num_rows > 0) {
 							echo '<div style="display: table-cell; padding: 2px;">'."\n";
 							echo '<strong>Stuff in Storage</strong><br>'."\n";
 							printmysqlselectquerytable($result);
@@ -304,8 +283,7 @@
 					$result = mysql_query("SELECT * FROM planets WHERE ownerID=".$characterID);
 					printmysqlselectquerytable($result);
 
-					$num=mysql_numrows($result);
-					for ($i = 0; $i < $num; $i++) {
+					for ($i = 0; $i < $result->num_rows; $i++) {
 						$planetID = mysql_result($result, $i, 'planetID');
 						$planetName = mysql_result($result, $i, 'planetName');
 						echo "<h3>$planetName</h3>\n";
@@ -319,7 +297,7 @@
 					}
 				}
 
-				mysql_close();
+				$mysqli->close();
 			}
 ?>
 			<br><br>
