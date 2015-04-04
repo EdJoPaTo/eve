@@ -1,6 +1,7 @@
 ﻿<?php
-	require $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
-	require $_SERVER['DOCUMENT_ROOT'].'/classes/evefunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/evefunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Prices.php';
 	$title = "Planetary Infrastructure";
 
 	$characterID = !empty($_SESSION['characterID']) ? (int) $_SESSION['characterID'] : 0;
@@ -15,6 +16,8 @@
 		}
 		$result->close();
 	}
+
+	$systemid = 30000142; //Jita
 
 	function mysqlselectquerycolumntoarray($result, $column)
 	{
@@ -186,10 +189,11 @@
 								echo '<div class="table hoverrow bordered">'."\n";
 								echo '<div class="headrow">'."\n";
 								echo '<div class="cell">Item</div>'."\n";
-								echo '<div class="cell">Produces per Hour</div>'."\n";
-								echo '<div class="cell">in Storage</div>'."\n";
+								echo '<div class="cell" style="min-width: 100px;">Produces per Hour</div>'."\n";
+								echo '<div class="cell" style="min-width: 100px;">in Storage</div>'."\n";
 								echo "</div>\n";
 								while ($row = $result->fetch_object()) {
+									$typeID = $row->typeID;
 									$typeName = $row->typeName;
 									$productionPerHour = $row->productionPerHour;
 									$inStorage = $row->inStorage;
@@ -199,10 +203,12 @@
 									echo $typeName;
 									echo "</div>\n";
 									echo '<div class="cell">';
-									echo $productionPerHour;
+									echo formatamount($productionPerHour);
+									echo Prices::getFromID($typeID, $systemid)->getMouseoverField($productionPerHour);
 									echo "</div>\n";
 									echo '<div class="cell">';
-									echo $inStorage;
+									echo formatamount($inStorage);
+									echo Prices::getFromID($typeID, $systemid)->getMouseoverField($inStorage);
 									echo "</div>\n";
 									echo "</div>\n";
 								}
@@ -215,11 +221,12 @@
 								echo '<div class="table hoverrow bordered">'."\n";
 								echo '<div class="headrow">'."\n";
 								echo '<div class="cell">Item</div>'."\n";
-								echo '<div class="cell">Needs per Hour</div>'."\n";
-								echo '<div class="cell">in Storage</div>'."\n";
+								echo '<div class="cell" style="min-width: 100px;">Needs per Hour</div>'."\n";
+								echo '<div class="cell" style="min-width: 100px;">in Storage</div>'."\n";
 								echo '<div class="cell">depletes</div>'."\n";
 								echo "</div>\n";
 								while ($row = $result->fetch_object()) {
+									$typeID = $row->typeID;
 									$typeName = $row->typeName;
 									$productionPerHour = 0 - $row->productionPerHour;
 									$inStorage = $row->inStorage;
@@ -229,10 +236,12 @@
 									echo $typeName;
 									echo "</div>\n";
 									echo '<div class="cell">';
-									echo $productionPerHour;
+									echo formatamount($productionPerHour);
+									echo Prices::getFromID($typeID, $systemid)->getMouseoverField($productionPerHour);
 									echo "</div>\n";
 									echo '<div class="cell">';
-									echo $inStorage;
+									echo formatamount($inStorage);
+									echo Prices::getFromID($typeID, $systemid)->getMouseoverField($inStorage);
 									echo "</div>\n";
 									$depletes = $lastUpdate + round(60.0 * 60.0 * $inStorage / $productionPerHour);
 									echo '<div class="cell ';
@@ -249,12 +258,32 @@
 							echo "</div><br>\n";
 						}
 
-						$result = $mysqli->query("SELECT typeName as Item, quantity as Quantity FROM eve.planetstorage WHERE ownerID=$characterID AND planetID=$planetID ORDER BY typeName");
-						echo mysql_error();
+						$result = $mysqli->query("SELECT typeID, typeName, quantity FROM eve.planetstorage WHERE ownerID=$characterID AND planetID=$planetID ORDER BY typeName");
 						if ($result->num_rows > 0) {
 							echo '<div style="display: table-cell; padding: 2px;">'."\n";
 							echo '<strong>Stuff in Storage</strong><br>'."\n";
-							printmysqlselectquerytable($result);
+//							printmysqlselectquerytable($result);
+							echo '<div class="table hoverrow bordered">'."\n";
+							echo '<div class="headrow">'."\n";
+							echo '<div class="cell">Item</div>'."\n";
+							echo '<div class="cell" style="min-width: 100px;">Quantity</div>'."\n";
+							echo "</div>\n";
+							while ($row = $result->fetch_object()) {
+								$typeID = $row->typeID;
+								$typeName = $row->typeName;
+								$quantity = $row->quantity;
+
+								echo '<div class="row">'."\n";
+								echo '<div class="cell">';
+								echo $typeName;
+								echo "</div>\n";
+								echo '<div class="cell">';
+								echo formatamount($quantity);
+								echo Prices::getFromID($typeID, $systemid)->getMouseoverField($quantity);
+								echo "</div>\n";
+								echo "</div>\n";
+							}
+							echo "</div>\n";
 							echo "</div>\n";
 						}
 						echo "</div>\n";
