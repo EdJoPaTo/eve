@@ -31,45 +31,37 @@
 			if (!empty($_SESSION['characterID'])) {
 				$characterID = $_SESSION['characterID'];
 
-				$host = 'localhost';
-				$user = 'eto';
-				$password = 'eto';
-				$database = 'eve';
-
-				$conn = mysql_connect($host,$user,$password) or die('Error: Could not connect to database - '.mysql_error());
-				mysql_select_db($database,$conn) or die('Error in selecting the database: '.mysql_error());
-
 				echo "\t\t\t<h1>API Details</h1>\n";
 				$requiredAPIAccessMask = 33554435;
 				if (!empty($_GET['keyID']) && !empty($_GET['vCode'])) {
 					$keyID = !empty($_GET['keyID']) ? (int)htmlspecialchars($_GET['keyID']) : (int)$keyID;
 					$vCode = !empty($_GET['vCode']) ? htmlspecialchars($_GET['vCode']) : $vCode;
 
-					$query = "SELECT * FROM api WHERE characterID=$characterID";
-					$result= mysql_query($query);
-					echo mysql_error();
-					$num = mysql_numrows($result);
-					if ($num > 0) {
-						if ($keyID != mysql_result($result, 0, 'keyID') || $vCode != mysql_result($result, 0, 'vCode')) {
-							$query = "DELETE FROM api WHERE characterID=$characterID";
-							mysql_query($query);
-							$num = 0;
+					$apiquery = "SELECT * FROM eve.api WHERE characterID=$characterID";
+					$result= $mysqli->query($apiquery);
+					if ($row = $result->fetch_object()) {
+						if ($keyID != $row->keyID || $vCode != $row->vCode) {
+							$query = "DELETE FROM eve.api WHERE characterID=$characterID";
+							$mysqli->query($query);
 						}
 					}
-					if ($num == 0) {
-						$query = "INSERT INTO api (characterID, keyID, vCode) VALUES (".$characterID.",".$keyID.",'".mysql_real_escape_string($vCode)."')";
-						mysql_query($query);
+					$result->close();
+					$result = $mysqli->query($apiquery);
+					if ($result->num_rows == 0) {
+						$query = "INSERT INTO eve.api (characterID, keyID, vCode) VALUES (".$characterID.",".$keyID.",'".mysql_real_escape_string($vCode)."')";
+						$mysqli->query($query);
 					}
+					$result->close();
 				}
 
-				$result = mysql_query("SELECT keyID, vCode, accessMask FROM api WHERE characterID=".$characterID);
-				$num = mysql_num_rows($result);
+				$result = $mysqli->query("SELECT keyID, vCode, accessMask FROM eve.api WHERE characterID=".$characterID);
 
-				if ($num == 1) {
-					$keyID = (int) mysql_result($result, 0, 'keyID');
-					$vCode = mysql_result($result, 0, 'vCode');
-					$accessMask = (int) mysql_result($result, 0, 'accessMask');
+				if ($row = $result->fetch_object()) {
+					$keyID = (int) $row->keyID;
+					$vCode = $row->vCode;
+					$accessMask = (int) $row->accessMask;
 				}
+				$result->close();
 
 
 				echo "\t\t\t".'<form action="'.$_SERVER['PHP_SELF'].'" name="args" method="get">';
