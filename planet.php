@@ -1,6 +1,7 @@
 <?php
 	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/myfunctions.php';
 	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/evefunctions.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Prices.php';
 
 	$title = "PI Commodity Prices";
 
@@ -25,7 +26,7 @@
 	$updated = time() + 60.0 * 60.0;
 
 	function createtypeidtable($quantity, $typeID) {
-		global $mysqli;
+		global $mysqli, $systemid, $pricetype;
 		$typeName = $mysqli->query("SELECT typeName FROM evedump.invTypes WHERE typeID=$typeID")->fetch_object()->typeName;
 		$sum = 0;
 		$profit = 0;
@@ -86,13 +87,16 @@
 							$volume = $mysqli->query("SELECT volume FROM evedump.invTypes WHERE typeID=$typeID")->fetch_object()->volume;
 							echo formatvolume($volume * $quantity)."&nbsp;m&sup3;";
 							echo "<br>\n";
-							$singleprice = getprice($typeID, $GLOBALS['systemid'], $GLOBALS['pricetype']);
+							$prices = Prices::getFromID($typeID, $systemid);
+//							$updated = min($updated, $prices->updated);
+							$singleprice = $prices->getPriceByType($pricetype)['price'];
 							$stackprice = $quantity * $singleprice;
 							if (isigb())
 								echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$typeID.')">';
 							echo formatprice($stackprice)."&nbsp;ISK";
 							if (isigb())
 								echo "</div>";
+							echo $prices->getMouseoverField($quantity);
 						echo "</div>\n";
 					echo "</div>\n";
 				echo "</div>\n";
