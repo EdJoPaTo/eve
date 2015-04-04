@@ -48,8 +48,9 @@
 					$result->close();
 					$result = $mysqli->query($apiquery);
 					if ($result->num_rows == 0) {
-						$query = "INSERT INTO eve.api (characterID, keyID, vCode) VALUES (".$characterID.",".$keyID.",'".mysql_real_escape_string($vCode)."')";
-						$mysqli->query($query);
+						$prepare = $mysqli->prepare("INSERT INTO eve.api (characterID, keyID, vCode) VALUES (?,?,?)");
+						$prepare->bind_param("iis", $characterID, $keyID, $vCode);
+						$prepare->execute();
 					}
 					$result->close();
 				}
