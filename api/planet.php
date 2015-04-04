@@ -270,7 +270,7 @@
 							echo "</div><br>\n";
 						}
 
-						$result = mysql_query("SELECT typeName as Item, quantity as Quantity FROM planetstorage WHERE ownerID=$characterID and planetID=$planetID");
+						$result = mysql_query("SELECT typeName as Item, quantity as Quantity FROM planetstorage WHERE ownerID=$characterID AND planetID=$planetID ORDER BY typeName");
 						echo mysql_error();
 						if (mysql_numrows($result) > 0) {
 							echo '<div style="display: table-cell; padding: 2px;">'."\n";
