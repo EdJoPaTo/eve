@@ -1,5 +1,4 @@
 <?php
-require_once 'mysqlDetails.php';
 
 class ItemStack {
 	var $items;
@@ -17,6 +16,7 @@ class ItemStack {
 
 	function getVolume() {
 		global $mysqli;
+		require_once 'mysqlDetails.php';
 		$sumVolume = 0;
 
 		foreach ($this->items as $typeID => $quantity) {
@@ -58,8 +58,9 @@ class ItemStack {
 	}
 
 	public function toHtml($systemID, $rowprefix = "", $pricetype = 'bestcase') {
-		require_once 'Prices.php';
 		global $mysqli;
+		require_once 'Prices.php';
+		require_once 'mysqlDetails.php';
 		$source = "";
 		$sumVolume = 0;
 		$sumPrice = 0;

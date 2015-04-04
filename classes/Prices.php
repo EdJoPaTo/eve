@@ -1,5 +1,4 @@
 <?php
-require_once 'mysqlDetails.php';
 
 class Prices {
 	var $typeID;
@@ -44,6 +43,7 @@ class Prices {
 
 	public function getMouseoverField($amount = 1, $rowprefix = "") {
 		global $mysqli;
+		require_once 'mysqlDetails.php';
 
 		$query = "SELECT typeName, volume
 		FROM evedump.invTypes
@@ -99,6 +99,8 @@ class Prices {
 
 	public static function getFromID($typeID, $systemID) {
 		global $mysqli;
+		require_once 'mysqlDetails.php';
+
 		$query="SELECT * FROM eve.prices WHERE id=$typeID and systemid=$systemID";
 		$result = $mysqli->query($query);
 
@@ -132,8 +134,9 @@ class Prices {
 	}
 
 	public static function updatePricesOfIDs($systemID, $ids) {
-		require_once 'Util.php';
 		global $mysqli;
+		require_once 'Util.php';
+		require_once 'mysqlDetails.php';
 
 		if (is_numeric($ids))
 			$ids = array($ids);

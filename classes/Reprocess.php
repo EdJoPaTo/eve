@@ -1,7 +1,6 @@
 <?php
 
 require_once 'ItemStack.php';
-require_once 'mysqlDetails.php';
 
 class Reprocess {
 	var $itemID;
@@ -13,6 +12,7 @@ class Reprocess {
 
 	function __construct($itemID, $reprocessPercentage, $quantity = 100) {
 		global $mysqli;
+		require_once 'mysqlDetails.php';
 
 		$this->itemID = $itemID;
 		$this->reprocessPercentage = $reprocessPercentage;
@@ -44,6 +44,7 @@ class Reprocess {
 
 	public function toHtml($systemID, $rowprefix = "", $pricetype = 'bestcase') {
 		global $mysqli;
+		require_once 'mysqlDetails.php';
 		$source = "";
 
 		$query = "SELECT typeName, volume
