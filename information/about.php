@@ -37,7 +37,9 @@
 						<ul>
 							<li>Jatsu Enaka</li>
 							<li>Eve Tobermory</li>
-							<li>X'or'X</li>
+							<li>Sternengecko</li>
+							<li>Lorianne Calmar</li>
+							<li>Larissa Liao</li>
 						</ul>
 					</li>
 				</ul>
