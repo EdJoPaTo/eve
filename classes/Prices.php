@@ -63,7 +63,7 @@ class Prices {
 		$source .= $rowprefix.'<div class="hoverpricecontainer">'."\n";
 		$source .= $rowprefix."\t".'<div class="iteminfo" style="background-image: url(//image.eveonline.com/Type/'.$this->typeID.'_64.png)">'."\n";
 		$source .= $rowprefix."\t\t";
-		$source .= round($amount, 2)."x&nbsp;";
+		$source .= formatamount($amount)."x&nbsp;";
 		$source .= $typeName.'<br>'."\n";
 		$source .= $rowprefix."\t\t".formatvolume($volume).'&nbsp;m&sup3;<br>'."\n";
 		$source .= $rowprefix."\t"."</div>\n";
