@@ -102,7 +102,7 @@
 
 					echo "<h2>Extractor Units</h2>\n";
 					$result = $mysqli->query("SELECT planetName, typeName, expiryTime FROM eve.planetpins, eve.planets WHERE planetpins.ownerID=$characterID AND planetpins.ownerID=planets.ownerID AND planetpins.planetID=planets.planetID AND typeName LIKE '%Extractor%'");
-					echo '<div class="table hoverrow bordered">'."\n";
+					echo '<div class="table hoverrow bordered" style="text-align: right;">'."\n";
 					echo '<div class="headrow">'."\n";
 					echo '<div class="cell">Planet</div>'."\n";
 					echo '<div class="cell">Extractor</div>'."\n";
@@ -124,7 +124,7 @@
 					echo "<h2>Storages</h2>\n";
 					$result = $mysqli->query($planetstoragefillingquery);
 //					printmysqlselectquerytable($result);
-					echo '<div class="table hoverrow bordered">'."\n";
+					echo '<div class="table hoverrow bordered" style="text-align: right;">'."\n";
 					echo '<div class="headrow">'."\n";
 					echo '<div class="cell">Planet</div>'."\n";
 					echo '<div class="cell">Storage</div>'."\n";
@@ -141,9 +141,9 @@
 						$contentVolume = $row->contentVolume;
 						$income = $row->volumeIncomePerHour;
 						$lastUpdate = $row->lastUpdate;
-						echo '<div class="cell">'.$capacity."</div>";
-						echo '<div class="cell">'.$contentVolume."</div>";
-						echo '<div class="cell">'.$income."</div>";
+						echo '<div class="cell">'.formatvolume($capacity)."</div>";
+						echo '<div class="cell">'.formatvolume($contentVolume)."</div>";
+						echo '<div class="cell">'.formatvolume($income)."</div>";
 
 						if ($income == 0) {
 							echo '<div class="cell">';
@@ -186,7 +186,7 @@
 							if ($result->num_rows > 0) {
 								echo '<strong style="color:green;">Produces</strong><br>'."\n";
 	//							printmysqlselectquerytable($result);
-								echo '<div class="table hoverrow bordered">'."\n";
+								echo '<div class="table hoverrow bordered" style="text-align: right;">'."\n";
 								echo '<div class="headrow">'."\n";
 								echo '<div class="cell">Item</div>'."\n";
 								echo '<div class="cell" style="min-width: 100px;">Produces per Hour</div>'."\n";
@@ -218,7 +218,7 @@
 							if ($result->num_rows > 0) {
 								echo '<strong style="color:red;">Needs</strong><br>'."\n";
 	//							printmysqlselectquerytable($result);
-								echo '<div class="table hoverrow bordered">'."\n";
+								echo '<div class="table hoverrow bordered" style="text-align: right;">'."\n";
 								echo '<div class="headrow">'."\n";
 								echo '<div class="cell">Item</div>'."\n";
 								echo '<div class="cell" style="min-width: 100px;">Needs per Hour</div>'."\n";
@@ -263,7 +263,7 @@
 							echo '<div style="display: table-cell; padding: 2px;">'."\n";
 							echo '<strong>Stuff in Storage</strong><br>'."\n";
 //							printmysqlselectquerytable($result);
-							echo '<div class="table hoverrow bordered">'."\n";
+							echo '<div class="table hoverrow bordered" style="text-align: right;">'."\n";
 							echo '<div class="headrow">'."\n";
 							echo '<div class="cell">Item</div>'."\n";
 							echo '<div class="cell" style="min-width: 100px;">Quantity</div>'."\n";
