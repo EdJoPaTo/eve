@@ -157,8 +157,8 @@
 						1 item<br>
 						<div class="table">
 							<div class="cell" style="width: 100px;">normal<br>ISK</div>
-							<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
 							<div class="cell borderleft" style="width: 100px;">reprocessed<br>ISK</div>
+							<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
 						</div>
 					</div>
 
@@ -216,21 +216,6 @@
 				if (isigb())
 					echo "</div>";
 				echo "\t\t\t\t\t\t\t"."</div>\n";
-				if ($compress) {
-				echo "\t\t\t\t\t\t\t".'<div class="cell';
-				if ($row['1compressedprice'] == $row['1bestprice'])
-					echo " bestvalue";
-				if ($row['1compressedprice'] == $row['1worstprice'])
-					echo " worstvalue";
-				echo '" style="width: 100px; text-align: right;">';
-				if (isigb())
-					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.getcompressedid($id).')">';
-				echo formatprice($row['1compressedprice']);
-				echo $row['compressedprices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
-				if (isigb())
-					echo "</div>";
-				echo "\t\t\t\t\t\t\t"."</div>\n";
-				}
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['1reprocessedprice'] == $row['1bestprice'])
 					echo " bestvalue";
@@ -240,6 +225,21 @@
 				echo formatprice($row['1reprocessedprice']);
 				echo $row['reprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
 				echo "</div>\n";
+				if ($compress) {
+					echo "\t\t\t\t\t\t\t".'<div class="cell';
+					if ($row['1compressedprice'] == $row['1bestprice'])
+						echo " bestvalue";
+					if ($row['1compressedprice'] == $row['1worstprice'])
+						echo " worstvalue";
+					echo '" style="width: 100px; text-align: right;">';
+					if (isigb())
+						echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.getcompressedid($id).')">';
+					echo formatprice($row['1compressedprice']);
+					echo $row['compressedprices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
+					if (isigb())
+						echo "</div>";
+					echo "\t\t\t\t\t\t\t"."</div>\n";
+				}
 				echo "\t\t\t\t\t\t</div>\n";
 				echo "\t\t\t\t\t</div>\n";
 

@@ -254,8 +254,8 @@
 						1 batch | 100 items<br>
 						<div class="table">
 							<div class="cell" style="width: 100px;">normal<br>ISK</div>
-							<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
 							<div class="cell borderleft" style="width: 100px;">reprocessed<br>ISK</div>
+							<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
 						</div>
 					</div>
 					<div class="cell borderleft">
@@ -263,8 +263,8 @@
 						<div class="table">
 							<div class="cell" style="width: 100px; color: #BAA373;">quantity<br>pieces</div>
 							<div class="cell borderleft" style="width: 100px;">normal<br>ISK</div>
-<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
 							<div class="cell borderleft" style="width: 100px;">reprocessed<br>ISK</div>
+							<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
 						</div>
 					</div>
 				</div>
@@ -333,22 +333,6 @@
 				echo formatprice($row['batchprice'])."\n";
 				echo $row['prices']->getMouseoverField(100, "\t\t\t\t\t\t\t\t");
 				echo "\t\t\t\t\t\t\t"."</div>\n";
-				if ($compress) {
-				echo "\t\t\t\t\t\t\t".'<div class="cell';
-				if ($row['batchcompressedprice'] == $row['batchbestprice'])
-					echo " bestvalue";
-				if ($row['batchcompressedprice'] == $row['batchworstprice'])
-					echo " worstvalue";
-				echo '" style="width: 100px; text-align: right;">';
-				if (isigb())
-					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.getcompressedid($id).')">';
-				echo formatprice($row['batchcompressedprice']);
-				if (isigb())
-					echo "</div>";
-				echo "\n";
-				echo $row['compressedprices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
-				echo "\t\t\t\t\t\t\t"."</div>\n";
-				}
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['batchreprocessedprice'] == $row['batchbestprice'])
 					echo " bestvalue";
@@ -359,6 +343,22 @@
 				echo "\n";
 				echo $row['batchreprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
 				echo "\t\t\t\t\t\t\t</div>\n";
+				if ($compress) {
+					echo "\t\t\t\t\t\t\t".'<div class="cell';
+					if ($row['batchcompressedprice'] == $row['batchbestprice'])
+						echo " bestvalue";
+					if ($row['batchcompressedprice'] == $row['batchworstprice'])
+						echo " worstvalue";
+					echo '" style="width: 100px; text-align: right;">';
+					if (isigb())
+						echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.getcompressedid($id).')">';
+					echo formatprice($row['batchcompressedprice']);
+					if (isigb())
+						echo "</div>";
+					echo "\n";
+					echo $row['compressedprices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
+					echo "\t\t\t\t\t\t\t"."</div>\n";
+				}
 				echo "\t\t\t\t\t\t</div>\n";
 				echo "\t\t\t\t\t</div>\n";
 
@@ -378,18 +378,6 @@
 				echo "\n";
 				echo $row['prices']->getMouseoverField($cycleamount, "\t\t\t\t\t\t\t\t");
 				echo "\t\t\t\t\t\t\t"."</div>\n";
-				if ($compress) {
-				echo "\t\t\t\t\t\t\t".'<div class="cell';
-				if ($row['cyclecompressedprice'] == $row['cyclebestprice'])
-					echo " bestvalue";
-				if ($row['cyclecompressedprice'] == $row['cycleworstprice'])
-					echo " worstvalue";
-				echo '" style="width: 100px; text-align: right;">';
-				echo formatprice($row['cyclecompressedprice']);
-				echo "\n";
-				echo $row['compressedprices']->getMouseoverField($cycleamount / 100, "\t\t\t\t\t\t\t\t");
-				echo "\t\t\t\t\t\t\t"."</div>\n";
-				}
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['cyclereprocessedprice'] == $row['cyclebestprice'])
 					echo " bestvalue";
@@ -400,6 +388,18 @@
 				echo "\n";
 				echo $row['cyclereprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
 				echo "\t\t\t\t\t\t\t</div>\n";
+				if ($compress) {
+					echo "\t\t\t\t\t\t\t".'<div class="cell';
+					if ($row['cyclecompressedprice'] == $row['cyclebestprice'])
+						echo " bestvalue";
+					if ($row['cyclecompressedprice'] == $row['cycleworstprice'])
+						echo " worstvalue";
+					echo '" style="width: 100px; text-align: right;">';
+					echo formatprice($row['cyclecompressedprice']);
+					echo "\n";
+					echo $row['compressedprices']->getMouseoverField($cycleamount / 100, "\t\t\t\t\t\t\t\t");
+					echo "\t\t\t\t\t\t\t"."</div>\n";
+				}
 				echo "\t\t\t\t\t\t</div>\n";
 				echo "\t\t\t\t\t</div>\n";
 
