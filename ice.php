@@ -21,6 +21,8 @@
 	$pricetype = !empty($_GET['pricetype']) ? strtolower(htmlspecialchars($_GET['pricetype'])) : "bestcase";
 	if ($pricetype != "buy" && $pricetype != "sell") { $pricetype = "bestcase"; }
 
+	$compress = !empty($_GET['compress']) ? toBool(htmlspecialchars($_GET['compress'])) : false;
+
 	$refine = !empty($_GET['refine']) ? (float)htmlspecialchars($_GET['refine']) : 0.0;
 	if (!is_float($refine) || $refine == 0) {$refine = 69.575;}
 	$refinepercent = $refine * 0.01;
@@ -84,8 +86,12 @@
 		$a['1price'] = $price;
 		$a['1compressedprice'] = $compressedprice;
 		$a['1reprocessedprice'] = $reprocessedprice;
-		$a['1bestprice'] = max($a['1price'], max($a['1compressedprice'], $a['1reprocessedprice']));
-		$a['1worstprice'] = min($a['1price'], min($a['1compressedprice'], $a['1reprocessedprice']));
+		$a['1bestprice'] = max($a['1price'], $a['1reprocessedprice']);
+		$a['1worstprice'] = min($a['1price'], $a['1reprocessedprice']);
+		if ($compress) {
+			$a['1bestprice'] = max($a['1bestprice'], $a['1compressedprice']);
+			$a['1worstprice'] = min($a['1worstprice'], $a['1compressedprice']);
+		}
 
 		$icetable[] = $a;
 	}
@@ -102,6 +108,10 @@
 		}
 		if ($GLOBALS['pricetype'] != 'buy') {
 			$link .= 'pricetype='.$GLOBALS['pricetype'].'&amp;';
+		}
+		if ($GLOBALS['compress']) {
+			$link .= 'compress=true';
+			$link .= '&amp;';
 		}
 		$link .= 'refine='.$refine;
 
@@ -145,10 +155,10 @@
 					<div class="cell border">Found&nbsp;in<br><br>Security</div>
 					<div class="cell borderleft">
 						1 item<br>
-						<div class="table" style="width: 300px;">
-							<div class="cell" style="width: 33%;">normal<br>ISK</div>
-							<div class="cell borderleft" style="width: 33%;">compressed<br>ISK</div>
-							<div class="cell borderleft" style="width: 33%;">reprocessed<br>ISK</div>
+						<div class="table">
+							<div class="cell" style="width: 100px;">normal<br>ISK</div>
+							<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
+							<div class="cell borderleft" style="width: 100px;">reprocessed<br>ISK</div>
 						</div>
 					</div>
 
@@ -192,13 +202,13 @@
 				echo "</div>\n";
 
 				echo "\t\t\t\t\t".'<div class="cell border">'."\n";
-				echo "\t\t\t\t\t\t".'<div class="table" style="width: 100%;">'."\n";
+				echo "\t\t\t\t\t\t".'<div class="table">'."\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['1price'] == $row['1bestprice'])
 					echo " bestvalue";
 				if ($row['1price'] == $row['1worstprice'])
 					echo " worstvalue";
-				echo '" style="width: 33%; text-align: right;">';
+				echo '" style="width: 100px; text-align: right;">';
 				if (isigb())
 					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$id.')">';
 				echo formatprice($row['1price']);
@@ -206,12 +216,13 @@
 				if (isigb())
 					echo "</div>";
 				echo "\t\t\t\t\t\t\t"."</div>\n";
+				if ($compress) {
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['1compressedprice'] == $row['1bestprice'])
 					echo " bestvalue";
 				if ($row['1compressedprice'] == $row['1worstprice'])
 					echo " worstvalue";
-				echo '" style="width: 33%; text-align: right;">';
+				echo '" style="width: 100px; text-align: right;">';
 				if (isigb())
 					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.getcompressedid($id).')">';
 				echo formatprice($row['1compressedprice']);
@@ -219,12 +230,13 @@
 				if (isigb())
 					echo "</div>";
 				echo "\t\t\t\t\t\t\t"."</div>\n";
+				}
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['1reprocessedprice'] == $row['1bestprice'])
 					echo " bestvalue";
 				if ($row['1reprocessedprice'] == $row['1worstprice'])
 					echo " worstvalue";
-				echo '" style="width: 33%; text-align: right;">';
+				echo '" style="width: 100px; text-align: right;">';
 				echo formatprice($row['1reprocessedprice']);
 				echo $row['reprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
 				echo "</div>\n";
@@ -303,6 +315,7 @@
 			echo '				<option value="bestcase"'.("bestcase" == $pricetype ? " selected" : "").'>Best Case</option>'."\n";
 			echo '			</select><br>'."\n";
 
+			echo '			<input type="checkbox" name="compress" value="true" onclick="document.args.submit();"'.($compress ? " checked" : "").'> Compressed<br>'."\n";
 			echo "			<br>\n";
 			echo "			<strong>Refining</strong><br>\n";
 			echo '			<input name="refine" type="number" min="30" max="100" step="0.0001" value="'.$refine.'" /> % <input type="submit" value="Submit" /><br>'."\n";

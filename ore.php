@@ -22,6 +22,7 @@
 	if ($security != 'null' && $security != 'low') { $security = "high"; }
 
 	$bonus = !empty($_GET['bonus']) ? toBool(htmlspecialchars($_GET['bonus'])) : false;
+	$compress = !empty($_GET['compress']) ? toBool(htmlspecialchars($_GET['compress'])) : false;
 
 	$pricetype = !empty($_GET['pricetype']) ? strtolower(htmlspecialchars($_GET['pricetype'])) : "bestcase";
 	if ($pricetype != "buy" && $pricetype != "sell") { $pricetype = "bestcase"; }
@@ -157,8 +158,12 @@
 		$a['batchcompressedprice'] = $compressedprice;
 		$a['batchreprocessed'] = new Reprocess($id, $refinepercent, 100);
 		$a['batchreprocessedprice'] = $a['batchreprocessed']->mineralStack->getPrice($systemid, $pricetype);
-		$a['batchbestprice'] = max($a['batchprice'], max($a['batchreprocessedprice'], $a['batchcompressedprice']));
-		$a['batchworstprice'] = min($a['batchprice'], min($a['batchreprocessedprice'], $a['batchcompressedprice']));
+		$a['batchbestprice'] = max($a['batchreprocessedprice'], $a['batchprice']);
+		$a['batchworstprice'] = min($a['batchreprocessedprice'], $a['batchprice']);
+		if ($compress) {
+			$a['batchbestprice'] = max($a['batchbestprice'], $a['batchcompressedprice']);
+			$a['batchworstprice'] = min($a['batchworstprice'], $a['batchcompressedprice']);
+		}
 
 		$minedpercycle = $m3percycle / $volume;
 		$a['cycleamount'] = $minedpercycle;
@@ -166,8 +171,12 @@
 		$a['cyclecompressedprice'] = $compressedprice * $minedpercycle / 100;
 		$a['cyclereprocessed'] = new Reprocess($id, $refinepercent, $minedpercycle);
 		$a['cyclereprocessedprice'] = $a['cyclereprocessed']->mineralStack->getPrice($systemid, $pricetype);
-		$a['cyclebestprice'] = max($a['cycleprice'], max($a['cyclecompressedprice'], $a['cyclereprocessedprice']));
-		$a['cycleworstprice'] = min($a['cycleprice'], min($a['cyclecompressedprice'], $a['cyclereprocessedprice']));
+		$a['cyclebestprice'] = max($a['cycleprice'], $a['cyclereprocessedprice']);
+		$a['cycleworstprice'] = min($a['cycleprice'], $a['cyclereprocessedprice']);
+		if ($compress) {
+			$a['cyclebestprice'] = max($a['cyclebestprice'], $a['cyclecompressedprice']);
+			$a['cycleworstprice'] = min($a['cycleworstprice'], $a['cyclecompressedprice']);
+		}
 
 		$oretable[] = $a;
 	}
@@ -190,7 +199,11 @@
 			$link .= '&amp;';
 		}
 		if ($GLOBALS['bonus']) {
-			$link .= 'bonus='.$GLOBALS['bonus'];
+			$link .= 'bonus=true';
+			$link .= '&amp;';
+		}
+		if ($GLOBALS['compress']) {
+			$link .= 'compress=true';
 			$link .= '&amp;';
 		}
 		$link .= 'cyclem3='.$m3percycle;
@@ -239,19 +252,19 @@
 					<div class="cell border" style="width: 80px;">1 item<br><br>ISK</div>
 					<div class="cell borderleft">
 						1 batch | 100 items<br>
-						<div class="table" style="width: 300px;">
-							<div class="cell" style="width: 33%;">normal<br>ISK</div>
-							<div class="cell borderleft" style="width: 33%;">compressed<br>ISK</div>
-							<div class="cell borderleft" style="width: 33%;">reprocessed<br>ISK</div>
+						<div class="table">
+							<div class="cell" style="width: 100px;">normal<br>ISK</div>
+							<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
+							<div class="cell borderleft" style="width: 100px;">reprocessed<br>ISK</div>
 						</div>
 					</div>
 					<div class="cell borderleft">
 						1 cycle | <?php echo formatvolume($m3percycle); ?>m&sup3;<br>
-						<div class="table" style="width: 400px;">
-							<div class="cell" style="width: 25%; color: #BAA373;">quantity<br>pieces</div>
-							<div class="cell borderleft" style="width: 25%;">normal<br>ISK</div>
-							<div class="cell borderleft" style="width: 25%;">compressed<br>ISK</div>
-							<div class="cell borderleft" style="width: 25%;">reprocessed<br>ISK</div>
+						<div class="table">
+							<div class="cell" style="width: 100px; color: #BAA373;">quantity<br>pieces</div>
+							<div class="cell borderleft" style="width: 100px;">normal<br>ISK</div>
+<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
+							<div class="cell borderleft" style="width: 100px;">reprocessed<br>ISK</div>
 						</div>
 					</div>
 				</div>
@@ -310,22 +323,23 @@
 				echo "\t\t\t\t\t</div>\n";
 
 				echo "\t\t\t\t\t".'<div class="cell border">'."\n";
-				echo "\t\t\t\t\t\t".'<div class="table" style="width: 100%;">'."\n";
+				echo "\t\t\t\t\t\t".'<div class="table">'."\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['batchprice'] == $row['batchbestprice'])
 					echo " bestvalue";
 				if ($row['batchprice'] == $row['batchworstprice'])
 					echo " worstvalue";
-				echo '" style="width: 33%; text-align: right;">';
+				echo '" style="width: 100px; text-align: right;">';
 				echo formatprice($row['batchprice'])."\n";
 				echo $row['prices']->getMouseoverField(100, "\t\t\t\t\t\t\t\t");
 				echo "\t\t\t\t\t\t\t"."</div>\n";
+				if ($compress) {
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['batchcompressedprice'] == $row['batchbestprice'])
 					echo " bestvalue";
 				if ($row['batchcompressedprice'] == $row['batchworstprice'])
 					echo " worstvalue";
-				echo '" style="width: 33%; text-align: right;">';
+				echo '" style="width: 100px; text-align: right;">';
 				if (isigb())
 					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.getcompressedid($id).')">';
 				echo formatprice($row['batchcompressedprice']);
@@ -334,12 +348,13 @@
 				echo "\n";
 				echo $row['compressedprices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
 				echo "\t\t\t\t\t\t\t"."</div>\n";
+				}
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['batchreprocessedprice'] == $row['batchbestprice'])
 					echo " bestvalue";
 				if ($row['batchreprocessedprice'] == $row['batchworstprice'])
 					echo " worstvalue";
-				echo '" style="width: 33%; text-align: right;">';
+				echo '" style="width: 100px; text-align: right;">';
 				echo formatprice($row['batchreprocessedprice']);
 				echo "\n";
 				echo $row['batchreprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
@@ -348,8 +363,8 @@
 				echo "\t\t\t\t\t</div>\n";
 
 				echo "\t\t\t\t\t".'<div class="cell border">'."\n";
-				echo "\t\t\t\t\t\t".'<div class="table" style="width: 100%;">'."\n";
-				echo "\t\t\t\t\t\t\t".'<div class="cell" style="width: 25%; text-align: right; color: #BAA373;">';
+				echo "\t\t\t\t\t\t".'<div class="table">'."\n";
+				echo "\t\t\t\t\t\t\t".'<div class="cell" style="width: 100px; text-align: right; color: #BAA373;">';
 				$cycleamount = $row['cycleamount'];
 				echo formatamount($cycleamount);
 				echo "</div>\n";
@@ -358,27 +373,29 @@
 					echo " bestvalue";
 				if ($row['cycleprice'] == $row['cycleworstprice'])
 					echo " worstvalue";
-				echo '" style="width: 25%; text-align: right;">';
+				echo '" style="width: 100px; text-align: right;">';
 				echo formatprice($row['cycleprice']);
 				echo "\n";
 				echo $row['prices']->getMouseoverField($cycleamount, "\t\t\t\t\t\t\t\t");
 				echo "\t\t\t\t\t\t\t"."</div>\n";
+				if ($compress) {
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['cyclecompressedprice'] == $row['cyclebestprice'])
 					echo " bestvalue";
 				if ($row['cyclecompressedprice'] == $row['cycleworstprice'])
 					echo " worstvalue";
-				echo '" style="width: 25%; text-align: right;">';
+				echo '" style="width: 100px; text-align: right;">';
 				echo formatprice($row['cyclecompressedprice']);
 				echo "\n";
 				echo $row['compressedprices']->getMouseoverField($cycleamount / 100, "\t\t\t\t\t\t\t\t");
 				echo "\t\t\t\t\t\t\t"."</div>\n";
+				}
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['cyclereprocessedprice'] == $row['cyclebestprice'])
 					echo " bestvalue";
 				if ($row['cyclereprocessedprice'] == $row['cycleworstprice'])
 					echo " worstvalue";
-				echo '" style="width: 25%; text-align: right;">';
+				echo '" style="width: 100px; text-align: right;">';
 				echo formatprice($row['cyclereprocessedprice']);
 				echo "\n";
 				echo $row['cyclereprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
@@ -466,6 +483,7 @@
 			echo '			</select><br>'."\n";
 
 			echo '			<input type="checkbox" name="bonus" value="true" onclick="document.args.submit();"'.($bonus ? " checked" : "").'> +5% / +10% Ore<br>'."\n";
+			echo '			<input type="checkbox" name="compress" value="true" onclick="document.args.submit();"'.($compress ? " checked" : "").'> Compressed<br>'."\n";
 			echo "			<br>\n";
 			echo "			<strong>Cycleamount</strong><br>\n";
 			echo 'Current: ';
