@@ -288,7 +288,7 @@
 /**/
 		$returnString .= "\t\t\t".'</div>'."\n";
 		if (!empty($title)) {
-			$returnString .= "\t\t".'<h1 class="smallonly">';
+			$returnString .= "\t\t".'<h1 class="smallonly" style="margin: 20px;">';
 			if (!empty($bgimage))
 				$returnString .= '<img src="'.$bgimage.'">';
 			$returnString .= $title.'</h1>'."\n";
