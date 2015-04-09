@@ -5,7 +5,7 @@
 	{
 		date_default_timezone_set("UTC");
 		generatemissingtable();
-		updateallprices();
+		updateprices();
 		updateapikeyinfo();
 		updateaccountstatus();
 		updateallbalance();
@@ -155,6 +155,48 @@
 		mysql_query($query);
 		echo mysql_error();
 
+		$query = "CREATE OR REPLACE VIEW marketgrouplastupdate AS
+		SELECT invTypes.typeID, invTypes.typeName, invTypes.marketGroupID, min(CASE WHEN prices.stamp IS NULL THEN 0 ELSE prices.stamp END) lastupdate,
+			CASE
+				WHEN invTypes.marketGroupID = 1857 THEN 30
+				WHEN invTypes.marketGroupID = 1033 THEN 30
+
+				WHEN invTypes.marketGroupID = 1855 THEN 60
+
+				WHEN invTypes.marketGroupID = 512 THEN 60
+				WHEN invTypes.marketGroupID = 514 THEN 60
+				WHEN invTypes.marketGroupID = 515 THEN 60
+				WHEN invTypes.marketGroupID = 516 THEN 60
+				WHEN invTypes.marketGroupID = 517 THEN 60
+				WHEN invTypes.marketGroupID = 518 THEN 60
+				WHEN invTypes.marketGroupID = 519 THEN 60
+				WHEN invTypes.marketGroupID = 521 THEN 60
+				WHEN invTypes.marketGroupID = 522 THEN 60
+				WHEN invTypes.marketGroupID = 523 THEN 60
+				WHEN invTypes.marketGroupID = 525 THEN 60
+				WHEN invTypes.marketGroupID = 526 THEN 60
+				WHEN invTypes.marketGroupID = 527 THEN 60
+				WHEN invTypes.marketGroupID = 528 THEN 60
+				WHEN invTypes.marketGroupID = 529 THEN 60
+				WHEN invTypes.marketGroupID = 530 THEN 60
+
+				WHEN invTypes.marketGroupID = 1333 THEN 120
+				WHEN invTypes.marketGroupID = 1334 THEN 120
+				WHEN invTypes.marketGroupID = 1335 THEN 120
+				WHEN invTypes.marketGroupID = 1336 THEN 120
+				WHEN invTypes.marketGroupID = 1337 THEN 120
+
+				ELSE 24 * 60
+			END updateintervall
+		FROM evedump.invTypes
+		LEFT JOIN eve.prices ON prices.id = invTypes.typeID
+		WHERE invTypes.published=1 AND invTypes.marketGroupID IS NOT NULL AND invTypes.typeID < 300000 AND invTypes.typeName NOT LIKE '%Blueprint'
+		GROUP BY invTypes.typeID
+		ORDER BY updateintervall, lastupdate, invTypes.marketGroupID, invTypes.typeID
+		";
+		mysql_query($query);
+		echo mysql_error();
+
 		$query = 'CREATE OR REPLACE VIEW planetstorage AS
 		SELECT ownerID, planetID, contentTypeID as typeID, contentTypeName as typeName, SUM(contentQuantity) as quantity
 		FROM planetpins
@@ -263,6 +305,56 @@
 		}
 		echo mysql_error();
 		mysql_close();
+	}
+	function updateprices() {
+		global $mysqli;
+		require_once 'mysqlDetails.php';
+		require_once 'Prices.php';
+
+		$systems = array(
+			'Jita' => 30000142,
+			'Hek' => 30002053,
+			'Amarr' => 30002187,
+			'Rens' => 30002510,
+			'Dodixie' => 30002659
+		);
+
+		$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall < 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 300";
+		$result = $mysqli->query($query);
+
+		$ids = array();
+		while ($row = $result->fetch_object()) {
+			$ids[] = $row->typeID;
+		}
+		$result->close();
+		sort($ids);
+
+		if (count($ids) > 0) {
+			foreach ($systems as $systemname => $systemid) {
+				echo "system ".$systemid." (".$systemname.")\n";
+				Prices::updatePricesOfIDs($systemid, $ids);
+			}
+		}
+
+
+		//Generellen Daten
+		$systemname = 'Jita';
+		$systemid = $systems[$systemname];
+
+		$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall > 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 300";
+		$result = $mysqli->query($query);
+
+		$ids = array();
+		while ($row = $result->fetch_object()) {
+			$ids[] = $row->typeID;
+		}
+		$result->close();
+		sort($ids);
+
+		if (count($ids) > 0) {
+			echo "system ".$systemid." (".$systemname.")\n";
+			Prices::updatePricesOfIDs($systemid, $ids);
+		}
 	}
 	function updateapikeyinfo()
 	{
