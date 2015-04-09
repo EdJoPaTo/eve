@@ -47,7 +47,7 @@ class ItemStack {
 		return $sumPrice;
 	}
 
-	public function getMouseoverField($systemID, $rowprefix = "", $pricetype = 'bestcase') {
+	public function getMouseoverField($systemID = 30000142, $rowprefix = "", $pricetype = 'bestcase') {
 		$source = "";
 
 		$source .= $rowprefix.'<div class="hoverpricecontainer">'."\n";
@@ -57,7 +57,7 @@ class ItemStack {
 		return $source;
 	}
 
-	public function toHtml($systemID, $rowprefix = "", $pricetype = 'bestcase') {
+	public function toHtml($systemID = 30000142, $rowprefix = "", $pricetype = 'bestcase') {
 		global $mysqli;
 		require_once 'Prices.php';
 		require_once 'mysqlDetails.php';
