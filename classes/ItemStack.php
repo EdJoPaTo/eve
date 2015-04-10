@@ -66,29 +66,42 @@ class ItemStack {
 		$sumPrice = 0;
 		$updated = time();
 
+		$items = array();
+
 		foreach ($this->items as $typeID => $quantity) {
 			$query = "SELECT typeName, volume
 			FROM evedump.invTypes
 			WHERE typeID=$typeID";
 			$result = $mysqli->query($query);
 			$row = $result->fetch_object();
-			$typeName = $row->typeName;
-			$volume = $quantity * $row->volume;
-			$result->close();
 
+			$a = array();
+			$a['typeID'] = $typeID;
+			$a['typeName'] = $row->typeName;
+			$a['quantity'] = $quantity;
+			$a['volume'] = $quantity * $row->volume;
+
+			$result->close();
 			$prices = Prices::getFromID($typeID, $systemID);
-			$price = $quantity * $prices->maxprice;
 			$updated = min($updated, $prices->updated);
 
-			$sumVolume += $volume;
-			$sumPrice += $price;
+			$a['prices'] = $prices;
+			$a['price'] = $quantity * $prices->maxprice;
 
-			$source .= $rowprefix.'<div class="iteminfo" style="background-image: url(//image.eveonline.com/Type/'.$typeID.'_64.png)">'."\n";
+			$sumVolume += $a['volume'];
+			$sumPrice += $a['price'];
+			$items[] = $a;
+		}
+		usort($items, build_sorter('price', true));
+
+		foreach ($items as $item) {
+			$source .= $rowprefix.'<div class="iteminfo" style="background-image: url(//image.eveonline.com/Type/'.$item['typeID'].'_64.png)">'."\n";
 			$source .= $rowprefix."\t";
-			$source .= round($quantity, 2)."x&nbsp;";
-			$source .= "<strong>".$typeName."</strong><br>\n";
-			$source .= $rowprefix."\t".formatvolume($volume).'&nbsp;m&sup3;<br>'."\n";
-			$source .= $rowprefix."\t".formatprice($price).'&nbsp;ISK<br>'."\n";
+			$source .= round($item['quantity'], 2)."x&nbsp;";
+			$source .= "<strong>".$item['typeName']."</strong><br>\n";
+			$source .= $rowprefix."\t".formatvolume($item['volume']).'&nbsp;m&sup3;<br>'."\n";
+			$source .= $rowprefix."\t".formatprice($item['price']).'&nbsp;ISK<br>'."\n";
+			$source .= $item['prices']->getMouseoverField($item['quantity'], $rowprefix."\t");
 			$source .= $rowprefix."</div>\n";
 		}
 
