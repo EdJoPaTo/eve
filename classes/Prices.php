@@ -142,8 +142,13 @@ class Prices {
 			$ids = array($ids);
 
 		$url = 'https://eve-central.com/api/marketstat?usesystem='.$systemID.'&typeid='.implode(',',$ids);
-		try {
+
 			$source = Util::postData($url);
+
+			if (strpos($source, '<') === FALSE) {
+				throw new Exception ( $source, 0, NULL );
+			}
+
 			$xml = simplexml_load_string($source);
 
 			foreach($ids as $id) {
@@ -160,9 +165,6 @@ class Prices {
 				ON DUPLICATE KEY UPDATE buy='$buy',sell='$sell',buyunits='$buyunits',sellunits='$sellunits',stamp='$stamp'";
 				$mysqli->query($query);
 			}
-		} catch (Exception $e) {
-			echo "Error updateallprices: ".$e->getMessage()."\n";
-		}
 	}
 }
 
