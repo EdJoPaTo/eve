@@ -23,6 +23,18 @@
 	{
 		return number_format($amount, 0, ",", ".");
 	}
+	function gettypeidbyname($name) {
+		global $mysqli;
+
+		$prepare = $mysqli->prepare("SELECT typeID FROM evedump.invTypes WHERE typeName LIKE ?");
+		$prepare->bind_param("s", $name);
+		$prepare->execute();
+		$prepare->bind_result($typeID);
+
+		$prepare->fetch();
+
+		return $typeID;
+	}
 	function getbestknowprice($id, $pricetype)
 	{
 		global $mysqli;
