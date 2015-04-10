@@ -319,7 +319,7 @@
 			'Dodixie' => 30002659
 		);
 
-		$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall < 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 300";
+		$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall <= 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 300";
 		$result = $mysqli->query($query);
 
 		$ids = array();
@@ -341,7 +341,60 @@
 		$systemname = 'Jita';
 		$systemid = $systems[$systemname];
 
+		echo "system ".$systemid." (".$systemname.")\n";
 		$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall > 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 300";
+		$result = $mysqli->query($query);
+		while ($result->num_rows > 0) {
+			$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall > 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 300";
+			try {
+				for ($i = 0; $i< 6; $i++)
+					updatepricesofquery($query, $systemid);
+			}	catch (Exception $e) {
+				echo $e->getMessage()."... try 50\n";
+				$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall > 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 50";
+				try {
+					for ($i = 0; $i< 5; $i++)
+						updatepricesofquery($query, $systemid);
+				}	catch (Exception $e) {
+					echo $e->getMessage()."... try 10\n";
+					$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall > 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 10";
+					try {
+						for ($i = 0; $i< 5; $i++)
+							updatepricesofquery($query, $systemid);
+					}	catch (Exception $e) {
+						echo $e->getMessage()."... try 1\n";
+						$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall > 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 1";
+						try {
+							for ($i = 0; $i< 10; $i++)
+								updatepricesofquery($query, $systemid);
+						}	catch (Exception $e) {
+							$result = $mysqli->query($query);
+							$id = $result->fetch_object()->typeID;
+							$result->close();
+
+							$buy = (float) -1;
+							$sell = (float) -1;
+							$buyunits = (int) -1;
+							$sellunits = (int) -1;
+							$stamp = time();
+							$query = "INSERT INTO eve.prices (ID, systemID, buy, sell, buyunits, sellunits, stamp)
+							VALUES ('$id', '$systemid', '$buy', '$sell', '$buyunits', '$sellunits', '$stamp')
+							ON DUPLICATE KEY UPDATE buy='$buy',sell='$sell',buyunits='$buyunits',sellunits='$sellunits',stamp='$stamp'";
+							$mysqli->query($query);
+							echo "Item $id: ".$e->getMessage()."\n";
+						}
+					}
+				}
+			}
+			$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall > 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 300";
+			$result = $mysqli->query($query);
+		}
+	}
+	function updatepricesofquery($query, $systemid) {
+		global $mysqli;
+		require_once 'mysqlDetails.php';
+		require_once 'Prices.php';
+
 		$result = $mysqli->query($query);
 
 		$ids = array();
@@ -352,7 +405,6 @@
 		sort($ids);
 
 		if (count($ids) > 0) {
-			echo "system ".$systemid." (".$systemname.")\n";
 			Prices::updatePricesOfIDs($systemid, $ids);
 		}
 	}
