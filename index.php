@@ -19,6 +19,12 @@
 				background-size: 64px 64px;
 				padding-top: 75px;
 			}
+			.publictablecell {
+				width: 33%;
+			}
+			.logintablecell {
+				width: 100%;
+			}
 			.hoverimg {
 				-webkit-transition: -webkit-filter 1s ease;
 				transition: -webkit-filter 1s ease;
@@ -64,20 +70,20 @@
 
 			<h2>Public Tools</h2>
 			<div class="table" style="width:100%;">
-				<a class="cell icon" style="width: 33%; background-image: url(//image.eveonline.com/Type/34_64.png);" href="ore.php">
+				<a class="publictablecell cell icon" style="background-image: url(//image.eveonline.com/Type/34_64.png);" href="ore.php">
 					Ore Chart
 				</a>
-				<a class="cell icon" style="width: 33%; background-image: url(//image.eveonline.com/Type/16265_64.png);" href="ice.php">
+				<a class="publictablecell cell icon" style="background-image: url(//image.eveonline.com/Type/16265_64.png);" href="ice.php">
 					Ice Chart
 				</a>
-				<a class="cell icon" style="width: 33%; background-image: url(//image.eveonline.com/Type/2398_64.png);" href="planet.php">
+				<a class="publictablecell cell icon" style="background-image: url(//image.eveonline.com/Type/2398_64.png);" href="planet.php">
 					PI Commodity Prices
 				</a>
 			</div>
 
 			<h2>Login required</h2>
 			<div class="table" style="width:100%;">
-				<a class="cell icon" style="width: 100%; background-image: url(//image.eveonline.com/Type/2014_64.png);" href="api/planet.php">
+				<a class="logintablecell cell icon" style="background-image: url(//image.eveonline.com/Type/2014_64.png);" href="api/planet.php">
 					Planetary Infrastructure Overview
 				</a>
 			</div>
