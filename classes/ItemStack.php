@@ -132,6 +132,29 @@ class ItemStack {
 
 		return $source;
 	}
+
+	public static function fromIngameCopyPaste($text) {
+		$itemStack = new ItemStack();
+
+		$splitted = explode("\n", $text);
+
+		foreach ($splitted as $line) {
+			$trimmed = trim($line, " \t\n\r");
+			if ($trimmed == "")
+				continue;
+
+			echo $trimmed."<br>\n";
+
+			if (preg_match_all("/^(\d+)[\s|\t](.+)$/", $trimmed, $out)) {
+				$quantity = (int) $out[1][0];
+				$name = $out[2][0];
+				$typeID = gettypeidbyname($name);
+				$itemStack->addItem($typeID, $quantity);
+			}
+		}
+
+		return $itemStack;
+	}
 }
 
 ?>
