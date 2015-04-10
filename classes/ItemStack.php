@@ -112,7 +112,7 @@ class ItemStack {
 		$source .= $rowprefix."All prices from $systemName"."<br>\n";
 		if ($updated == 0)
 			$source .= '<div class="worstvalue">';
-		$source .= 'updated: '.gmdate('d.m.Y H:i:s e', $updated)."<br>\n";
+		$source .= $rowprefix.'updated: '.gmdate('d.m.Y H:i:s e', $updated)."<br>\n";
 		if ($updated == 0)
 			$source .= "</div>";
 
