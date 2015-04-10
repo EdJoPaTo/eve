@@ -161,11 +161,16 @@ class ItemStack {
 			if ($trimmed == "")
 				continue;
 
-			echo $trimmed."<br>\n";
-
 			if (preg_match_all("/^(\d+)[\s|\t](.+)$/", $trimmed, $out)) {
 				$quantity = (int) $out[1][0];
 				$name = $out[2][0];
+				$typeID = gettypeidbyname($name);
+				$itemStack->addItem($typeID, $quantity);
+			}
+
+			if (preg_match_all("/^(.+)[\s|\t](\d+)[\s|\t](.+)[\s|\t](\d+[,[\d]+]?)\sm3$/", $trimmed, $out)) {
+				$quantity = (int) $out[2][0];
+				$name = $out[1][0];
 				$typeID = gettypeidbyname($name);
 				$itemStack->addItem($typeID, $quantity);
 			}
