@@ -92,8 +92,9 @@ class ItemStack {
 			$source .= $rowprefix."</div>\n";
 		}
 
-		if (count($this->items) > 1) {
-			$source .= $rowprefix."<hr>\n";
+		if (count($this->items) != 1) {
+			if (count($this->items) > 1)
+				$source .= $rowprefix."<hr>\n";
 			$source .= $rowprefix.'<div class="iteminfo" style="background-image: url(//image.eveonline.com/Type/23_64.png)">'."\n";
 			$source .= $rowprefix."\t<strong>Sum</strong><br>\n";
 			$source .= $rowprefix."\t".formatvolume($sumVolume).'&nbsp;m&sup3;<br>'."\n";
