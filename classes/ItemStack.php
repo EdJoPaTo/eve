@@ -14,6 +14,12 @@ class ItemStack {
 		$this->items[$typeID] += $quantity;
 	}
 
+	function addItemStack($itemStack) {
+		foreach ($itemStack->items as $typeID => $quantity) {
+			$this->addItem($typeID, $quantity);
+		}
+	}
+
 	function getVolume() {
 		global $mysqli;
 		require_once 'mysqlDetails.php';
@@ -45,6 +51,18 @@ class ItemStack {
 		}
 
 		return $sumPrice;
+	}
+
+	function getReprocessedStack($reprocessPercentage) {
+		require_once 'Reprocess.php';
+		$itemStack = new ItemStack();
+
+		foreach ($this->items as $typeID => $quantity) {
+			$reprocess = new Reprocess($typeID, $reprocessPercentage, $quantity);
+			$itemStack->addItemStack($reprocess->mineralStack);
+		}
+
+		return $itemStack;
 	}
 
 	public function getMouseoverField($systemID = 30000142, $rowprefix = "", $pricetype = 'bestcase') {
