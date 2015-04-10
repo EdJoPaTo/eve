@@ -376,7 +376,7 @@
 							$sell = (float) -1;
 							$buyunits = (int) -1;
 							$sellunits = (int) -1;
-							$stamp = time();
+							$stamp = time() + 24*60*60;
 							$query = "INSERT INTO eve.prices (ID, systemID, buy, sell, buyunits, sellunits, stamp)
 							VALUES ('$id', '$systemid', '$buy', '$sell', '$buyunits', '$sellunits', '$stamp')
 							ON DUPLICATE KEY UPDATE buy='$buy',sell='$sell',buyunits='$buyunits',sellunits='$sellunits',stamp='$stamp'";
