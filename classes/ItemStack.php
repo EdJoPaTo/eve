@@ -53,13 +53,16 @@ class ItemStack {
 		return $sumPrice;
 	}
 
-	function getReprocessedStack($reprocessPercentage) {
+	function getReprocessedStack($reprocessPercentage, $addNotReprocessableItems = true) {
 		require_once 'Reprocess.php';
 		$itemStack = new ItemStack();
 
 		foreach ($this->items as $typeID => $quantity) {
 			$reprocess = new Reprocess($typeID, $reprocessPercentage, $quantity);
-			$itemStack->addItemStack($reprocess->mineralStack);
+			if ($addNotReprocessableItems && count($reprocess->mineralStack->items) == 0)
+				$itemStack->addItem($typeID, $quantity);
+			else
+				$itemStack->addItemStack($reprocess->mineralStack);
 		}
 
 		return $itemStack;
