@@ -39,7 +39,7 @@ Sisters Core Scanner Probe 8 Scanner Probe 0,80 m3
 			echo "\t\t\t\t".'</div>'."\n";
 			echo "\t\t\t\t".'<div class="cell">'."\n";
 			echo "\t\t\t\t\t"."<strong>reprocess reprocessable items... (69,6%)</strong>";
-			echo $itemStack->getReprocessedStack(69.575)->toHtml(30000142, "\t\t\t\t\t");
+			echo $itemStack->getReprocessedStack(0.69575)->toHtml(30000142, "\t\t\t\t\t");
 			echo "\t\t\t\t".'</div>'."\n";
 			echo "\t\t\t\t".'<div class="cell">'."\n";
 			echo "\t\t\t\t\t".'<form action="'.$_SERVER['REQUEST_URI'].'" name="args" method="post">'."\n";
