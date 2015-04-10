@@ -20,7 +20,7 @@
 				padding-top: 75px;
 			}
 			.publictablecell {
-				width: 33%;
+				width: 25%;
 			}
 			.logintablecell {
 				width: 100%;
@@ -75,6 +75,9 @@
 				</a>
 				<a class="publictablecell cell icon" style="background-image: url(//image.eveonline.com/Type/16265_64.png);" href="ice.php">
 					Ice Chart
+				</a>
+				<a class="publictablecell cell icon" style="background-image: url(//image.eveonline.com/Type/23_64.png);" href="item.php">
+					Item Prices
 				</a>
 				<a class="publictablecell cell icon" style="background-image: url(//image.eveonline.com/Type/2398_64.png);" href="planet.php">
 					PI Commodity Prices
