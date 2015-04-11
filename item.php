@@ -5,6 +5,8 @@
 	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/ItemStack.php';
 
 	$title = "Item Prices";
+
+	$reprocess = !empty($_POST['reprocess']) ? toBool(htmlspecialchars($_POST['reprocess'])) : false;
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -38,16 +40,23 @@ Sisters Core Scanner Probe  8  Scanner Probe  0,80 m3
 			echo "\t\t\t\t\t"."<strong>input items</strong>";
 			echo $itemStack->toHtml(30000142, "\t\t\t\t\t");
 			echo "\t\t\t\t".'</div>'."\n";
+			if ($reprocess) {
 			echo "\t\t\t\t".'<div class="cell">'."\n";
-			echo "\t\t\t\t\t"."<strong>reprocess reprocessable items... (69,6%)</strong>";
+			echo "\t\t\t\t\t"."<strong>Reprocess (69,6%)</strong>";
 			echo $itemStack->getReprocessedStack(0.69575)->toHtml(30000142, "\t\t\t\t\t");
 			echo "\t\t\t\t".'</div>'."\n";
+			}
 			echo "\t\t\t\t".'<div class="cell">'."\n";
 			echo "\t\t\t\t\t".'<form action="'.$_SERVER['REQUEST_URI'].'" name="args" method="post">'."\n";
 			echo "\t\t\t\t\t\tYou can copy items from ingame <b>Details</b> or <b>List</b> views by selecting wanted items and using <code>Ctrl + C</code> key combination.<br>Icons view does not have copy feature ingame.<br>\n";
+			echo "\t\t\t\t\t\t".'<input type="submit" value="Submit" /><br>'."\n";
 			echo "\t\t\t\t\t\t".'<textarea name="items" cols="80" rows="15">'.$items.'</textarea>'."<br>\n";
 			echo "\t\t\t\t\t\t".'<input type="submit" value="Submit" />'."\n";
+			echo "\t\t\t\t\t\t<br><br>\n";
+			echo "\t\t\t\t\t\t<strong>Options</strong><br>\n";
+			echo "\t\t\t\t\t\t".'<input type="checkbox" name="reprocess" value="true" onclick="document.args.submit();"'.($reprocess ? " checked" : "").'> Show Reprocessed Stack<br>'."\n";
 			echo "\t\t\t\t\t".'</form>'."\n";
+
 			echo "\t\t\t\t".'</div>'."\n";
 
 			echo "\t\t\t".'</div>'."\n";
