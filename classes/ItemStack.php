@@ -157,6 +157,10 @@ class ItemStack {
 	public static function fromIngameCopyPaste($text) {
 		$itemStack = new ItemStack();
 
+		$findNumber = "(\d+(?:\.\d{3})*)";
+		$findItemName = "([\w\d'-]+(?: [\w\d'-]+)*)\*?";
+		$findColumnSplitter = "(?: |\t)+";
+
 		$splitted = explode("\n", $text);
 
 		foreach ($splitted as $line) {
@@ -164,18 +168,22 @@ class ItemStack {
 			if ($trimmed == "")
 				continue;
 
-			if (preg_match_all("/^(\d+)[\s|\t](.+)$/", $trimmed, $out)) {
-				$quantity = (int) $out[1][0];
-				$name = $out[2][0];
+			if (preg_match_all("/^".$findNumber.$findColumnSplitter.$findItemName."/", $trimmed, $out, PREG_SET_ORDER)) {
+				$quantity = (int) str_replace(".", "", $out[0][1]);
+				$name = $out[0][2];
 				$typeID = gettypeidbyname($name);
 				$itemStack->addItem($typeID, $quantity);
 			}
-
-			if (preg_match_all("/^(.+)[\s|\t](\d+)[\s|\t](.+)[\s|\t](\d+[,[\d]+]?)\sm3$/", $trimmed, $out)) {
-				$quantity = (int) $out[2][0];
-				$name = $out[1][0];
+			else if (preg_match_all("/^".$findItemName.$findColumnSplitter.$findNumber."/", $trimmed, $out, PREG_SET_ORDER)) {
+				$quantity = (int) str_replace(".", "", $out[0][2]);
+				$name = $out[0][1];
 				$typeID = gettypeidbyname($name);
 				$itemStack->addItem($typeID, $quantity);
+			}
+			else if (preg_match_all("/^".$findItemName."/", $trimmed, $out, PREG_SET_ORDER)) {
+				$name = $out[0][1];
+				$typeID = gettypeidbyname($name);
+				$itemStack->addItem($typeID, 1);
 			}
 		}
 
