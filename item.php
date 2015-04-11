@@ -22,11 +22,11 @@
 <?php
 
 			$items = !empty($_POST['items']) ? $_POST['items'] :
-"3000 Veldspar
-2 Logic Circuit
-Fried Interface Circuit 30 Salvaged Materials 0,30 m3
-Power Circuit 2 Salvaged Materials 0,02 m3
-Sisters Core Scanner Probe 8 Scanner Probe 0,80 m3
+"3.000  Veldspar
+2  Logic Circuit
+Fried Interface Circuit  30  Salvaged Materials  0,30 m3
+Power Circuit  2  Salvaged Materials  0,02 m3
+Sisters Core Scanner Probe  8  Scanner Probe  0,80 m3
 ";
 
 			$itemStack = ItemStack::fromIngameCopyPaste($items);
