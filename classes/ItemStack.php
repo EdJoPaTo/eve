@@ -115,6 +115,16 @@ class ItemStack {
 		}
 		usort($items, build_sorter('price', true));
 
+		if (count($this->items) != 1) {
+			$source .= $rowprefix.'<div class="iteminfo" style="background-image: url(//image.eveonline.com/Type/23_64.png)">'."\n";
+			$source .= $rowprefix."\t<strong>Sum</strong><br>\n";
+			$source .= $rowprefix."\t".formatvolume($sumVolume).'&nbsp;m&sup3;<br>'."\n";
+			$source .= $rowprefix."\t".formatprice($sumPrice).'&nbsp;ISK<br>'."\n";
+			$source .= $rowprefix."</div>\n";
+			if (count($this->items) > 1)
+				$source .= $rowprefix."<hr>\n";
+		}
+
 		foreach ($items as $item) {
 			$source .= $rowprefix.'<div class="iteminfo" style="background-image: url(//image.eveonline.com/Type/'.$item['typeID'].'_64.png)">'."\n";
 			$source .= $rowprefix."\t";
@@ -123,16 +133,6 @@ class ItemStack {
 			$source .= $rowprefix."\t".formatvolume($item['volume']).'&nbsp;m&sup3;<br>'."\n";
 			$source .= $rowprefix."\t".formatprice($item['price']).'&nbsp;ISK<br>'."\n";
 			$source .= $item['prices']->getMouseoverField($item['quantity'], $rowprefix."\t");
-			$source .= $rowprefix."</div>\n";
-		}
-
-		if (count($this->items) != 1) {
-			if (count($this->items) > 1)
-				$source .= $rowprefix."<hr>\n";
-			$source .= $rowprefix.'<div class="iteminfo" style="background-image: url(//image.eveonline.com/Type/23_64.png)">'."\n";
-			$source .= $rowprefix."\t<strong>Sum</strong><br>\n";
-			$source .= $rowprefix."\t".formatvolume($sumVolume).'&nbsp;m&sup3;<br>'."\n";
-			$source .= $rowprefix."\t".formatprice($sumPrice).'&nbsp;ISK<br>'."\n";
 			$source .= $rowprefix."</div>\n";
 		}
 
