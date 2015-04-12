@@ -114,7 +114,8 @@
 						echo '<div class="cell">'.$row->typeName."</div>";
 						$expiryTime = $row->expiryTime;
 						echo '<div class="cell"';
-						if ($expiryTime < time()) { echo ' style="color:red;"'; }
+						if ($expiryTime < time()) { echo ' style="color:red;" title="finished!"'; }
+						elseif ($expiryTime < time() + 60 * 60 * 24) { echo ' style="color:orange;" title="in under 24h finished"'; }
 						echo ">";
 						echo gmdate('d.m.Y H:i:s', $expiryTime)."</div>";
 						echo "</div>\n";
@@ -152,8 +153,9 @@
 							$cellstart = '<div class="cell"';
 							$fullUntilTime = ($capacity - $contentVolume) / $income;
 							$fullTime = $lastUpdate + $fullUntilTime * 60 * 60;
-							if ($fullTime < time() + 60 * 60 * 1) { $cellstart .= ' style="color:red;"'; }
-							elseif ($fullTime < time() + 60 * 60 * 24) { $cellstart .= ' style="color:orange;"'; }
+							if ($fullTime < time()) { $cellstart .= ' style="color:red;" title="full!"'; }
+							elseif ($fullTime < time() + 60 * 60 * 1) { $cellstart .= ' style="color:red;" title="in under 1h full!"'; }
+							elseif ($fullTime < time() + 60 * 60 * 24) { $cellstart .= ' style="color:orange;" title="in under 24h full"'; }
 							$cellstart .= ">";
 
 							echo $cellstart.gmdate('d.m.Y H:i:s', $fullTime)."</div>";
