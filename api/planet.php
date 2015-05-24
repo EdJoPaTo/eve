@@ -32,7 +32,7 @@
 <html>
 	<head>
 <?php echo getHead($title); ?>
-		<meta http-equiv="expires" content="<?php echo gmdate("D, d M Y H:i:s e", $cachedUntil); ?>">
+<?php		if (!empty($cachedUntil)) echo "\t\t".'<meta http-equiv="expires" content="' . gmdate("D, d M Y H:i:s e", $cachedUntil) . '">'; ?>
 	</head>
 	<body onload="CCPEVE.requestTrust('<?php echo "http://".$_SERVER['HTTP_HOST']; ?>')">
 <?php echo getPageselection($title, "//image.eveonline.com/Type/2014_64.png"); ?>
