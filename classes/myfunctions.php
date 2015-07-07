@@ -254,26 +254,30 @@
 		$returnString = "";
 		$returnString .= "\t\t\t".'<div id="pageselection">'."\n";
 		if ($_SERVER["PHP_SELF"] != "/index.php")
-			$returnString .= "\t\t\t\t".'<a href="/">Overview</a>'."\n";
-		if ($_SERVER["PHP_SELF"] != "/ore.php")
-			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/34_32.png);" href="/ore.php">Ore</a>'."\n";
-		if ($_SERVER["PHP_SELF"] != "/ice.php")
-			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/16265_32.png);" href="/ice.php">Ice</a>'."\n";
-		if ($_SERVER["PHP_SELF"] != "/item.php")
-			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/23_32.png);" href="/item.php">Item Prices</a>'."\n";
-		if ($_SERVER["PHP_SELF"] != "/planet.php")
-			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/2398_32.png);" href="/planet.php">PI Commodity</a>'."\n";
-		if (!empty($_SESSION['characterID'])) {
-			if ($_SERVER["PHP_SELF"] != "/api/planet.php")
-				$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/2014_32.png);" href="/api/planet.php">PI Overview</a>'."\n";
-		}
+			$returnString .= "\t\t\t\t" . '<a href="/" class="wideonly">Overview</a>' . "\n";
+//		if ($_SERVER["PHP_SELF"] != "/ore.php")
+//			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/34_32.png);" href="/ore.php">Ore</a>'."\n";
+//		if ($_SERVER["PHP_SELF"] != "/ice.php")
+//			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/16265_32.png);" href="/ice.php">Ice</a>'."\n";
+//		if ($_SERVER["PHP_SELF"] != "/item.php")
+//			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/23_32.png);" href="/item.php">Item Prices</a>'."\n";
+//		if ($_SERVER["PHP_SELF"] != "/planet.php")
+//			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/2398_32.png);" href="/planet.php">PI Commodity</a>'."\n";
+//		if (!empty($_SESSION['characterID'])) {
+//			if ($_SERVER["PHP_SELF"] != "/api/planet.php")
+//				$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/2014_32.png);" href="/api/planet.php">PI Overview</a>'."\n";
+//		}
 		if (!empty($title)) {
-			$returnString .= "\t\t\t\t".'<div class="doublespacer"></div>'."\n";
-			$returnString .= "\t\t\t\t".'<div class="wideonly title';
+			$returnString .= "\t\t\t\t" . '<div class="wideonly doublespacer"></div>' . "\n";
+			$returnString .= "\t\t\t\t" . '<div class="wideonly title';
 			if (!empty($bgimage))
 				$returnString .= ' img" style="background-image: url('.$bgimage.'); padding-left: 75px;" ';
 			$returnString .= '">'.$title.'</div>'."\n";
-			$returnString .= "\t\t\t\t".'<div class="wideonly doublespacer"></div>'."\n";
+			$returnString .= "\t\t\t\t" . '<a href="/" class="smallonly title';
+			if ( !empty( $bgimage ) )
+				$returnString .= ' img" style="background-image: url('.$bgimage.'); padding-left: 75px;" ';
+			$returnString .= '">' . $title . '</a>' . "\n";
+			$returnString .= "\t\t\t\t" . '<div class="doublespacer"></div>' . "\n";
 		} else {
 			$returnString .= "\t\t\t\t".'<div class="singlespacer"></div>'."\n";
 		}
@@ -289,14 +293,14 @@
 		}
 /**/
 		$returnString .= "\t\t\t".'</div>'."\n";
-		if (!empty($title)) {
-			$returnString .= "\t\t".'<h1 class="smallonly" style="margin: 0px 15px; margin-top: 75px;">';
-			if (!empty($bgimage))
-				$returnString .= '<img src="'.$bgimage.'">';
-			$returnString .= $title.'</h1>'."\n";
-		} else {
-			$returnString .= "\t\t".'<div class="smallonly" style="margin-top: 50px;"></div>';
-		}
+//		if (!empty($title)) {
+//			$returnString .= "\t\t".'<h1 class="smallonly" style="margin: 0px 15px; margin-top: 75px;">';
+//			if (!empty($bgimage))
+//				$returnString .= '<img src="'.$bgimage.'">';
+//			$returnString .= $title.'</h1>'."\n";
+//		} else {
+			$returnString .= "\t\t" . '<div class="smallonly" style="margin-top: 60px;"></div>';
+//		}
 		return $returnString;
 	}
 	function getFooter() {
