@@ -218,7 +218,7 @@
 	}
 	function createlinktargetcycleamount($m3percycle)
 	{
-		return createlinktarget($GLOBALS['system'], $m3percycle, $GLOBALS['refine']);
+		return createlinktarget($GLOBALS['system'], round( $m3percycle, 0 ), $GLOBALS['refine']);
 	}
 	function createlinktargetrefine($refine)
 	{
@@ -490,19 +490,19 @@
 			echo '<input name="cyclem3" type="number" value="'.$m3percycle.'" /> m&sup3; <input type="submit" value="Submit" /><br>'."\n";
 
 			echo '			Venture: ';
-			echo '<a href="'.createlinktargetcycleamount(300).'">T1 (~300 m&sup3;)</a>, ';
-			echo '<a href="'.createlinktargetcycleamount(500).'">T2 (~500 m&sup3;)</a>, ';
-			echo '<a href="'.createlinktargetcycleamount(860).'">T2+Orca (~860 m&sup3;)</a>, ';
-			echo '<a href="'.createlinktargetcycleamount(700).'">Prospect (~700 m&sup3;)</a>';
+			echo '<a href="' . createlinktargetcycleamount( 164.063 ) . '">T1 (~160 m&sup3;)</a>, ';
+			echo '<a href="' . createlinktargetcycleamount( 255.469 ) . '">T2 (~255 m&sup3;)</a>, ';
+			echo '<a href="' . createlinktargetcycleamount( 293.789 ) . '">T2+Orca (~295 m&sup3;)</a>, ';
+			echo '<a href="' . createlinktargetcycleamount( 348.076 ) . '">Prospect (~350 m&sup3;)</a>';
 			echo "<br>\n";
 			echo '			Retriever: ';
-			echo '<a href="'.createlinktargetcycleamount(900).'">T1 (~900 m&sup3;)</a>, ';
-			echo '<a href="'.createlinktargetcycleamount(1180).'">T2 (~1180 m&sup3;)</a>, ';
-			echo '<a href="'.createlinktargetcycleamount(2000).'">T2+Orca (~2000 m&sup3;)</a>';
+			echo '<a href="' . createlinktargetcycleamount( 1220.933 ) . '">T1 (~1220 m&sup3;)</a>, ';
+			echo '<a href="' . createlinktargetcycleamount( 1593.493 ) . '">T2 (~1595 m&sup3;)</a>, ';
+			echo '<a href="' . createlinktargetcycleamount( 1832.516 ) . '">T2+Orca (~1835 m&sup3;)</a>';
 			echo "<br>\n";
 			echo '			Hulk: ';
-			echo '<a href="'.createlinktargetcycleamount(1700).'">T2 (~1700 m&sup3;)</a>, ';
-			echo '<a href="'.createlinktargetcycleamount(2900).'">T2+Orca (~2900 m&sup3;)</a>';
+			echo '<a href="' . createlinktargetcycleamount( 1169.536 ) . '">T2 (~1170 m&sup3;)</a>, ';
+			echo '<a href="' . createlinktargetcycleamount( 1344.966 ) . '">T2+Orca (~1345 m&sup3;)</a>';
 			echo "<br>\n";
 			echo "			<br>\n";
 			echo "			<strong>Refining</strong><br>\n";
