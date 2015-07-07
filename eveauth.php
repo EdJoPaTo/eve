@@ -30,6 +30,8 @@
 
 			if (!empty($_SESSION['characterID'])) {
 				$characterID = $_SESSION['characterID'];
+				$keyID = "";
+				$vCode = "";
 
 				echo "\t\t\t<h1>API Details</h1>\n";
 				$requiredAPIAccessMask = 33554435;
