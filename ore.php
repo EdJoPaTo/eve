@@ -232,7 +232,7 @@
 		<meta http-equiv="expires" content="<?php echo gmdate("D, d M Y H:i:s e", $updated + 60.0 * 30.0); ?>">
 	</head>
 	<body onload="CCPEVE.requestTrust('<?php echo "http://".$_SERVER['HTTP_HOST']; ?>')">
-<?php echo getPageselection($title, '//image.eveonline.com/Type/34_64.png'); ?>
+<?php echo getPageselection( $title, '//image.eveonline.com/Type/34_64.png' ) . "\n"; ?>
 		<div id="content">
 <?php
 			if (!empty($_SERVER['HTTP_EVE_CHARNAME']) && strpos($_SERVER['HTTP_EVE_SHIPNAME'], $_SERVER['HTTP_EVE_CHARNAME']) !== FALSE) {
@@ -244,7 +244,6 @@
 				echo "\t\t\tPrice data update pending... This may take up to a minute.<br><br>\n";
 			}
 ?>
-
 			<div class="table hoverrow border" style="font-size: 90%; text-align: right;">
 				<div class="headrow">
 					<div class="cell border">Name</div>
@@ -255,7 +254,7 @@
 						<div class="table">
 							<div class="cell" style="width: 100px;">normal<br>ISK</div>
 							<div class="cell borderleft" style="width: 100px;">reprocessed<br>ISK</div>
-							<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
+<?php if ( $compress ) echo "\t\t\t\t\t\t\t" . '<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>' . "\n"; ?>
 						</div>
 					</div>
 					<div class="cell borderleft">
@@ -264,7 +263,7 @@
 							<div class="cell" style="width: 100px; color: #BAA373;">quantity<br>pieces</div>
 							<div class="cell borderleft" style="width: 100px;">normal<br>ISK</div>
 							<div class="cell borderleft" style="width: 100px;">reprocessed<br>ISK</div>
-							<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
+<?php if ( $compress ) echo "\t\t\t\t\t\t\t" . '<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>' . "\n"; ?>
 						</div>
 					</div>
 				</div>
@@ -313,13 +312,14 @@
 				echo "</div>\n";
 
 				echo "\t\t\t\t\t".'<div class="cell border">'."\n";
+				echo "\t\t\t\t\t\t";
 				if (isigb())
 					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$id.')">';
 				echo formatprice($row['1price']);
 				if (isigb())
 					echo "</div>";
 				echo "\n";
-				echo $row['prices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
+				echo $row[ 'prices' ]->getMouseoverField( 1, "\t\t\t\t\t\t" );
 				echo "\t\t\t\t\t</div>\n";
 
 				echo "\t\t\t\t\t".'<div class="cell border">'."\n";
@@ -331,7 +331,7 @@
 					echo " worstvalue";
 				echo '" style="width: 100px; text-align: right;">';
 				echo formatprice($row['batchprice'])."\n";
-				echo $row['prices']->getMouseoverField(100, "\t\t\t\t\t\t\t\t");
+				echo $row[ 'prices' ]->getMouseoverField( 100, "\t\t\t\t\t\t\t\t" );
 				echo "\t\t\t\t\t\t\t"."</div>\n";
 				echo "\t\t\t\t\t\t\t".'<div class="cell';
 				if ($row['batchreprocessedprice'] == $row['batchbestprice'])

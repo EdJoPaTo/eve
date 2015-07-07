@@ -133,7 +133,7 @@
 		<meta http-equiv="expires" content="<?php echo gmdate("D, d M Y H:i:s e", $updated + 60.0 * 30.0); ?>">
 	</head>
 	<body onload="CCPEVE.requestTrust('<?php echo "http://".$_SERVER['HTTP_HOST']; ?>')">
-<?php echo getPageselection($title, '//image.eveonline.com/Type/16265_64.png'); ?>
+<?php echo getPageselection( $title, '//image.eveonline.com/Type/16265_64.png' ) . "\n"; ?>
 		<div id="content">
 <?php
 			if (!empty($_SERVER['HTTP_EVE_CHARNAME']) && strpos($_SERVER['HTTP_EVE_SHIPNAME'], $_SERVER['HTTP_EVE_CHARNAME']) !== FALSE)
@@ -146,7 +146,6 @@
 				echo "\t\t\tPrice data update pending... This may take up to a minute.<br><br>\n";
 			}
 ?>
-
 			<div class="table hoverrow border" style="font-size: 90%; text-align: right;">
 				<div class="headrow">
 					<div class="cell border">Name</div>
@@ -158,10 +157,9 @@
 						<div class="table">
 							<div class="cell" style="width: 100px;">normal<br>ISK</div>
 							<div class="cell borderleft" style="width: 100px;">reprocessed<br>ISK</div>
-							<?php if ($compress) echo "\t\t\t\t\t\t\t".'<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>'; ?>
+<?php if ($compress) echo "\t\t\t\t\t\t\t" . '<div class="cell borderleft" style="width: 100px;">compressed<br>ISK</div>' . "\n"; ?>
 						</div>
 					</div>
-
 				</div>
 <?php
 			foreach ($icetable as $row) {
@@ -211,7 +209,7 @@
 				echo '" style="width: 100px; text-align: right;">';
 				if (isigb())
 					echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.$id.')">';
-				echo formatprice($row['1price']);
+				echo formatprice( $row[ '1price' ] ) . "\n";
 				echo $row['prices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
 				if (isigb())
 					echo "</div>";
@@ -222,7 +220,7 @@
 				if ($row['1reprocessedprice'] == $row['1worstprice'])
 					echo " worstvalue";
 				echo '" style="width: 100px; text-align: right;">';
-				echo formatprice($row['1reprocessedprice']);
+				echo formatprice( $row[ '1reprocessedprice' ] ) . "\n";
 				echo $row['reprocessed']->getMouseoverField($systemid, "\t\t\t\t\t\t\t\t", $pricetype);
 				echo "</div>\n";
 				if ($compress) {
@@ -234,7 +232,7 @@
 					echo '" style="width: 100px; text-align: right;">';
 					if (isigb())
 						echo '<div class="igbmore" onclick="CCPEVE.showMarketDetails('.getcompressedid($id).')">';
-					echo formatprice($row['1compressedprice']);
+					echo formatprice( $row[ '1compressedprice' ] ) . "\n";
 					echo $row['compressedprices']->getMouseoverField(1, "\t\t\t\t\t\t\t\t");
 					if (isigb())
 						echo "</div>";
