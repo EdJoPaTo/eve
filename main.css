@@ -244,6 +244,7 @@ a.external:hover, a.external:focus {
 .iteminfo {
 	background-repeat: no-repeat;
 	background-position: 5px center;
+	background-size: 64px 64px;
 	padding-left: 70px;
 	min-height: 64px;
 }

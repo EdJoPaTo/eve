@@ -87,10 +87,9 @@
 			} else if (empty ( $data ['vCode'] )) {
 				throw new Exception ( "No API verification code has been provided", 0, NULL );
 			}
-
-			// Build the URL query string.
-			$url = sprintf ( "%s?%s", $url, http_build_query ( $data ) );
 		}
+		// Build the URL query string.
+		$url = sprintf ( "%s?%s", $url, http_build_query ( $data ) );
 
 		$cu = curl_init($url);
 		curl_setopt ( $cu, CURLOPT_URL, $url );

@@ -37,6 +37,22 @@
 		mysql_query($query);
 		echo mysql_error();
 
+		$query = 'CREATE TABLE IF NOT EXISTS characters (
+		characterID bigint(15) NOT NULL,
+		characterName varchar(128) NOT NULL,
+		corporationID bigint(15),
+		corporationName varchar(128),
+		allianceID bigint(15),
+		allianceName varchar(128),
+		factionID bigint(15),
+		factionName varchar(128),
+		cachedUntil bigint(15),
+		PRIMARY KEY (characterID),
+		UNIQUE (characterID)
+		)';
+		mysql_query($query);
+		echo mysql_error();
+
 		$query = 'CREATE TABLE IF NOT EXISTS api (
 		characterID bigint(15) NOT NULL,
 		keyID bigint(15) NOT NULL,
