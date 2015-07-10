@@ -38,12 +38,12 @@ Serenety Steel
       $pilots = Pilot::getPilotsOfIDs( $pilotIDs );
 
       function cmp( $a, $b ) {
-        $value = strcmp( $a->allianceName, $b->allianceName );
+        $value = strcasecmp( $a->allianceName, $b->allianceName );
         if ( $value == 0 ) {
-          $value = strcmp( $a->corporationName, $b->corporationName );
+          $value = strcasecmp( $a->corporationName, $b->corporationName );
         }
         if ( $value == 0 ) {
-          $value = strcmp( $a->characterName, $b->characterName );
+          $value = strcasecmp( $a->characterName, $b->characterName );
         }
         return $value;
       }
