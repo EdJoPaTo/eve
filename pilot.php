@@ -96,7 +96,7 @@ Karnis Delvari
 
       echo "\t\t\t" . '<div class="table">' . "\n";
 
-      echo "\t\t\t\t" . '<div class="cell">' . "\n";
+      echo "\t\t\t\t" . '<div class="cell smallonsmall">' . "\n";
       echo "\t\t\t\t\t" . '<div class="table">' . "\n";
 
       $lastAlli = -1;
@@ -156,12 +156,12 @@ Karnis Delvari
 
         echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
         echo formatpriceshort( $pilot->zKillboardCharacterStats->iskDestroyed ) . "&nbsp;ISK";
-        echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsDestroyed ) . '&nbsp;ships)';
-        echo ' destroyed</span>' . "<br>\n";
+        echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->shipsDestroyed ) . '&nbsp;ships)';
+        echo '&nbsp;destroyed</span>' . "<br>\n";
         echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
         echo formatpriceshort( $pilot->zKillboardCharacterStats->iskLost ) . "&nbsp;ISK";
-        echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsLost ) . '&nbsp;ships)';
-        echo ' lost</span>' . "<br>\n";
+        echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->shipsLost ) . '&nbsp;ships)';
+        echo '&nbsp;lost</span>' . "<br>\n";
 
         echo "\t\t\t\t\t\t\t\t\t\t" . "</div>\n";
       }
@@ -187,7 +187,7 @@ Karnis Delvari
       echo "\t\t\t\t\t" . '<form action="' . $_SERVER['REQUEST_URI'] . '" name="args" method="post">' . "\n";
       echo "\t\t\t\t\t\tYou can copy pilots from chat member lists (like the local) by selecting them and using <code>Ctrl + C</code> key combination.<br>\n";
       echo "\t\t\t\t\t\t" . '<input type="submit" value="Submit" /><br>' . "\n";
-      echo "\t\t\t\t\t\t" . '<textarea name="pilots" cols="80" rows="40">' . $pilotsText . '</textarea>' . "<br>\n";
+      echo "\t\t\t\t\t\t" . '<textarea name="pilots" cols="30" rows="' . ( $pilotCount + 10 ) . '">' . $pilotsText . '</textarea>' . "<br>\n";
       echo "\t\t\t\t\t\t" . '<input type="submit" value="Submit" />' . "\n";
       echo "\t\t\t\t\t\t<br><br>\n";
       echo "\t\t\t\t\t" . '</form>' . "\n";

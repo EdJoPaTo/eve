@@ -314,7 +314,14 @@ a.external:hover, a.external:focus {
 	}
 	.smallonly, #pageselection > .smallonly { display: none; }
 }
-@media (max-width:999px) { .wideonly, #pageselection > .wideonly { display: none; } }
+@media (max-width:999px) {
+	.wideonly, #pageselection > .wideonly {
+		display: none;
+	}
+	.smallonsmall {
+		font-size: 90%;
+	}
+}
 @media (min-width:1300px) { #content { width: 1200px; } }
 @media (min-width:1700px) { #content { width: 1600px; } }
 
