@@ -51,7 +51,7 @@ Serenety Steel
 
       echo "\t\t\t" . '<div class="table">' . "\n";
 
-      echo "\t\t\t\t" . '<div class="cell" style="padding: 10px;">' . "\n";
+      echo "\t\t\t\t" . '<div class="cell">' . "\n";
       echo "\t\t\t\t\t" . '<div class="table">' . "\n";
 
       $lastAlli = -1;
@@ -72,7 +72,7 @@ Serenety Steel
             echo $pilot->allianceName;
           }
           echo "</strong><br>\n";
-          echo "\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(//image.eveonline.com/Alliance/' . $pilot->allianceID . '_128.png);)">' . "\n";
+          echo "\t\t\t\t\t\t" . '<div class="iteminfo" style="padding-bottom: 7px; background-image: url(//image.eveonline.com/Alliance/' . $pilot->allianceID . '_128.png);)">' . "\n";
           $lastAlli = $pilot->allianceID;
           $lastCorp = -1;
         }
@@ -89,7 +89,8 @@ Serenety Steel
         }
 
         echo "\t\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(//image.eveonline.com/Character/' . $pilot->characterID . '_128.jpg);)">' . "\n";
-        echo "\t\t\t\t\t\t\t\t\t" . $pilot->characterName . "<br>\n";
+        echo "\t\t\t\t\t\t\t\t\t" . "<strong>" . $pilot->characterName . "</strong>" . "\n";
+        echo "\t\t\t\t\t\t\t\t\t" . '<a href="https://zkillboard.com/character/' . $pilot->characterID . '/" target="_blank" class="external">zK</a>' . "<br>\n";
 //        echo "\t\t\t\t\t\t\t\t\t" . $pilot->corporationName . "<br>\n";
         if ( $pilot->allianceID != 0 ) {
 //          echo "\t\t\t\t\t\t\t\t\t" . $pilot->allianceName . "<br>\n";
@@ -105,7 +106,7 @@ Serenety Steel
 
       echo "\t\t\t\t\t" . '</div>' . "\n";
       echo "\t\t\t\t" . '</div>' . "\n";
-      echo "\t\t\t\t" . '<div class="cell" style="padding: 10px;">' . "\n";
+      echo "\t\t\t\t" . '<div class="cell" style="padding-left: 15px;">' . "\n";
       echo "\t\t\t\t\t" . '<form action="' . $_SERVER['REQUEST_URI'] . '" name="args" method="post">' . "\n";
       echo "\t\t\t\t\t\tYou can copy pilots from chat member lists by selecting them and using <code>Ctrl + C</code> key combination.<br>\n";
       echo "\t\t\t\t\t\t" . '<input type="submit" value="Submit" /><br>' . "\n";
