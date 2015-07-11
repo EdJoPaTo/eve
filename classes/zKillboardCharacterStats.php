@@ -33,16 +33,20 @@ class zKillboardCharacterStats {
 
 		$json = callKillboardCharacterStats( $characterID );
 		$cachedUntil = time() + 60 * 60 * 24 * 5; // 5 Tage
+		$iskDestroyed = empty( $json->iskDestroyed ) ? 0 : (int) $json->iskDestroyed;
+		$iskLost = empty( $json->iskLost ) ? 0 : (int) $json->iskLost;
+		$shipsDestroyed = empty( $json->shipsDestroyed ) ? 0 : (int) $json->shipsDestroyed;
+		$shipsLost = empty( $json->shipsLost ) ? 0 : (int) $json->shipsLost;
 
 		$query = "INSERT INTO eve.killboardCharacterStats (characterID, iskDestroyed, iskLost, shipsDestroyed, shipsLost, cachedUntil)
-		VALUES ('$characterID', '$json->iskDestroyed', '$json->iskLost', '$json->shipsDestroyed', '$json->shipsLost', '$cachedUntil')
-		ON DUPLICATE KEY UPDATE iskDestroyed='$json->iskDestroyed', iskLost='$json->iskLost', shipsDestroyed='$json->shipsDestroyed', shipsLost='$json->shipsLost', cachedUntil='$cachedUntil'";
+		VALUES ('$characterID', '$iskDestroyed', '$iskLost', '$shipsDestroyed', '$shipsLost', '$cachedUntil')
+		ON DUPLICATE KEY UPDATE iskDestroyed='$iskDestroyed', iskLost='$iskLost', shipsDestroyed='$shipsDestroyed', shipsLost='$shipsLost', cachedUntil='$cachedUntil'";
 		$mysqli->query( $query );
 		if ( $mysqli->error ) {
 			echo $mysqli->error . "<br>\n";
 		}
 
-		return new zKillboardCharacterStats( $characterID, $json->iskDestroyed, $json->iskLost, $json->shipsDestroyed, $json->shipsLost );
+		return new zKillboardCharacterStats( $characterID, $iskDestroyed, $iskLost, $shipsDestroyed, $shipsLost );
 	}
 }
 

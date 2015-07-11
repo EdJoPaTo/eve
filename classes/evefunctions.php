@@ -142,7 +142,6 @@
 	}
 	function callKillboardCharacterStats( $characterID ) {
 		$url = "https://zkillboard.com/api/stats/characterID/".$characterID."/";
-		echo $url . "\n";
 
 		$cu = curl_init($url);
 		curl_setopt ( $cu, CURLOPT_URL, $url );
