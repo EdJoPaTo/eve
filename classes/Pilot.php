@@ -108,6 +108,7 @@ class Pilot {
       $names = array( $ids );
 
     $idsleft = array();
+    $idsNeedUpdate = array();
     $returnArray = array();
 
     foreach ( $ids as $id ) {
@@ -116,8 +117,12 @@ class Pilot {
       }
 
       $result = $mysqli->query( "SELECT * FROM eve.characters WHERE characterID=$id" );
-      if ( ( $row = $result->fetch_object( ) ) && ( (int) $row->cachedUntil > time() ) ) {
-        $returnArray[] = new Pilot(
+      if ( $row = $result->fetch_object( ) ) {
+        // Erstmal hinzufügen aber als "needs update" kennzeichen
+        if ( (int) $row->cachedUntil < time() ) {
+          $idsNeedUpdate[ $id ] = (int) $row->cachedUntil;
+        }
+        $returnArray[ $row->characterID ] = new Pilot(
           $row->characterID,
           $row->characterName,
           $row->corporationID,
@@ -130,6 +135,12 @@ class Pilot {
       } else {
         $idsleft[] = $id;
       }
+    }
+
+    // needs update hinten an die Fehlenden anfügen, damit die Fehlenden zuerst abgeholt werden
+    asort( $idsNeedUpdate, SORT_NUMERIC ); // Älteste Info zuerst aktualisieren
+    foreach ( $idsNeedUpdate as $id => $cachedUntil ) {
+      $idsleft[] = $id;
     }
 
     if ( count( $idsleft ) > 0 ) {
@@ -151,7 +162,7 @@ class Pilot {
         if ( $curCorpID == 0 )
           continue;
 
-        $returnArray[] = new Pilot(
+        $returnArray[ (int) $curCharID ] = new Pilot(
           $curCharID,
           $curCharName,
           $curCorpID,
