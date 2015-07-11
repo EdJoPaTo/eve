@@ -30,6 +30,9 @@
 "Rell Silfani
 Karnis Delvari
 ";
+      $pilotsText = trim( $pilotsText, " \t\n\r" );
+      $pilotsText = preg_replace( "/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $pilotsText );
+
           $time = microtime();
       $pilotIDs = Pilot::getIDsOfIngameCopyPaste( $pilotsText );
           $timeNameToPlayer = microtime() - $time; $time = microtime();
@@ -168,6 +171,13 @@ Karnis Delvari
       echo "\t\t\t\t\t" . '</div>' . "\n";
       echo "\t\t\t\t" . '</div>' . "\n";
       echo "\t\t\t\t" . '<div class="cell" style="padding-left: 10px;">' . "\n";
+
+      $lines = substr_count( $pilotsText, "\n" ) + 1;
+      $pilotCount = count( $pilots );
+      if ( $lines - $pilotCount > 0 ) {
+        echo "\t\t\t\t\t" . '<span style="color: red;">Your List contains more lines than Pilots loaded. Some lines are invalid or a big amout of new pilots was added.</span>' . "<br><br>\n";
+      }
+
       echo "\t\t\t\t\t" . '<form action="' . $_SERVER['REQUEST_URI'] . '" name="args" method="post">' . "\n";
       echo "\t\t\t\t\t\tYou can copy pilots from chat member lists (like the local) by selecting them and using <code>Ctrl + C</code> key combination.<br>\n";
       echo "\t\t\t\t\t\t" . '<input type="submit" value="Submit" /><br>' . "\n";
