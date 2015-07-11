@@ -10,6 +10,15 @@
     <head>
   <?php echo getHead($title); ?>
       <style type="text/css">
+        .iteminfo {
+          background-position: 5px 2px;
+        }
+        .alliance {
+          padding: 7px;
+        }
+        .alliance:nth-of-type(even) {
+          background-color: rgba( 70, 70, 70, 0.3 );
+        }
       </style>
     </head>
     <body onload="CCPEVE.requestTrust('<?php echo "http://".$_SERVER['HTTP_HOST']; ?>')">
@@ -37,6 +46,26 @@ Serenety Steel
       $pilotIDs = Pilot::getIDsOfIngameCopyPaste( $pilotsText );
       $pilots = Pilot::getPilotsOfIDs( $pilotIDs );
 
+      $alliances = array();
+      $corps = array();
+
+      foreach ( $pilots as $pilot ) {
+        echo $pilot->corporationID . "\n";
+        if ( empty( $corps[ $pilot->corporationID ] ) ) {
+          $corps[ $pilot->corporationID ] = array();
+          $corps[ $pilot->corporationID ][ 'count' ] = 0;
+        }
+        if ( empty( $alliances[ $pilot->allianceID ] ) && $pilot->allianceID != 0 ) {
+          $alliances[ $pilot->allianceID ] = array();
+          $alliances[ $pilot->allianceID ][ 'count' ] = 0;
+        }
+
+        $corps[ $pilot->corporationID ][ 'count' ] += 1;
+        if ( $pilot->allianceID != 0 ) {
+          $alliances[ $pilot->allianceID ][ 'count' ] += 1;
+        }
+      }
+
       function cmp( $a, $b ) {
         $value = strcasecmp( $a->allianceName, $b->allianceName );
         if ( $value == 0 ) {
@@ -56,57 +85,63 @@ Serenety Steel
 
       $lastAlli = -1;
       $lastCorp = -1;
-      //TODO: Display Pilots
       foreach ( $pilots as $pilot ) {
         if ($lastAlli != $pilot->allianceID) {
           if ( $lastCorp != -1 ) {
-            echo "\t\t\t\t\t\t\t" . "</div>\n";
+            echo "\t\t\t\t\t\t\t\t" . "</div>\n";
           }
           if ( $lastAlli != -1 ) {
+            echo "\t\t\t\t\t\t\t" . "</div>\n";
             echo "\t\t\t\t\t\t" . "</div>\n";
           }
-          echo "\t\t\t\t\t\t" . "<strong>";
+          echo "\t\t\t\t\t\t" . '<div class="alliance">' . "\n";
           if ( $pilot->allianceID == 0) {
-            echo "Without Alliance";
+            echo "\t\t\t\t\t\t\t" . '<div class="iteminfo">' . "\n";
           } else {
+            echo "\t\t\t\t\t\t\t" . "<strong>";
             echo $pilot->allianceName;
+            echo "</strong>";
+            echo ' (' . $alliances[ $pilot->allianceID ][ 'count' ] . ')';
+            echo "<br>\n";
+            echo "\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(//image.eveonline.com/Alliance/' . $pilot->allianceID . '_128.png);)">' . "\n";
           }
-          echo "</strong><br>\n";
-          echo "\t\t\t\t\t\t" . '<div class="iteminfo" style="padding-bottom: 7px; background-image: url(//image.eveonline.com/Alliance/' . $pilot->allianceID . '_128.png);)">' . "\n";
           $lastAlli = $pilot->allianceID;
           $lastCorp = -1;
         }
 
         if ($lastCorp != $pilot->corporationID) {
           if ( $lastCorp != -1 ) {
-            echo "\t\t\t\t\t\t\t" . "</div>\n";
+            echo "\t\t\t\t\t\t\t\t" . "</div>\n";
           }
-          echo "\t\t\t\t\t\t\t" . "<strong>";
+          echo "\t\t\t\t\t\t\t\t" . "<strong>";
           echo $pilot->corporationName;
-          echo "</strong><br>\n";
-          echo "\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(//image.eveonline.com/Corporation/' . $pilot->corporationID . '_128.png);)">' . "\n";
+          echo "</strong>";
+          echo ' (' . $corps[ $pilot->corporationID ][ 'count' ] . ')';
+          echo "<br>\n";
+          echo "\t\t\t\t\t\t\t\t" . '<div class="corporation iteminfo" style="background-image: url(//image.eveonline.com/Corporation/' . $pilot->corporationID . '_128.png);)">' . "\n";
           $lastCorp = $pilot->corporationID;
         }
 
-        echo "\t\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(//image.eveonline.com/Character/' . $pilot->characterID . '_128.jpg);)">' . "\n";
-        echo "\t\t\t\t\t\t\t\t\t" . "<strong>" . $pilot->characterName . "</strong>" . "\n";
-        echo "\t\t\t\t\t\t\t\t\t" . '<a href="https://zkillboard.com/character/' . $pilot->characterID . '/" target="_blank" class="external">zK</a>' . "<br>\n";
+        echo "\t\t\t\t\t\t\t\t\t" . '<div class="character iteminfo" style="background-image: url(//image.eveonline.com/Character/' . $pilot->characterID . '_128.jpg);)">' . "\n";
+        echo "\t\t\t\t\t\t\t\t\t\t" . "<strong>" . $pilot->characterName . "</strong>" . "\n";
+        echo "\t\t\t\t\t\t\t\t\t\t" . '<a href="https://zkillboard.com/character/' . $pilot->characterID . '/" target="_blank" class="external">zK</a>' . "<br>\n";
 //        echo "\t\t\t\t\t\t\t\t\t" . $pilot->corporationName . "<br>\n";
         if ( $pilot->allianceID != 0 ) {
 //          echo "\t\t\t\t\t\t\t\t\t" . $pilot->allianceName . "<br>\n";
         }
-        echo "\t\t\t\t\t\t\t\t" . "</div>\n";
+        echo "\t\t\t\t\t\t\t\t\t" . "</div>\n";
       }
       if ( $lastCorp != -1 ) {
-        echo "\t\t\t\t\t\t\t" . "</div>\n";
+        echo "\t\t\t\t\t\t\t\t" . "</div>\n";
       }
       if ( $lastAlli != -1 ) {
+        echo "\t\t\t\t\t\t\t" . "</div>\n";
         echo "\t\t\t\t\t\t" . "</div>\n";
       }
 
       echo "\t\t\t\t\t" . '</div>' . "\n";
       echo "\t\t\t\t" . '</div>' . "\n";
-      echo "\t\t\t\t" . '<div class="cell" style="padding-left: 15px;">' . "\n";
+      echo "\t\t\t\t" . '<div class="cell" style="padding-left: 10px;">' . "\n";
       echo "\t\t\t\t\t" . '<form action="' . $_SERVER['REQUEST_URI'] . '" name="args" method="post">' . "\n";
       echo "\t\t\t\t\t\tYou can copy pilots from chat member lists by selecting them and using <code>Ctrl + C</code> key combination.<br>\n";
       echo "\t\t\t\t\t\t" . '<input type="submit" value="Submit" /><br>' . "\n";
