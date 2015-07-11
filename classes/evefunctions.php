@@ -11,6 +11,25 @@
 	{
 		return number_format($price, 2, ",", ".");
 	}
+	function formatpriceshort( $price ) {
+		$exponent = 0;
+		while ( $price > 1000 ) {
+			$price /= 1000;
+			$exponent += 3;
+		}
+
+		switch ($exponent) {
+			case 15: $letter = 'p'; break; //Just in case...
+			case 12: $letter = 't'; break;
+			case  9: $letter = 'b'; break;
+			case  6: $letter = 'm'; break;
+			case  3: $letter = 'k'; break;
+			case  0:
+			default: $letter = ''; break;
+		}
+
+		return number_format($price, 2, ",", ".") . $letter;
+	}
 	function formatpieces($pieces)
 	{
 		return number_format((int)$pieces, 0, ",", ".");
@@ -120,5 +139,28 @@
 		}
 
 		return $xml;
+	}
+	function callKillboardCharacterStats( $characterID ) {
+		$url = "https://zkillboard.com/api/stats/characterID/".$characterID."/";
+		echo $url . "\n";
+
+		$cu = curl_init($url);
+		curl_setopt ( $cu, CURLOPT_URL, $url );
+		curl_setopt ( $cu, CURLOPT_RETURNTRANSFER, 1 );
+
+		$response = curl_exec($cu);
+		//$response = file_get_contents($url);
+
+		$errormsg = curl_error($cu);
+//		echo "$url $errormsg\n";
+		if (curl_errno($cu)) {
+			curl_close($cu);
+			throw new Exception($errormsg, 0, NULL);
+		}
+		curl_close($cu);
+
+		$json = json_decode( $response );
+
+		return $json;
 	}
 ?>

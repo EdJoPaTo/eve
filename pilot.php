@@ -41,6 +41,7 @@ Penguin68
 Tyr Dolorem
 Quasi Vader
 Serenety Steel
+Brother Mojo
 ";
 
       $pilotIDs = Pilot::getIDsOfIngameCopyPaste( $pilotsText );
@@ -50,24 +51,41 @@ Serenety Steel
       $corps = array();
 
       foreach ( $pilots as $pilot ) {
-        echo $pilot->corporationID . "\n";
+        $pilot->getKillboardCharacterStats();
+
         if ( empty( $corps[ $pilot->corporationID ] ) ) {
           $corps[ $pilot->corporationID ] = array();
           $corps[ $pilot->corporationID ][ 'count' ] = 0;
+          $corps[ $pilot->corporationID ][ 'iskDestroyed' ] = 0;
+          $corps[ $pilot->corporationID ][ 'iskLost' ] = 0;
         }
         if ( empty( $alliances[ $pilot->allianceID ] ) && $pilot->allianceID != 0 ) {
           $alliances[ $pilot->allianceID ] = array();
           $alliances[ $pilot->allianceID ][ 'count' ] = 0;
+          $alliances[ $pilot->allianceID ][ 'iskDestroyed' ] = 0;
+          $alliances[ $pilot->allianceID ][ 'iskLost' ] = 0;
         }
 
         $corps[ $pilot->corporationID ][ 'count' ] += 1;
+        $corps[ $pilot->corporationID ][ 'iskDestroyed' ] += $pilot->zKillboardCharacterStats->iskDestroyed;
+        $corps[ $pilot->corporationID ][ 'iskLost' ] += $pilot->zKillboardCharacterStats->iskLost;
         if ( $pilot->allianceID != 0 ) {
           $alliances[ $pilot->allianceID ][ 'count' ] += 1;
+          $alliances[ $pilot->allianceID ][ 'iskDestroyed' ] += $pilot->zKillboardCharacterStats->iskDestroyed;
+          $alliances[ $pilot->allianceID ][ 'iskLost' ] += $pilot->zKillboardCharacterStats->iskLost;
         }
       }
 
       function cmp( $a, $b ) {
-        $value = strcasecmp( $a->allianceName, $b->allianceName );
+        $tmp = $b->zKillboardCharacterStats->iskDestroyed - $a->zKillboardCharacterStats->iskDestroyed;
+        $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
+        if ( $value == 0) {
+          $tmp = $a->zKillboardCharacterStats->iskLost - $b->zKillboardCharacterStats->iskLost;
+          $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
+        }
+        if ( $value == 0) {
+          $value = strcasecmp( $a->allianceName, $b->allianceName );
+        }
         if ( $value == 0 ) {
           $value = strcasecmp( $a->corporationName, $b->corporationName );
         }
@@ -86,6 +104,10 @@ Serenety Steel
       $lastAlli = -1;
       $lastCorp = -1;
       foreach ( $pilots as $pilot ) {
+        if ($lastAlli == 0 && $lastCorp != $pilot->corporationID ) {
+          $lastAlli = -2;
+        }
+
         if ($lastAlli != $pilot->allianceID) {
           if ( $lastCorp != -1 ) {
             echo "\t\t\t\t\t\t\t\t" . "</div>\n";
@@ -96,7 +118,7 @@ Serenety Steel
           }
           echo "\t\t\t\t\t\t" . '<div class="alliance">' . "\n";
           if ( $pilot->allianceID == 0) {
-            echo "\t\t\t\t\t\t\t" . '<div class="iteminfo">' . "\n";
+            echo "\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(/res/RedX_64.png);)">' . "\n";
           } else {
             echo "\t\t\t\t\t\t\t" . "<strong>";
             echo $pilot->allianceName;
@@ -129,6 +151,16 @@ Serenety Steel
         if ( $pilot->allianceID != 0 ) {
 //          echo "\t\t\t\t\t\t\t\t\t" . $pilot->allianceName . "<br>\n";
         }
+
+        echo "\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
+        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskDestroyed );
+        echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsDestroyed ) . ' ships)';
+        echo ' destroyed</span>' . "<br>\n";
+        echo "\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
+        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskLost );
+        echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsLost ) . ' ships)';
+        echo ' lost</span>' . "<br>\n";
+
         echo "\t\t\t\t\t\t\t\t\t" . "</div>\n";
       }
       if ( $lastCorp != -1 ) {

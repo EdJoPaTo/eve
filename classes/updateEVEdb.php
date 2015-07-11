@@ -53,6 +53,19 @@
 		mysql_query($query);
 		echo mysql_error();
 
+		$query = 'CREATE TABLE IF NOT EXISTS killboardCharacterStats (
+		characterID bigint(15) NOT NULL,
+		iskDestroyed bigint(15),
+		iskLost bigint(15),
+		shipsDestroyed bigint(15),
+		shipsLost bigint(15),
+		cachedUntil bigint(15),
+		PRIMARY KEY (characterID),
+		UNIQUE (characterID)
+		)';
+		mysql_query($query);
+		echo mysql_error();
+
 		$query = 'CREATE TABLE IF NOT EXISTS api (
 		characterID bigint(15) NOT NULL,
 		keyID bigint(15) NOT NULL,

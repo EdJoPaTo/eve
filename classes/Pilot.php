@@ -9,16 +9,27 @@ class Pilot {
   var $allianceName;
   var $factionID;
   var $factionName;
+  var $zKillboardCharacterStats;
 
   function __construct( $characterID = 0, $characterName = "", $corporationID = 0, $corporationName = "", $allianceID = 0, $allianceName = "", $factionID = 0, $factionName = "" ) {
-    $this->characterID = $characterID;
+    $this->characterID = (int) $characterID;
     $this->characterName = $characterName;
-    $this->corporationID = $corporationID;
+    $this->corporationID = (int) $corporationID;
     $this->corporationName = $corporationName;
-    $this->allianceID = $allianceID;
+    $this->allianceID = (int) $allianceID;
     $this->allianceName = $allianceName;
-    $this->factionID = $factionID;
+    $this->factionID = (int) $factionID;
     $this->factionName = $factionName;
+  }
+
+  public function getKillboardCharacterStats( ) {
+    require_once 'zKillboardCharacterStats.php';
+
+    if ( empty( $this->zKillboardCharacterStats ) ) {
+      $this->zKillboardCharacterStats = zKillboardCharacterStats::getKillboardFromID( $this->characterID );
+    }
+
+    return $this->zKillboardCharacterStats;
   }
 
   public static function getIDsOfIngameCopyPaste( $text ) {
@@ -105,21 +116,17 @@ class Pilot {
       }
 
       $result = $mysqli->query( "SELECT * FROM eve.characters WHERE characterID=$id" );
-      if ( $row = $result->fetch_object( ) ) {
-        if ( (int) $row->cachedUntil < time() ) {
-          $idsleft[] = $id;
-        } else {
-          $returnArray[] = new Pilot(
-            $row->characterID,
-            $row->characterName,
-            $row->corporationID,
-            $row->corporationName,
-            $row->allianceID,
-            $row->allianceName,
-            $row->factionID,
-            $row->factionName
-          );
-        }
+      if ( ( $row = $result->fetch_object( ) ) && ( (int) $row->cachedUntil > time() ) ) {
+        $returnArray[] = new Pilot(
+          $row->characterID,
+          $row->characterName,
+          $row->corporationID,
+          $row->corporationName,
+          $row->allianceID,
+          $row->allianceName,
+          $row->factionID,
+          $row->factionName
+        );
       } else {
         $idsleft[] = $id;
       }
