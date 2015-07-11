@@ -16,7 +16,7 @@
         .alliance {
           padding: 7px;
         }
-        .alliance:nth-of-type(even) {
+        .alliance:nth-of-type(even), .corporation:nth-of-type(even) {
           background-color: rgba( 70, 70, 70, 0.3 );
         }
       </style>
@@ -110,6 +110,7 @@ Brother Mojo
 
         if ($lastAlli != $pilot->allianceID) {
           if ( $lastCorp != -1 ) {
+            echo "\t\t\t\t\t\t\t\t\t" . "</div>\n";
             echo "\t\t\t\t\t\t\t\t" . "</div>\n";
           }
           if ( $lastAlli != -1 ) {
@@ -133,37 +134,40 @@ Brother Mojo
 
         if ($lastCorp != $pilot->corporationID) {
           if ( $lastCorp != -1 ) {
+            echo "\t\t\t\t\t\t\t\t\t" . "</div>\n";
             echo "\t\t\t\t\t\t\t\t" . "</div>\n";
           }
-          echo "\t\t\t\t\t\t\t\t" . "<strong>";
+          echo "\t\t\t\t\t\t\t\t" . '<div class="corporation">' . "\n";
+          echo "\t\t\t\t\t\t\t\t\t" . "<strong>";
           echo $pilot->corporationName;
           echo "</strong>";
           echo ' (' . $corps[ $pilot->corporationID ][ 'count' ] . ')';
           echo "<br>\n";
-          echo "\t\t\t\t\t\t\t\t" . '<div class="corporation iteminfo" style="background-image: url(//image.eveonline.com/Corporation/' . $pilot->corporationID . '_128.png);)">' . "\n";
+          echo "\t\t\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(//image.eveonline.com/Corporation/' . $pilot->corporationID . '_128.png);)">' . "\n";
           $lastCorp = $pilot->corporationID;
         }
 
-        echo "\t\t\t\t\t\t\t\t\t" . '<div class="character iteminfo" style="background-image: url(//image.eveonline.com/Character/' . $pilot->characterID . '_128.jpg);)">' . "\n";
-        echo "\t\t\t\t\t\t\t\t\t\t" . "<strong>" . $pilot->characterName . "</strong>" . "\n";
-        echo "\t\t\t\t\t\t\t\t\t\t" . '<a href="https://zkillboard.com/character/' . $pilot->characterID . '/" target="_blank" class="external">zK</a>' . "<br>\n";
+        echo "\t\t\t\t\t\t\t\t\t\t" . '<div class="character iteminfo" style="background-image: url(//image.eveonline.com/Character/' . $pilot->characterID . '_128.jpg);)">' . "\n";
+        echo "\t\t\t\t\t\t\t\t\t\t\t" . "<strong>" . $pilot->characterName . "</strong>" . "\n";
+        echo "\t\t\t\t\t\t\t\t\t\t\t" . '<a href="https://zkillboard.com/character/' . $pilot->characterID . '/" target="_blank" class="external">zK</a>' . "<br>\n";
 //        echo "\t\t\t\t\t\t\t\t\t" . $pilot->corporationName . "<br>\n";
         if ( $pilot->allianceID != 0 ) {
 //          echo "\t\t\t\t\t\t\t\t\t" . $pilot->allianceName . "<br>\n";
         }
 
-        echo "\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
+        echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
         echo formatpriceshort( $pilot->zKillboardCharacterStats->iskDestroyed );
         echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsDestroyed ) . ' ships)';
         echo ' destroyed</span>' . "<br>\n";
-        echo "\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
+        echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
         echo formatpriceshort( $pilot->zKillboardCharacterStats->iskLost );
         echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsLost ) . ' ships)';
         echo ' lost</span>' . "<br>\n";
 
-        echo "\t\t\t\t\t\t\t\t\t" . "</div>\n";
+        echo "\t\t\t\t\t\t\t\t\t\t" . "</div>\n";
       }
       if ( $lastCorp != -1 ) {
+        echo "\t\t\t\t\t\t\t\t\t" . "</div>\n";
         echo "\t\t\t\t\t\t\t\t" . "</div>\n";
       }
       if ( $lastAlli != -1 ) {
