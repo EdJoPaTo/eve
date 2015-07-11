@@ -75,8 +75,36 @@ Karnis Delvari
           $timeKillboard = microtime() - $time; $time = microtime();
 
       function cmp( $a, $b ) {
-        $tmp = $b->zKillboardCharacterStats->iskDestroyed - $a->zKillboardCharacterStats->iskDestroyed;
-        $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
+        global $alliances;
+        global $corps;
+        $value = 0;
+
+        //Alliance ISK destroyed
+        if ( $value == 0 && $a->allianceID != 0 && $b->allianceID != 0) {
+          $tmp = $alliances[ $b->allianceID ][ 'iskDestroyed' ] - $alliances[ $a->allianceID ][ 'iskDestroyed' ];
+          $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
+        }
+        // Alliance Member Count
+        if ( $value == 0 && $a->allianceID != 0 && $b->allianceID != 0) {
+          $tmp = $alliances[ $b->allianceID ][ 'count' ] - $alliances[ $a->allianceID ][ 'count' ];
+          $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
+        }
+        // Corp ISK destroyed
+        if ( $value == 0 ) {
+          $tmp = $corps[ $b->corporationID ][ 'iskDestroyed' ] - $corps[ $a->corporationID ][ 'iskDestroyed' ];
+          $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
+        }
+        // Corp Member Count
+        if ( $value == 0 ) {
+          $tmp = $corps[ $b->corporationID ][ 'count' ] - $corps[ $a->corporationID ][ 'count' ];
+          $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
+        }
+        // Player ISK destroyed
+        if ( $value == 0 ) {
+          $tmp = $b->zKillboardCharacterStats->iskDestroyed - $a->zKillboardCharacterStats->iskDestroyed;
+          $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
+        }
+        // Player ISK Lost
         if ( $value == 0) {
           $tmp = $a->zKillboardCharacterStats->iskLost - $b->zKillboardCharacterStats->iskLost;
           $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
