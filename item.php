@@ -19,7 +19,7 @@
 		</style>
 	</head>
 	<body onload="CCPEVE.requestTrust('<?php echo "http://".$_SERVER['HTTP_HOST']; ?>')">
-<?php echo getPageselection($title, '//image.eveonline.com/Type/23_64.png'); ?>
+<?php echo getPageselection($title, '//image.eveonline.com/Type/442_64.png'); ?>
 		<div id="content">
 <?php
 

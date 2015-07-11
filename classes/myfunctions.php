@@ -260,7 +260,7 @@
 //		if ($_SERVER["PHP_SELF"] != "/ice.php")
 //			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/16265_32.png);" href="/ice.php">Ice</a>'."\n";
 //		if ($_SERVER["PHP_SELF"] != "/item.php")
-//			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/23_32.png);" href="/item.php">Item Prices</a>'."\n";
+//			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/442_32.png);" href="/item.php">Item Prices</a>'."\n";
 //		if ($_SERVER["PHP_SELF"] != "/planet.php")
 //			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/2398_32.png);" href="/planet.php">PI Commodity</a>'."\n";
 //		if (!empty($_SESSION['characterID'])) {
