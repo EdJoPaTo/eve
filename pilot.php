@@ -22,30 +22,19 @@
       </style>
     </head>
     <body onload="CCPEVE.requestTrust('<?php echo "http://".$_SERVER['HTTP_HOST']; ?>')">
-  <?php echo getPageselection($title, '//image.eveonline.com/Type/23_64.png'); ?>
+  <?php echo getPageselection($title, '//image.eveonline.com/Type/22177_64.png'); ?>
       <div id="content">
 <?php
 
       $pilotsText = !empty($_POST['pilots']) ? $_POST['pilots'] :
 "Rell Silfani
 Karnis Delvari
-Jatsu Enaka
-drdready
-Larissa Liao
-Sternengecko
-Lorianne Calmar
-Shell Seeker
-Evesham
-Piir8
-Penguin68
-Tyr Dolorem
-Quasi Vader
-Serenety Steel
-Brother Mojo
 ";
-
+          $time = microtime();
       $pilotIDs = Pilot::getIDsOfIngameCopyPaste( $pilotsText );
+          $timeNameToPlayer = microtime() - $time; $time = microtime();
       $pilots = Pilot::getPilotsOfIDs( $pilotIDs );
+          $timePlayerInfo = microtime() - $time; $time = microtime();
 
       $alliances = array();
       $corps = array();
@@ -75,6 +64,7 @@ Brother Mojo
           $alliances[ $pilot->allianceID ][ 'iskLost' ] += $pilot->zKillboardCharacterStats->iskLost;
         }
       }
+          $timeKillboard = microtime() - $time; $time = microtime();
 
       function cmp( $a, $b ) {
         $tmp = $b->zKillboardCharacterStats->iskDestroyed - $a->zKillboardCharacterStats->iskDestroyed;
@@ -126,7 +116,7 @@ Brother Mojo
             echo "</strong>";
             echo ' (' . $alliances[ $pilot->allianceID ][ 'count' ] . ')';
             echo "<br>\n";
-            echo "\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(//image.eveonline.com/Alliance/' . $pilot->allianceID . '_128.png);)">' . "\n";
+            echo "\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(//image.eveonline.com/Alliance/' . $pilot->allianceID . '_64.png);)">' . "\n";
           }
           $lastAlli = $pilot->allianceID;
           $lastCorp = -1;
@@ -143,11 +133,11 @@ Brother Mojo
           echo "</strong>";
           echo ' (' . $corps[ $pilot->corporationID ][ 'count' ] . ')';
           echo "<br>\n";
-          echo "\t\t\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(//image.eveonline.com/Corporation/' . $pilot->corporationID . '_128.png);)">' . "\n";
+          echo "\t\t\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(//image.eveonline.com/Corporation/' . $pilot->corporationID . '_64.png);)">' . "\n";
           $lastCorp = $pilot->corporationID;
         }
 
-        echo "\t\t\t\t\t\t\t\t\t\t" . '<div class="character iteminfo" style="background-image: url(//image.eveonline.com/Character/' . $pilot->characterID . '_128.jpg);)">' . "\n";
+        echo "\t\t\t\t\t\t\t\t\t\t" . '<div class="character iteminfo" style="background-image: url(//image.eveonline.com/Character/' . $pilot->characterID . '_64.jpg);)">' . "\n";
         echo "\t\t\t\t\t\t\t\t\t\t\t" . "<strong>" . $pilot->characterName . "</strong>" . "\n";
         echo "\t\t\t\t\t\t\t\t\t\t\t" . '<a href="https://zkillboard.com/character/' . $pilot->characterID . '/" target="_blank" class="external">zK</a>' . "<br>\n";
 //        echo "\t\t\t\t\t\t\t\t\t" . $pilot->corporationName . "<br>\n";
@@ -156,11 +146,11 @@ Brother Mojo
         }
 
         echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
-        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskDestroyed );
+        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskDestroyed ) . " ISK";
         echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsDestroyed ) . ' ships)';
         echo ' destroyed</span>' . "<br>\n";
         echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
-        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskLost );
+        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskLost ) . " ISK";
         echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsLost ) . ' ships)';
         echo ' lost</span>' . "<br>\n";
 
@@ -179,12 +169,16 @@ Brother Mojo
       echo "\t\t\t\t" . '</div>' . "\n";
       echo "\t\t\t\t" . '<div class="cell" style="padding-left: 10px;">' . "\n";
       echo "\t\t\t\t\t" . '<form action="' . $_SERVER['REQUEST_URI'] . '" name="args" method="post">' . "\n";
-      echo "\t\t\t\t\t\tYou can copy pilots from chat member lists by selecting them and using <code>Ctrl + C</code> key combination.<br>\n";
+      echo "\t\t\t\t\t\tYou can copy pilots from chat member lists (like the local) by selecting them and using <code>Ctrl + C</code> key combination.<br>\n";
       echo "\t\t\t\t\t\t" . '<input type="submit" value="Submit" /><br>' . "\n";
       echo "\t\t\t\t\t\t" . '<textarea name="pilots" cols="80" rows="40">' . $pilotsText . '</textarea>' . "<br>\n";
       echo "\t\t\t\t\t\t" . '<input type="submit" value="Submit" />' . "\n";
       echo "\t\t\t\t\t\t<br><br>\n";
       echo "\t\t\t\t\t" . '</form>' . "\n";
+
+//      echo "\t\t\t\t" . "query names to player IDs: " . round( $timeNameToPlayer * 1000, 2 ) . " ms<br>\n";
+//      echo "\t\t\t\t" . "query pilot corporations: " . round( $timePlayerInfo * 1000, 2 ) . " ms<br>\n";
+//      echo "\t\t\t\t" . "query pilot zKillboards: " . round( $timeKillboard * 1000, 2 ) . " ms<br>\n";
 
       echo "\t\t\t\t" . '</div>' . "\n";
 
