@@ -14,7 +14,12 @@
           background-position: 5px 2px;
         }
         .alliance {
-          padding: 7px;
+          padding: 1px;
+          padding-right: 5px;
+          padding-left: 2px;
+        }
+        .alliancespacer {
+          margin: 0px;
         }
         .alliance:nth-of-type(even), .corporation:nth-of-type(even) {
           background-color: rgba( 70, 70, 70, 0.3 );
@@ -109,10 +114,11 @@ Karnis Delvari
           if ( $lastAlli != -1 ) {
             echo "\t\t\t\t\t\t\t" . "</div>\n";
             echo "\t\t\t\t\t\t" . "</div>\n";
+            echo '<hr class="alliancespacer">' . "\n";
           }
           echo "\t\t\t\t\t\t" . '<div class="alliance">' . "\n";
           if ( $pilot->allianceID == 0) {
-            echo "\t\t\t\t\t\t\t" . '<div class="iteminfo" style="background-image: url(/res/RedX_64.png);)">' . "\n";
+            echo "\t\t\t\t\t\t\t" . '<div class="iteminfo">' . "\n";
           } else {
             echo "\t\t\t\t\t\t\t" . "<strong>";
             echo $pilot->allianceName;
@@ -149,12 +155,12 @@ Karnis Delvari
         }
 
         echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
-        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskDestroyed ) . " ISK";
-        echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsDestroyed ) . ' ships)';
+        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskDestroyed ) . "&nbsp;ISK";
+        echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsDestroyed ) . '&nbsp;ships)';
         echo ' destroyed</span>' . "<br>\n";
         echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
-        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskLost ) . " ISK";
-        echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsLost ) . ' ships)';
+        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskLost ) . "&nbsp;ISK";
+        echo ' (' . formatpieces( $pilot->zKillboardCharacterStats->shipsLost ) . '&nbsp;ships)';
         echo ' lost</span>' . "<br>\n";
 
         echo "\t\t\t\t\t\t\t\t\t\t" . "</div>\n";
