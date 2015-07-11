@@ -224,6 +224,25 @@ Karnis Delvari
 //      echo "\t\t\t\t" . "query pilot corporations: " . round( $timePlayerInfo * 1000, 2 ) . " ms<br>\n";
 //      echo "\t\t\t\t" . "query pilot zKillboards: " . round( $timeKillboard * 1000, 2 ) . " ms<br>\n";
 
+      $scannedChars = $mysqli->query( "SELECT * FROM eve.characters" )->num_rows;
+      $scannedCorps = $mysqli->query( "SELECT * FROM eve.characters GROUP BY corporationID" )->num_rows;
+      $scannedAllis = $mysqli->query( "SELECT * FROM eve.characters WHERE allianceID != 0 GROUP BY allianceID" )->num_rows;
+
+      echo "\t\t\t\t\t" . "<strong>Current</strong><br>\n";
+      echo "\t\t\t\t\t" . $pilotCount . " pilots";
+      if ( $lines > $pilotCount ) {
+        echo " of " . $lines . " Input Lines";
+      }
+      echo "<br>\n";
+      echo "\t\t\t\t\t" . count( $corps ) . " corporations" . "<br>\n";
+      echo "\t\t\t\t\t" . count ( $alliances ) . " alliances" . "<br>\n";
+
+      echo "\t\t\t\t\t" . "<br>\n";
+      echo "\t\t\t\t\t" . "<strong>All Time Stats</strong><br>\n";
+      echo "\t\t\t\t\t" . $scannedChars . " pilots" . "<br>\n";
+      echo "\t\t\t\t\t" . $scannedCorps . " corporations" . "<br>\n";
+      echo "\t\t\t\t\t" . $scannedAllis . " alliances" . "<br>\n";
+
       echo "\t\t\t\t" . '</div>' . "\n";
 
       echo "\t\t\t" . '</div>' . "\n";
