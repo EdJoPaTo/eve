@@ -242,10 +242,6 @@ Karnis Delvari
       echo "\t\t\t\t\t" . '</div>' . "\n";
       echo "\t\t\t\t\t" . '<div class="cell" style="padding-left: 10px;">' . "\n";
 
-      $scannedChars = $mysqli->query( "SELECT * FROM eve.characters" )->num_rows;
-      $scannedCorps = $mysqli->query( "SELECT * FROM eve.characters GROUP BY corporationID" )->num_rows;
-      $scannedAllis = $mysqli->query( "SELECT * FROM eve.characters WHERE allianceID != 0 GROUP BY allianceID" )->num_rows;
-
       echo "\t\t\t\t\t\t" . "<strong>Current Scan Stats</strong><br>\n";
       echo "\t\t\t\t\t\t" . $pilotCount . " pilots";
       if ( $lines > $pilotCount ) {
@@ -255,9 +251,21 @@ Karnis Delvari
       echo "\t\t\t\t\t\t" . count( $corps ) . " corporations" . "<br>\n";
       echo "\t\t\t\t\t\t" . count ( $alliances ) . " alliances" . "<br>\n";
 
+      echo "\t\t\t\t\t\t" . "<br>\n";
+      echo "\t\t\t\t\t\t" . "<strong>Last 24h</strong><br>\n";
+      $time24hago = time() - 60 * 60 * 24;
+      $scannedChars = $mysqli->query( "SELECT * FROM eve.characters WHERE cachedUntil > $time24hago" )->num_rows;
+      $scannedCorps = $mysqli->query( "SELECT * FROM eve.characters WHERE cachedUntil > $time24hago GROUP BY corporationID" )->num_rows;
+      $scannedAllis = $mysqli->query( "SELECT * FROM eve.characters WHERE cachedUntil > $time24hago AND allianceID != 0 GROUP BY allianceID" )->num_rows;
+      echo "\t\t\t\t\t\t" . $scannedChars . " pilots" . "<br>\n";
+      echo "\t\t\t\t\t\t" . $scannedCorps . " corporations" . "<br>\n";
+      echo "\t\t\t\t\t\t" . $scannedAllis . " alliances" . "<br>\n";
 
       echo "\t\t\t\t\t\t" . "<br>\n";
-      echo "\t\t\t\t\t\t" . "<strong>All Time Stats</strong><br>\n";
+      echo "\t\t\t\t\t\t" . "<strong>All Time</strong><br>\n";
+      $scannedChars = $mysqli->query( "SELECT * FROM eve.characters" )->num_rows;
+      $scannedCorps = $mysqli->query( "SELECT * FROM eve.characters GROUP BY corporationID" )->num_rows;
+      $scannedAllis = $mysqli->query( "SELECT * FROM eve.characters WHERE allianceID != 0 GROUP BY allianceID" )->num_rows;
       echo "\t\t\t\t\t\t" . $scannedChars . " pilots" . "<br>\n";
       echo "\t\t\t\t\t\t" . $scannedCorps . " corporations" . "<br>\n";
       echo "\t\t\t\t\t\t" . $scannedAllis . " alliances" . "<br>\n";
