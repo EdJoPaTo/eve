@@ -119,7 +119,7 @@ class Pilot {
       $result = $mysqli->query( "SELECT * FROM eve.characters WHERE characterID=$id" );
       if ( $row = $result->fetch_object( ) ) {
         // Erstmal hinzufügen aber als "needs update" kennzeichen
-        if ( (int) $row->cachedUntil < time() ) {
+        if ( (int) $row->cachedUntil < time() + 60 * 20 ) { // EVE hat 10min, 30 min reichen aber auch
           $idsNeedUpdate[ $id ] = (int) $row->cachedUntil;
         }
         $returnArray[ $row->characterID ] = new Pilot(
