@@ -55,21 +55,29 @@ Karnis Delvari
           $corps[ $pilot->corporationID ][ 'count' ] = 0;
           $corps[ $pilot->corporationID ][ 'iskDestroyed' ] = 0;
           $corps[ $pilot->corporationID ][ 'iskLost' ] = 0;
+          $corps[ $pilot->corporationID ][ 'iskDestroyedBest' ] = 0;
+          $corps[ $pilot->corporationID ][ 'iskLostBest' ] = 0;
         }
         if ( empty( $alliances[ $pilot->allianceID ] ) && $pilot->allianceID != 0 ) {
           $alliances[ $pilot->allianceID ] = array();
           $alliances[ $pilot->allianceID ][ 'count' ] = 0;
           $alliances[ $pilot->allianceID ][ 'iskDestroyed' ] = 0;
           $alliances[ $pilot->allianceID ][ 'iskLost' ] = 0;
+          $alliances[ $pilot->allianceID ][ 'iskDestroyedBest' ] = 0;
+          $alliances[ $pilot->allianceID ][ 'iskLostBest' ] = 0;
         }
 
         $corps[ $pilot->corporationID ][ 'count' ] += 1;
         $corps[ $pilot->corporationID ][ 'iskDestroyed' ] += $pilot->zKillboardCharacterStats->iskDestroyed;
         $corps[ $pilot->corporationID ][ 'iskLost' ] += $pilot->zKillboardCharacterStats->iskLost;
+        $corps[ $pilot->corporationID ][ 'iskDestroyedBest' ] = max( $corps[ $pilot->corporationID ][ 'iskDestroyedBest' ], $pilot->zKillboardCharacterStats->iskDestroyed);
+        $corps[ $pilot->corporationID ][ 'iskLostBest' ] = max( $corps[ $pilot->corporationID ][ 'iskLostBest' ], $pilot->zKillboardCharacterStats->iskLost);
         if ( $pilot->allianceID != 0 ) {
           $alliances[ $pilot->allianceID ][ 'count' ] += 1;
           $alliances[ $pilot->allianceID ][ 'iskDestroyed' ] += $pilot->zKillboardCharacterStats->iskDestroyed;
           $alliances[ $pilot->allianceID ][ 'iskLost' ] += $pilot->zKillboardCharacterStats->iskLost;
+          $alliances[ $pilot->allianceID ][ 'iskDestroyedBest' ] = max( $alliances[ $pilot->allianceID ][ 'iskDestroyedBest' ], $pilot->zKillboardCharacterStats->iskDestroyed);
+          $alliances[ $pilot->allianceID ][ 'iskLostBest' ] = max( $alliances[ $pilot->allianceID ][ 'iskLostBest' ], $pilot->zKillboardCharacterStats->iskLost);
         }
       }
           $timeKillboard = microtime() - $time; $time = microtime();
@@ -79,19 +87,24 @@ Karnis Delvari
         global $corps;
         $value = 0;
 
-        //Alliance ISK destroyed
-        if ( $value == 0 && $a->allianceID != 0 && $b->allianceID != 0) {
-          $tmp = $alliances[ $b->allianceID ][ 'iskDestroyed' ] - $alliances[ $a->allianceID ][ 'iskDestroyed' ];
+        // Best destroyer of alli/ corp
+        if ( $value == 0 ) {
+          $aValue = $a->allianceID != 0 ? $alliances[ $a->allianceID ][ 'iskDestroyedBest' ] : $corps[ $a->corporationID ][ 'iskDestroyedBest' ];
+          $bValue = $b->allianceID != 0 ? $alliances[ $b->allianceID ][ 'iskDestroyedBest' ] : $corps[ $b->corporationID ][ 'iskDestroyedBest' ];
+          $tmp = $bValue - $aValue;
           $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
         }
+        // Best destroyer of corp
+        if ( $value == 0 ) {
+          $aValue = $corps[ $a->corporationID ][ 'iskDestroyedBest' ];
+          $bValue = $corps[ $b->corporationID ][ 'iskDestroyedBest' ];
+          $tmp = $bValue - $aValue;
+          $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
+        }
+
         // Alliance Member Count
         if ( $value == 0 && $a->allianceID != 0 && $b->allianceID != 0) {
           $tmp = $alliances[ $b->allianceID ][ 'count' ] - $alliances[ $a->allianceID ][ 'count' ];
-          $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
-        }
-        // Corp ISK destroyed
-        if ( $value == 0 ) {
-          $tmp = $corps[ $b->corporationID ][ 'iskDestroyed' ] - $corps[ $a->corporationID ][ 'iskDestroyed' ];
           $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
         }
         // Corp Member Count
