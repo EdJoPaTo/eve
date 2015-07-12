@@ -204,7 +204,7 @@ Karnis Delvari
 
       echo "\t\t\t\t\t" . '</div>' . "\n";
       echo "\t\t\t\t" . '</div>' . "\n";
-      echo "\t\t\t\t" . '<div class="cell" style="padding-left: 10px;">' . "\n";
+      echo "\t\t\t\t" . '<div class="cell">' . "\n";
 
       $lines = substr_count( $pilotsText, "\n" ) + 1;
       $pilotCount = count( $pilots );
@@ -212,37 +212,44 @@ Karnis Delvari
         echo "\t\t\t\t\t" . '<span style="color: red;">Your List contains more lines than Pilots loaded. Some lines are invalid or a big amout of new pilots was added.</span>' . "<br><br>\n";
       }
 
-      echo "\t\t\t\t\t" . '<form action="' . $_SERVER['REQUEST_URI'] . '" name="args" method="post">' . "\n";
-      echo "\t\t\t\t\t\tYou can copy pilots from chat member lists (like the local) by selecting them and using <code>Ctrl + C</code> key combination.<br>\n";
-      echo "\t\t\t\t\t\t" . '<input type="submit" value="Submit" /><br>' . "\n";
-      echo "\t\t\t\t\t\t" . '<textarea name="pilots" cols="30" rows="' . ( $pilotCount + 10 ) . '">' . $pilotsText . '</textarea>' . "<br>\n";
-      echo "\t\t\t\t\t\t" . '<input type="submit" value="Submit" />' . "\n";
-      echo "\t\t\t\t\t\t<br><br>\n";
-      echo "\t\t\t\t\t" . '</form>' . "\n";
-
 //      echo "\t\t\t\t" . "query names to player IDs: " . round( $timeNameToPlayer * 1000, 2 ) . " ms<br>\n";
 //      echo "\t\t\t\t" . "query pilot corporations: " . round( $timePlayerInfo * 1000, 2 ) . " ms<br>\n";
 //      echo "\t\t\t\t" . "query pilot zKillboards: " . round( $timeKillboard * 1000, 2 ) . " ms<br>\n";
+
+      echo "\t\t\t\t\t" . "You can copy pilots from chat member lists (like the local) by selecting them and using <code>Ctrl + C</code> key combination.<br><br>\n";
+      echo "\t\t\t\t\t" . '<div class="cell" style="padding-left: 10px;">' . "\n";
+
+      echo "\t\t\t\t\t\t" . '<form action="' . $_SERVER['REQUEST_URI'] . '" name="args" method="post">' . "\n";
+      echo "\t\t\t\t\t\t\t" . '<input type="submit" value="Submit" /><br>' . "\n";
+      echo "\t\t\t\t\t\t\t" . '<textarea name="pilots" cols="30" rows="' . ( $pilotCount + 10 ) . '">' . $pilotsText . '</textarea>' . "<br>\n";
+      echo "\t\t\t\t\t\t\t" . '<input type="submit" value="Submit" />' . "\n";
+      echo "\t\t\t\t\t\t\t<br><br>\n";
+      echo "\t\t\t\t\t\t" . '</form>' . "\n";
+
+      echo "\t\t\t\t\t" . '</div>' . "\n";
+      echo "\t\t\t\t\t" . '<div class="cell" style="padding-left: 10px;">' . "\n";
 
       $scannedChars = $mysqli->query( "SELECT * FROM eve.characters" )->num_rows;
       $scannedCorps = $mysqli->query( "SELECT * FROM eve.characters GROUP BY corporationID" )->num_rows;
       $scannedAllis = $mysqli->query( "SELECT * FROM eve.characters WHERE allianceID != 0 GROUP BY allianceID" )->num_rows;
 
-      echo "\t\t\t\t\t" . "<strong>Current</strong><br>\n";
-      echo "\t\t\t\t\t" . $pilotCount . " pilots";
+      echo "\t\t\t\t\t\t" . "<strong>Current Scan Stats</strong><br>\n";
+      echo "\t\t\t\t\t\t" . $pilotCount . " pilots";
       if ( $lines > $pilotCount ) {
         echo " of " . $lines . " Input Lines";
       }
       echo "<br>\n";
-      echo "\t\t\t\t\t" . count( $corps ) . " corporations" . "<br>\n";
-      echo "\t\t\t\t\t" . count ( $alliances ) . " alliances" . "<br>\n";
+      echo "\t\t\t\t\t\t" . count( $corps ) . " corporations" . "<br>\n";
+      echo "\t\t\t\t\t\t" . count ( $alliances ) . " alliances" . "<br>\n";
 
-      echo "\t\t\t\t\t" . "<br>\n";
-      echo "\t\t\t\t\t" . "<strong>All Time Stats</strong><br>\n";
-      echo "\t\t\t\t\t" . $scannedChars . " pilots" . "<br>\n";
-      echo "\t\t\t\t\t" . $scannedCorps . " corporations" . "<br>\n";
-      echo "\t\t\t\t\t" . $scannedAllis . " alliances" . "<br>\n";
 
+      echo "\t\t\t\t\t\t" . "<br>\n";
+      echo "\t\t\t\t\t\t" . "<strong>All Time Stats</strong><br>\n";
+      echo "\t\t\t\t\t\t" . $scannedChars . " pilots" . "<br>\n";
+      echo "\t\t\t\t\t\t" . $scannedCorps . " corporations" . "<br>\n";
+      echo "\t\t\t\t\t\t" . $scannedAllis . " alliances" . "<br>\n";
+
+      echo "\t\t\t\t\t" . '</div>' . "\n";
       echo "\t\t\t\t" . '</div>' . "\n";
 
       echo "\t\t\t" . '</div>' . "\n";
