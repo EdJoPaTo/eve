@@ -61,6 +61,12 @@
 		shipsLost bigint(15),
 		pointsDestroyed bigint(15),
 		pointsLost bigint(15),
+		top1DestroyedGroupID bigint(15),
+		top1DestroyedCount bigint(15),
+		top2DestroyedGroupID bigint(15),
+		top2DestroyedCount bigint(15),
+		top3DestroyedGroupID bigint(15),
+		top3DestroyedCount bigint(15),
 		cachedUntil bigint(15),
 		PRIMARY KEY (characterID),
 		UNIQUE (characterID)

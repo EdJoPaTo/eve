@@ -195,10 +195,30 @@ Karnis Delvari
 //          echo "\t\t\t\t\t\t\t\t\t" . $pilot->allianceName . "<br>\n";
         }
 
-        echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
+        echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: limegreen;">';
         echo formatpriceshort( $pilot->zKillboardCharacterStats->allTime->iskDestroyed ) . "&nbsp;ISK";
         echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->allTime->shipsDestroyed ) . '&nbsp;ships)';
         echo '&nbsp;destroyed</span>' . "<br>\n";
+        $i = 0;
+        foreach ( $pilot->zKillboardCharacterStats->topDestroyed as $key => $value ) {
+          if ( $value->groupID == 0 ) {
+            break;
+          }
+          if ( $i == 0 ) {
+            echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
+          }
+          $i += 1;
+          if ( $i > 1 ) {
+            echo "; ";
+          }
+
+          $typeName = $mysqli->query( "SELECT groupName FROM evedump.invGroups WHERE groupID=$value->groupID" )->fetch_object()->groupName;
+
+          echo formatpieces( $value->shipsDestroyed ) . "x&nbsp;" . $typeName;
+        }
+        if ( $i > 0 ) {
+          echo "</span>" . "<br>\n";
+        }
         echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
         echo formatpriceshort( $pilot->zKillboardCharacterStats->allTime->iskLost ) . "&nbsp;ISK";
         echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->allTime->shipsLost ) . '&nbsp;ships)';
