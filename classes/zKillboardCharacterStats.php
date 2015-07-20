@@ -103,14 +103,16 @@ class zKillboardCharacterStats {
 		$pointsLost = empty( $json->pointsLost ) ? 0 : (int) $json->pointsLost;
 
 		$topDestroyed = array();
-		foreach ( $json->groups as $key => $value ) {
-			$tmp = array();
-			$tmp[ 'groupID' ] = (int) $key;
-			$tmp[ 'shipsDestroyed' ] = empty( $value->shipsDestroyed ) ? 0 : (int) $value->shipsDestroyed;
-			$tmp[ 'iskDestroyed' ] = empty( $value->iskDestroyed ) ? 0 : (int) $value->iskDestroyed;
+		if ( !empty( $json->groups ) ) {
+			foreach ( $json->groups as $key => $value ) {
+				$tmp = array();
+				$tmp[ 'groupID' ] = (int) $key;
+				$tmp[ 'shipsDestroyed' ] = empty( $value->shipsDestroyed ) ? 0 : (int) $value->shipsDestroyed;
+				$tmp[ 'iskDestroyed' ] = empty( $value->iskDestroyed ) ? 0 : (int) $value->iskDestroyed;
 
-			if ( $tmp[ 'shipsDestroyed' ] > 0 ) {
-				$topDestroyed[] = $tmp;
+				if ( $tmp[ 'shipsDestroyed' ] > 0 ) {
+					$topDestroyed[] = $tmp;
+				}
 			}
 		}
 
