@@ -7,6 +7,9 @@
 		else
 			return false;
 	}
+	function formatpercent( $percent ) {
+		return number_format( $percent * 100, 1, ",", "." ) . "%";
+	}
 	function formatprice($price)
 	{
 		return number_format($price, 2, ",", ".");
