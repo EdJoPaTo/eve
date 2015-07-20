@@ -195,12 +195,19 @@ Karnis Delvari
           echo "\t\t\t\t\t\t\t\t\t\t\t" . "no information available" . "\n";
         } else {
           echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span title="ISK Efficiency">' . formatpercent( $pilot->zKillboardCharacterStats->allTime->iskPercentage ) . '</span>' . "\n";
+
           echo "\t\t\t\t\t\t\t\t\t\t\t" . '<a href="https://zkillboard.com/character/' . $pilot->characterID . '/" target="_blank" class="external">zK</a>' . "<br>\n";
 
-          echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: limegreen;">';
+          echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: limegreen;" title="destroyed">';
           echo formatpriceshort( $pilot->zKillboardCharacterStats->allTime->iskDestroyed ) . "&nbsp;ISK";
-          echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->allTime->shipsDestroyed ) . '&nbsp;ships)';
-          echo '&nbsp;destroyed</span>' . "<br>\n";
+          if ( $pilot->zKillboardCharacterStats->allTime->allTypesDestroyed > 0 ) {
+            echo "&nbsp;(";
+            echo formatpieces( $pilot->zKillboardCharacterStats->allTime->allTypesDestroyed ) . '&nbsp;ship';
+            if ( $pilot->zKillboardCharacterStats->allTime->allTypesDestroyed > 1 ) { echo 's'; }
+            echo ")";
+          }
+          echo "</span><br>\n";
+
           $i = 0;
           foreach ( $pilot->zKillboardCharacterStats->topDestroyed as $key => $value ) {
             if ( $value->groupID == 0 ) {
@@ -221,10 +228,15 @@ Karnis Delvari
           if ( $i > 0 ) {
             echo "</span>" . "<br>\n";
           }
-          echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
+          echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;" title="lost">';
           echo formatpriceshort( $pilot->zKillboardCharacterStats->allTime->iskLost ) . "&nbsp;ISK";
-          echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->allTime->shipsLost ) . '&nbsp;ships)';
-          echo '&nbsp;lost</span>' . "<br>\n";
+          if ( $pilot->zKillboardCharacterStats->allTime->allTypesLost > 0 ) {
+            echo "&nbsp;(";
+            echo formatpieces( $pilot->zKillboardCharacterStats->allTime->allTypesLost ) . '&nbsp;ship';
+            if ( $pilot->zKillboardCharacterStats->allTime->allTypesLost > 1 ) { echo 's'; }
+            echo ")";
+          }
+          echo "</span><br>\n";
         }
 
         echo "\t\t\t\t\t\t\t\t\t\t" . "</div>\n";

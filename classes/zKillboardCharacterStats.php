@@ -4,23 +4,60 @@ class zKillboardDestructionSet {
 	var $iskDestroyed;
 	var $iskLost;
 	var $iskPercentage;
+
 	var $shipsDestroyed;
 	var $shipsLost;
-	var $shipsPercentage;
+	var $capsuleDestroyed;
+	var $capsuleLost;
+	var $structureDestroyed;
+	var $structureLost;
+	var $allTypesDestroyed;
+	var $allTypesLost;
+
+	var $shipsIskDestroyed;
+	var $shipsIskLost;
+	var $capsuleIskDestroyed;
+	var $capsuleIskLost;
+	var $structureIskDestroyed;
+	var $structureIskLost;
+
 	var $pointsDestroyed;
 	var $pointsLost;
 	var $pointsPercentage;
 
-	function __construct( $iskDestroyed = 0, $iskLost = 0, $shipsDestroyed = 0, $shipsLost = 0, $pointsDestroyed = 0, $pointsLost = 0 ) {
-		$this->iskDestroyed = (int) $iskDestroyed;
-		$this->iskLost = (int) $iskLost;
+	function __construct(
+					$shipsDestroyed = 0, $shipsLost = 0,
+					$capsuleDestroyed = 0, $capsuleLost = 0,
+					$structureDestroyed = 0, $structureLost = 0,
+					$shipsIskDestroyed = 0, $shipsIskLost = 0,
+					$capsuleIskDestroyed = 0, $capsuleIskLost = 0,
+					$structureIskDestroyed = 0, $structureIskLost = 0,
+					$pointsDestroyed = 0, $pointsLost = 0
+	) {
+		$this->shipsDestroyed = (int) $shipsDestroyed;
+		$this->shipsLost = (int) $shipsLost;
+		$this->capsuleDestroyed = (int) $capsuleDestroyed;
+		$this->capsuleLost = (int) $capsuleLost;
+		$this->structureDestroyed = (int) $structureDestroyed;
+		$this->structureLost = (int) $structureLost;
+
+		$this->allTypesDestroyed = $this->shipsDestroyed + $this->capsuleDestroyed + $this->structureDestroyed;
+		$this->allTypesLost = $this->shipsLost + $this->capsuleLost + $this->structureLost;
+
+
+		$this->shipsIskDestroyed = (int) $shipsIskDestroyed;
+		$this->shipsIskLost = (int) $shipsIskLost;
+		$this->capsuleIskDestroyed = (int) $capsuleIskDestroyed;
+		$this->capsuleIskLost = (int) $capsuleIskLost;
+		$this->structureIskDestroyed = (int) $structureIskDestroyed;
+		$this->structureIskLost = (int) $structureIskLost;
+
+		$this->iskDestroyed = $this->shipsIskDestroyed + $this->capsuleIskDestroyed + $this->structureIskDestroyed;
+		$this->iskLost = $this->shipsIskLost + $this->capsuleIskLost + $this->structureIskLost;
+
 		$tmp = $this->iskDestroyed + $this->iskLost;
 		$this->iskPercentage = $tmp == 0 ? 0 : $this->iskDestroyed / $tmp;
 
-		$this->shipsDestroyed = (int) $shipsDestroyed;
-		$this->shipsLost = (int) $shipsLost;
-		$tmp = $this->shipsDestroyed + $this->shipsLost;
-		$this->shipsPercentage = $tmp == 0 ? 0 : $this->shipsDestroyed / $tmp;
 
 		$this->pointsDestroyed = (int) $pointsDestroyed;
 		$this->pointsLost = (int) $pointsLost;
@@ -82,12 +119,13 @@ class zKillboardCharacterStats {
 			return new zKillboardCharacterStats(
 				$row->characterID,
 				new zKillboardDestructionSet(
-					$row->iskDestroyed,
-					$row->iskLost,
-					$row->shipsDestroyed,
-					$row->shipsLost,
-					$row->pointsDestroyed,
-					$row->pointsLost
+					$row->shipsDestroyed, $row->shipsLost,
+					$row->capsuleDestroyed, $row->capsuleLost,
+					$row->structureDestroyed, $row->structureLost,
+					$row->shipsIskDestroyed, $row->shipsIskLost,
+					$row->capsuleIskDestroyed, $row->capsuleIskLost,
+					$row->structureIskDestroyed, $row->structureIskLost,
+					$row->pointsDestroyed, $row->pointsLost
 				),
 				new zKillboardTopDestroyed(
 					$row->top1DestroyedGroupID,
@@ -106,16 +144,55 @@ class zKillboardCharacterStats {
 
 		$json = callKillboardCharacterStats( $characterID );
 		$cachedUntil = time() + 60 * 60 * 24 * 5; // 5 Tage
-		$iskDestroyed = empty( $json->iskDestroyed ) ? 0 : (int) $json->iskDestroyed;
-		$iskLost = empty( $json->iskLost ) ? 0 : (int) $json->iskLost;
-		$shipsDestroyed = empty( $json->shipsDestroyed ) ? 0 : (int) $json->shipsDestroyed;
-		$shipsLost = empty( $json->shipsLost ) ? 0 : (int) $json->shipsLost;
 		$pointsDestroyed = empty( $json->pointsDestroyed ) ? 0 : (int) $json->pointsDestroyed;
 		$pointsLost = empty( $json->pointsLost ) ? 0 : (int) $json->pointsLost;
+
+		$zKiskDestroyed = empty( $json->iskDestroyed ) ? 0 : (int) $json->iskDestroyed;
+		$zKiskLost = empty( $json->iskLost ) ? 0 : (int) $json->iskLost;
+		$zKshipsDestroyed = empty( $json->shipsDestroyed ) ? 0 : (int) $json->shipsDestroyed;
+		$zKshipsLost = empty( $json->shipsLost ) ? 0 : (int) $json->shipsLost;
+
+		$shipsDestroyed = 0;
+		$shipsLost = 0;
+		$capsuleDestroyed = 0;
+		$capsuleLost = 0;
+		$structureDestroyed = 0;
+		$structureLost = 0;
+
+		$shipsIskDestroyed = 0;
+		$shipsIskLost = 0;
+		$capsuleIskDestroyed = 0;
+		$capsuleIskLost = 0;
+		$structureIskDestroyed = 0;
+		$structureIskLost = 0;
 
 		$topDestroyed = array();
 		if ( !empty( $json->groups ) ) {
 			foreach ( $json->groups as $key => $value ) {
+				$groupID = (int) $key;
+				$categoryID = $mysqli->query( "SELECT categoryID FROM evedump.invGroups WHERE groupID=$groupID" )->fetch_object()->categoryID;
+
+				if ( $categoryID == 23 || // Starbase
+							$categoryID == 40 || // Sovereignty Structures
+							$categoryID == 22 ) { // Deployable (z.B. MTU)
+					$structureDestroyed += empty( $value->shipsDestroyed ) ? 0 : $value->shipsDestroyed;
+					$structureLost += empty( $value->shipsLost ) ? 0 : $value->shipsLost;
+					$structureIskDestroyed += empty( $value->iskDestroyed ) ? 0 : $value->iskDestroyed;
+					$structureIskLost += empty( $value->iskLost ) ? 0 : $value->iskLost;
+					continue;
+				} elseif ( $groupID == 29 ) {
+					$capsuleDestroyed += empty( $value->shipsDestroyed ) ? 0 : $value->shipsDestroyed;
+					$capsuleLost += empty( $value->shipsLost ) ? 0 : $value->shipsLost;
+					$capsuleIskDestroyed += empty( $value->iskDestroyed ) ? 0 : $value->iskDestroyed;
+					$capsuleIskLost += empty( $value->iskLost ) ? 0 : $value->iskLost;
+					continue;
+				} else {
+					$shipsDestroyed += empty( $value->shipsDestroyed ) ? 0 : $value->shipsDestroyed;
+					$shipsLost += empty( $value->shipsLost ) ? 0 : $value->shipsLost;
+					$shipsIskDestroyed += empty( $value->iskDestroyed ) ? 0 : $value->iskDestroyed;
+					$shipsIskLost += empty( $value->iskLost ) ? 0 : $value->iskLost;
+				}
+
 				$tmp = array();
 				$tmp[ 'groupID' ] = (int) $key;
 				$tmp[ 'shipsDestroyed' ] = empty( $value->shipsDestroyed ) ? 0 : (int) $value->shipsDestroyed;
@@ -138,8 +215,12 @@ class zKillboardCharacterStats {
 
 		$query = "INSERT INTO eve.killboardCharacterStats (
 			characterID,
-			iskDestroyed, iskLost,
 			shipsDestroyed, shipsLost,
+			capsuleDestroyed, capsuleLost,
+			structureDestroyed, structureLost,
+			shipsIskDestroyed, shipsIskLost,
+			capsuleIskDestroyed, capsuleIskLost,
+			structureIskDestroyed, structureIskLost,
 			pointsDestroyed, pointsLost,
 			top1DestroyedGroupID, top1DestroyedCount,
 			top2DestroyedGroupID, top2DestroyedCount,
@@ -147,8 +228,12 @@ class zKillboardCharacterStats {
 			cachedUntil)
 		VALUES (
 			'$characterID',
-			'$iskDestroyed', '$iskLost',
 			'$shipsDestroyed', '$shipsLost',
+			'$capsuleDestroyed', '$capsuleLost',
+			'$structureDestroyed', '$structureLost',
+			'$shipsIskDestroyed', '$shipsIskLost',
+			'$capsuleIskDestroyed', '$capsuleIskLost',
+			'$structureIskDestroyed', '$structureIskLost',
 			'$pointsDestroyed', '$pointsLost',
 			'" . $topDestroyed[ 0 ][ 'groupID' ] . "', '" . $topDestroyed[ 0 ][ 'shipsDestroyed' ] . "',
 			'" . $topDestroyed[ 1 ][ 'groupID' ] . "', '" . $topDestroyed[ 1 ][ 'shipsDestroyed' ] . "',
@@ -156,8 +241,12 @@ class zKillboardCharacterStats {
 			'$cachedUntil')
 		ON DUPLICATE KEY
 		UPDATE
-			iskDestroyed='$iskDestroyed', iskLost='$iskLost',
 			shipsDestroyed='$shipsDestroyed', shipsLost='$shipsLost',
+			capsuleDestroyed='$capsuleDestroyed', capsuleLost='$capsuleLost',
+			structureDestroyed='$structureDestroyed', structureLost='$structureLost',
+			shipsIskDestroyed='$shipsIskDestroyed', shipsIskLost='$shipsIskLost',
+			capsuleIskDestroyed='$capsuleIskDestroyed', capsuleIskLost='$capsuleIskLost',
+			structureIskDestroyed='$structureIskDestroyed', structureIskLost='$structureIskLost',
 			pointsDestroyed='$pointsDestroyed', pointsLost='$pointsLost',
 			top1DestroyedGroupID='" . $topDestroyed[ 0 ][ 'groupID' ] . "', top1DestroyedCount='" . $topDestroyed[ 0 ][ 'shipsDestroyed' ] . "',
 			top2DestroyedGroupID='" . $topDestroyed[ 1 ][ 'groupID' ] . "', top2DestroyedCount='" . $topDestroyed[ 1 ][ 'shipsDestroyed' ] . "',
@@ -170,7 +259,15 @@ class zKillboardCharacterStats {
 
 		return new zKillboardCharacterStats(
 			$characterID,
-			new zKillboardDestructionSet( $iskDestroyed, $iskLost, $shipsDestroyed, $shipsLost, $pointsDestroyed, $pointsLost ),
+			new zKillboardDestructionSet(
+				$shipsDestroyed, $shipsLost,
+				$capsuleDestroyed, $capsuleLost,
+				$structureDestroyed, $structureLost,
+				$shipsIskDestroyed, $shipsIskLost,
+				$capsuleIskDestroyed, $capsuleIskLost,
+				$structureIskDestroyed, $structureIskLost,
+				$pointsDestroyed, $pointsLost
+			),
 			new zKillboardTopDestroyed( $topDestroyed[ 0 ][ 'groupID' ], $topDestroyed[ 0 ][ 'shipsDestroyed' ] ),
 			new zKillboardTopDestroyed( $topDestroyed[ 1 ][ 'groupID' ], $topDestroyed[ 1 ][ 'shipsDestroyed' ] ),
 			new zKillboardTopDestroyed( $topDestroyed[ 2 ][ 'groupID' ], $topDestroyed[ 2 ][ 'shipsDestroyed' ] )
