@@ -20,7 +20,7 @@ class zKillboardDestructionSet {
 		$this->shipsDestroyed = (int) $shipsDestroyed;
 		$this->shipsLost = (int) $shipsLost;
 		$tmp = $this->shipsDestroyed + $this->shipsLost;
-		$this->iskPercentage = $tmp == 0 ? 0 : $this->shipsDestroyed / $tmp;
+		$this->shipsPercentage = $tmp == 0 ? 0 : $this->shipsDestroyed / $tmp;
 
 		$this->pointsDestroyed = (int) $pointsDestroyed;
 		$this->pointsLost = (int) $pointsLost;
