@@ -59,6 +59,8 @@
 		iskLost bigint(15),
 		shipsDestroyed bigint(15),
 		shipsLost bigint(15),
+		pointsDestroyed bigint(15),
+		pointsLost bigint(15),
 		cachedUntil bigint(15),
 		PRIMARY KEY (characterID),
 		UNIQUE (characterID)

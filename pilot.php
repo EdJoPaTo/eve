@@ -68,16 +68,16 @@ Karnis Delvari
         }
 
         $corps[ $pilot->corporationID ][ 'count' ] += 1;
-        $corps[ $pilot->corporationID ][ 'iskDestroyed' ] += $pilot->zKillboardCharacterStats->iskDestroyed;
-        $corps[ $pilot->corporationID ][ 'iskLost' ] += $pilot->zKillboardCharacterStats->iskLost;
-        $corps[ $pilot->corporationID ][ 'iskDestroyedBest' ] = max( $corps[ $pilot->corporationID ][ 'iskDestroyedBest' ], $pilot->zKillboardCharacterStats->iskDestroyed);
-        $corps[ $pilot->corporationID ][ 'iskLostBest' ] = max( $corps[ $pilot->corporationID ][ 'iskLostBest' ], $pilot->zKillboardCharacterStats->iskLost);
+        $corps[ $pilot->corporationID ][ 'iskDestroyed' ] += $pilot->zKillboardCharacterStats->allTime->iskDestroyed;
+        $corps[ $pilot->corporationID ][ 'iskLost' ] += $pilot->zKillboardCharacterStats->allTime->iskLost;
+        $corps[ $pilot->corporationID ][ 'iskDestroyedBest' ] = max( $corps[ $pilot->corporationID ][ 'iskDestroyedBest' ], $pilot->zKillboardCharacterStats->allTime->iskDestroyed);
+        $corps[ $pilot->corporationID ][ 'iskLostBest' ] = max( $corps[ $pilot->corporationID ][ 'iskLostBest' ], $pilot->zKillboardCharacterStats->allTime->iskLost);
         if ( $pilot->allianceID != 0 ) {
           $alliances[ $pilot->allianceID ][ 'count' ] += 1;
-          $alliances[ $pilot->allianceID ][ 'iskDestroyed' ] += $pilot->zKillboardCharacterStats->iskDestroyed;
-          $alliances[ $pilot->allianceID ][ 'iskLost' ] += $pilot->zKillboardCharacterStats->iskLost;
-          $alliances[ $pilot->allianceID ][ 'iskDestroyedBest' ] = max( $alliances[ $pilot->allianceID ][ 'iskDestroyedBest' ], $pilot->zKillboardCharacterStats->iskDestroyed);
-          $alliances[ $pilot->allianceID ][ 'iskLostBest' ] = max( $alliances[ $pilot->allianceID ][ 'iskLostBest' ], $pilot->zKillboardCharacterStats->iskLost);
+          $alliances[ $pilot->allianceID ][ 'iskDestroyed' ] += $pilot->zKillboardCharacterStats->allTime->iskDestroyed;
+          $alliances[ $pilot->allianceID ][ 'iskLost' ] += $pilot->zKillboardCharacterStats->allTime->iskLost;
+          $alliances[ $pilot->allianceID ][ 'iskDestroyedBest' ] = max( $alliances[ $pilot->allianceID ][ 'iskDestroyedBest' ], $pilot->zKillboardCharacterStats->allTime->iskDestroyed);
+          $alliances[ $pilot->allianceID ][ 'iskLostBest' ] = max( $alliances[ $pilot->allianceID ][ 'iskLostBest' ], $pilot->zKillboardCharacterStats->allTime->iskLost);
         }
       }
           $timeKillboard = microtime() - $time; $time = microtime();
@@ -114,12 +114,12 @@ Karnis Delvari
         }
         // Player ISK destroyed
         if ( $value == 0 ) {
-          $tmp = $b->zKillboardCharacterStats->iskDestroyed - $a->zKillboardCharacterStats->iskDestroyed;
+          $tmp = $b->zKillboardCharacterStats->allTime->iskDestroyed - $a->zKillboardCharacterStats->allTime->iskDestroyed;
           $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
         }
         // Player ISK Lost
         if ( $value == 0) {
-          $tmp = $a->zKillboardCharacterStats->iskLost - $b->zKillboardCharacterStats->iskLost;
+          $tmp = $a->zKillboardCharacterStats->allTime->iskLost - $b->zKillboardCharacterStats->allTime->iskLost;
           $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
         }
         if ( $value == 0) {
@@ -196,12 +196,12 @@ Karnis Delvari
         }
 
         echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
-        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskDestroyed ) . "&nbsp;ISK";
-        echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->shipsDestroyed ) . '&nbsp;ships)';
+        echo formatpriceshort( $pilot->zKillboardCharacterStats->allTime->iskDestroyed ) . "&nbsp;ISK";
+        echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->allTime->shipsDestroyed ) . '&nbsp;ships)';
         echo '&nbsp;destroyed</span>' . "<br>\n";
         echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
-        echo formatpriceshort( $pilot->zKillboardCharacterStats->iskLost ) . "&nbsp;ISK";
-        echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->shipsLost ) . '&nbsp;ships)';
+        echo formatpriceshort( $pilot->zKillboardCharacterStats->allTime->iskLost ) . "&nbsp;ISK";
+        echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->allTime->shipsLost ) . '&nbsp;ships)';
         echo '&nbsp;lost</span>' . "<br>\n";
 
         echo "\t\t\t\t\t\t\t\t\t\t" . "</div>\n";
