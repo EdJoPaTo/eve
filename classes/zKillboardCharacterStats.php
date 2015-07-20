@@ -3,18 +3,29 @@
 class zKillboardDestructionSet {
 	var $iskDestroyed;
 	var $iskLost;
+	var $iskPercentage;
 	var $shipsDestroyed;
 	var $shipsLost;
+	var $shipsPercentage;
 	var $pointsDestroyed;
 	var $pointsLost;
+	var $pointsPercentage;
 
 	function __construct( $iskDestroyed = 0, $iskLost = 0, $shipsDestroyed = 0, $shipsLost = 0, $pointsDestroyed = 0, $pointsLost = 0 ) {
 		$this->iskDestroyed = (int) $iskDestroyed;
 		$this->iskLost = (int) $iskLost;
+		$tmp = $this->iskDestroyed + $this->iskLost;
+		$this->iskPercentage = $tmp == 0 ? 0 : $this->iskDestroyed / $tmp;
+
 		$this->shipsDestroyed = (int) $shipsDestroyed;
 		$this->shipsLost = (int) $shipsLost;
+		$tmp = $this->shipsDestroyed + $this->shipsLost;
+		$this->iskPercentage = $tmp == 0 ? 0 : $this->shipsDestroyed / $tmp;
+
 		$this->pointsDestroyed = (int) $pointsDestroyed;
 		$this->pointsLost = (int) $pointsLost;
+		$tmp = $this->pointsDestroyed + $this->pointsLost;
+		$this->pointsPercentage = $tmp == 0 ? 0 : $this->pointsDestroyed / $tmp;
 	}
 }
 

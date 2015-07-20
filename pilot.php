@@ -120,7 +120,7 @@ Karnis Delvari
         // Player ISK Lost
         if ( $value == 0) {
           $tmp = $a->zKillboardCharacterStats->allTime->iskLost - $b->zKillboardCharacterStats->allTime->iskLost;
-          $value = $tmp > 0 ? 1 : ( $tmp < 0 ? -1 : 0 );
+          $value = $tmp > 0 ? -1 : 1;
         }
         if ( $value == 0) {
           $value = strcasecmp( $a->allianceName, $b->allianceName );
@@ -155,7 +155,7 @@ Karnis Delvari
           if ( $lastAlli != -1 ) {
             echo "\t\t\t\t\t\t\t" . "</div>\n";
             echo "\t\t\t\t\t\t" . "</div>\n";
-            echo '<hr class="alliancespacer">' . "\n";
+            echo "\t\t\t\t\t\t" . '<hr class="alliancespacer">' . "\n";
           }
           echo "\t\t\t\t\t\t" . '<div class="alliance">' . "\n";
           if ( $pilot->allianceID == 0) {
@@ -189,40 +189,43 @@ Karnis Delvari
 
         echo "\t\t\t\t\t\t\t\t\t\t" . '<div class="character iteminfo" style="background-image: url(//image.eveonline.com/Character/' . $pilot->characterID . '_64.jpg);)">' . "\n";
         echo "\t\t\t\t\t\t\t\t\t\t\t" . "<strong>" . $pilot->characterName . "</strong>" . "\n";
-        echo "\t\t\t\t\t\t\t\t\t\t\t" . '<a href="https://zkillboard.com/character/' . $pilot->characterID . '/" target="_blank" class="external">zK</a>' . "<br>\n";
-//        echo "\t\t\t\t\t\t\t\t\t" . $pilot->corporationName . "<br>\n";
-        if ( $pilot->allianceID != 0 ) {
-//          echo "\t\t\t\t\t\t\t\t\t" . $pilot->allianceName . "<br>\n";
-        }
+        $shipsAll = $pilot->zKillboardCharacterStats->allTime->shipsDestroyed + $pilot->zKillboardCharacterStats->allTime->shipsLost;
+        if ( $shipsAll == 0 ) {
+          echo "\t\t\t\t\t\t\t\t\t\t\t" . "<br>\n";
+          echo "\t\t\t\t\t\t\t\t\t\t\t" . "no information available" . "\n";
+        } else {
+          echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span title="ISK Efficiency">' . formatpercent( $pilot->zKillboardCharacterStats->allTime->iskPercentage ) . '</span>' . "\n";
+          echo "\t\t\t\t\t\t\t\t\t\t\t" . '<a href="https://zkillboard.com/character/' . $pilot->characterID . '/" target="_blank" class="external">zK</a>' . "<br>\n";
 
-        echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: limegreen;">';
-        echo formatpriceshort( $pilot->zKillboardCharacterStats->allTime->iskDestroyed ) . "&nbsp;ISK";
-        echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->allTime->shipsDestroyed ) . '&nbsp;ships)';
-        echo '&nbsp;destroyed</span>' . "<br>\n";
-        $i = 0;
-        foreach ( $pilot->zKillboardCharacterStats->topDestroyed as $key => $value ) {
-          if ( $value->groupID == 0 ) {
-            break;
-          }
-          if ( $i == 0 ) {
-            echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
-          }
-          $i += 1;
-          if ( $i > 1 ) {
-            echo "; ";
-          }
+          echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: limegreen;">';
+          echo formatpriceshort( $pilot->zKillboardCharacterStats->allTime->iskDestroyed ) . "&nbsp;ISK";
+          echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->allTime->shipsDestroyed ) . '&nbsp;ships)';
+          echo '&nbsp;destroyed</span>' . "<br>\n";
+          $i = 0;
+          foreach ( $pilot->zKillboardCharacterStats->topDestroyed as $key => $value ) {
+            if ( $value->groupID == 0 ) {
+              break;
+            }
+            if ( $i == 0 ) {
+              echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: green;">';
+            }
+            $i += 1;
+            if ( $i > 1 ) {
+              echo "; ";
+            }
 
-          $typeName = $mysqli->query( "SELECT groupName FROM evedump.invGroups WHERE groupID=$value->groupID" )->fetch_object()->groupName;
+            $typeName = $mysqli->query( "SELECT groupName FROM evedump.invGroups WHERE groupID=$value->groupID" )->fetch_object()->groupName;
 
-          echo formatpieces( $value->shipsDestroyed ) . "x&nbsp;" . $typeName;
+            echo formatpieces( $value->shipsDestroyed ) . "x&nbsp;" . $typeName;
+          }
+          if ( $i > 0 ) {
+            echo "</span>" . "<br>\n";
+          }
+          echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
+          echo formatpriceshort( $pilot->zKillboardCharacterStats->allTime->iskLost ) . "&nbsp;ISK";
+          echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->allTime->shipsLost ) . '&nbsp;ships)';
+          echo '&nbsp;lost</span>' . "<br>\n";
         }
-        if ( $i > 0 ) {
-          echo "</span>" . "<br>\n";
-        }
-        echo "\t\t\t\t\t\t\t\t\t\t\t" . '<span style="color: red;">';
-        echo formatpriceshort( $pilot->zKillboardCharacterStats->allTime->iskLost ) . "&nbsp;ISK";
-        echo '&nbsp;(' . formatpieces( $pilot->zKillboardCharacterStats->allTime->shipsLost ) . '&nbsp;ships)';
-        echo '&nbsp;lost</span>' . "<br>\n";
 
         echo "\t\t\t\t\t\t\t\t\t\t" . "</div>\n";
       }
