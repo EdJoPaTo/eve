@@ -27,7 +27,7 @@
 			}
 			.hoverimg {
 				-webkit-transition: -webkit-filter 1s ease;
-				transition: -webkit-filter 1s ease;
+				transition: -webkit-filter 1s ease, filter 1s ease;
 				-webkit-filter: grayscale(0.3) blur(5px);
 				filter: grayscale(0.3) blur(5px);
 				background-repeat: no-repeat;
