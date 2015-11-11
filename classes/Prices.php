@@ -2,7 +2,7 @@
 
 class Prices {
 	var $typeID;
-	var $systemId;
+	var $systemID;
 	var $buy;
 	var $sell;
 	var $maxprice;
@@ -12,15 +12,15 @@ class Prices {
 	var $units;
 
 	function __construct($typeID, $systemID, $buy, $sell, $updated = 0, $buyunits = 0, $sellunits = 0) {
-		$this->typeID = $typeID;
-		$this->systemID = $systemID;
-		$this->buy = $buy;
-		$this->sell = $sell;
-		$this->maxprice = max($buy, $sell);
-		$this->updated = $updated;
-		$this->buyunits = $buyunits;
-		$this->sellunits = $sellunits;
-		$this->units = $buyunits + $sellunits;
+		$this->typeID = (int) $typeID;
+		$this->systemID = (int) $systemID;
+		$this->buy = (double) $buy;
+		$this->sell = (double) $sell;
+		$this->maxprice = max((double) $buy, (double) $sell);
+		$this->updated = (int) $updated;
+		$this->buyunits = (int) $buyunits;
+		$this->sellunits = (int) $sellunits;
+		$this->units = (int) $buyunits + (int) $sellunits;
 	}
 
 	public function getPriceByType($pricetype = 'bestcase') {

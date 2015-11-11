@@ -14,13 +14,14 @@ class Reprocess {
 		global $mysqli;
 		require_once 'mysqlDetails.php';
 
-		$this->itemID = $itemID;
-		$this->reprocessPercentage = $reprocessPercentage;
-		$this->quantity = $quantity;
+		$this->itemID = (int) $itemID;
+		$this->reprocessPercentage = (double) $reprocessPercentage;
+		$this->quantity = (int) $quantity;
 
 		$this->mineralStack = new ItemStack();
 
-		$batchSize = $mysqli->query("SELECT * FROM evedump.invTypes WHERE typeID=$itemID")->fetch_object()->portionSize;
+		$batchSize = (int) $mysqli->query("SELECT portionSize FROM evedump.invTypes WHERE typeID=$itemID")->fetch_object()->portionSize;
+		$this->batchSize = $batchSize;
 
 		$result = $mysqli->query("SELECT * FROM evedump.invTypeMaterials WHERE typeID=$itemID");
 		while ($row = $result->fetch_object()) {
