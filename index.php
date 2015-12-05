@@ -89,7 +89,7 @@
 
 			<h2>Login required</h2>
 			<div class="table" style="width:100%;">
-				<a class="logintablecell cell icon" style="background-image: url(//image.eveonline.com/Type/2014_64.png);" href="api/planet.php">
+				<a class="logintablecell cell icon" style="background-image: url(//image.eveonline.com/Type/2014_64.png);" href="evelogin/planet.php">
 					Planetary Infrastructure Overview
 				</a>
 			</div>

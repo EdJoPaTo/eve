@@ -47,7 +47,7 @@
 			if ($characterID == 0) {
 				echo "Please log in";
 			} elseif (empty($keyID) || empty($vCode)) {
-				echo 'Please provide me your API Informations in the <a href="/eveauth.php">Settings</a>.';
+				echo 'Please provide me your API Informations in the <a href="/evelogin/auth.php">Settings</a>.';
 			} else {
 				$selectpinsquery = "SELECT * FROM eve.planetindustrypins WHERE ownerID=$characterID";
 	//			$selectpinsquery .= " AND planetID=40176640";

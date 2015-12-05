@@ -264,8 +264,8 @@
 //		if ($_SERVER["PHP_SELF"] != "/planet.php")
 //			$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/2398_32.png);" href="/planet.php">PI Commodity</a>'."\n";
 //		if (!empty($_SESSION['characterID'])) {
-//			if ($_SERVER["PHP_SELF"] != "/api/planet.php")
-//				$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/2014_32.png);" href="/api/planet.php">PI Overview</a>'."\n";
+//			if ($_SERVER["PHP_SELF"] != "/evelogin/planet.php")
+//				$returnString .= "\t\t\t\t".'<a class="wideonly img" style="background-image: url(//image.eveonline.com/Type/2014_32.png);" href="/evelogin/planet.php">PI Overview</a>'."\n";
 //		}
 		if (!empty($title)) {
 			$returnString .= "\t\t\t\t" . '<div class="wideonly doublespacer"></div>' . "\n";
@@ -289,7 +289,7 @@
 			$returnString .= "\t\t\t\t".'<a style="background-image: url(//images.contentful.com/idjq7aai9ylm/4fSjj56uD6CYwYyus4KmES/4f6385c91e6de56274d99496e6adebab/EVE_SSO_Login_Buttons_Large_Black.png?w=270&amp;h=45); background-repeat: no-repeat; background-position: center center; min-width: 270px; width: 270px; height: 45px; padding: 0px 10px;" href="'.OAuth::eveSSOLoginURL().'"></a>'."\n";
 		} else {
 			$returnString .= "\t\t\t\t".'<div class="img pilot64" style="padding-left: 75px; background-size: 64px 64px;">'.$_SESSION['characterName']."</div>\n";
-			$returnString .= "\t\t\t\t".'<a href="/eveauth.php">Settings</a>'."\n";
+			$returnString .= "\t\t\t\t".'<a href="/evelogin/auth.php">Settings</a>'."\n";
 		}
 /**/
 		$returnString .= "\t\t\t".'</div>'."\n";
