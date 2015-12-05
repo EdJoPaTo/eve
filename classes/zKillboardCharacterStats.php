@@ -68,11 +68,19 @@ class zKillboardDestructionSet {
 
 class zKillboardTopDestroyed {
 	var $groupID;
+	var $groupName;
 	var $shipsDestroyed;
 
 	function __construct( $groupID = 0, $shipsDestroyed = 0 ) {
+		global $mysqli;
+		require_once 'mysqlDetails.php';
+
 		$this->groupID = (int) $groupID;
 		$this->shipsDestroyed = (int) $shipsDestroyed;
+
+		if ($groupID != 0) {
+			$this->groupName = $mysqli->query( "SELECT groupName FROM evedump.invGroups WHERE groupID=$groupID" )->fetch_object()->groupName;
+		}
 	}
 }
 
