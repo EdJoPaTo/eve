@@ -13,13 +13,13 @@ class Pilot {
 
   function __construct( $characterID = 0, $characterName = "", $corporationID = 0, $corporationName = "", $allianceID = 0, $allianceName = "", $factionID = 0, $factionName = "" ) {
     $this->characterID = (int) $characterID;
-    $this->characterName = $characterName;
+    $this->characterName = (string) $characterName;
     $this->corporationID = (int) $corporationID;
-    $this->corporationName = $corporationName;
+    $this->corporationName = (string) $corporationName;
     $this->allianceID = (int) $allianceID;
-    $this->allianceName = $allianceName;
+    $this->allianceName = (string) $allianceName;
     $this->factionID = (int) $factionID;
-    $this->factionName = $factionName;
+    $this->factionName = (string) $factionName;
   }
 
   public function getKillboardCharacterStats( ) {
