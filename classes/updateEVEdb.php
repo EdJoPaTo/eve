@@ -369,7 +369,7 @@
 
 		if (count($ids) > 0) {
 			foreach ($systems as $systemname => $systemid) {
-				echo "system ".$systemid." (".$systemname.")\n";
+				echo "mining infos - system ".$systemid." (".$systemname.")\n";
 				Prices::updatePricesOfIDs($systemid, $ids);
 			}
 		}
@@ -379,7 +379,7 @@
 		$systemname = 'Jita';
 		$systemid = $systems[$systemname];
 
-		echo "system ".$systemid." (".$systemname.")\n";
+		echo "general data - system ".$systemid." (".$systemname.")\n";
 		$query = "SELECT typeID FROM eve.marketgrouplastupdate WHERE updateIntervall > 120 AND lastupdate < ".time()." - updateintervall * 60 LIMIT 300";
 		$result = $mysqli->query($query);
 		while ($result->num_rows > 0) {
