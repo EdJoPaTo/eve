@@ -215,6 +215,9 @@
 				WHEN invTypes.marketGroupID = 529 THEN 60
 				WHEN invTypes.marketGroupID = 530 THEN 60
 
+				WHEN invTypes.marketGroupID = 1859 THEN 60
+				WHEN invTypes.marketGroupID = 983 THEN 60
+
 				WHEN invTypes.marketGroupID = 1333 THEN 120
 				WHEN invTypes.marketGroupID = 1334 THEN 120
 				WHEN invTypes.marketGroupID = 1335 THEN 120
