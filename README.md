@@ -1,9 +1,14 @@
-Install Stuff
+# EVE Tools
+
+replaced by the [Silfani EVE Tools](https://github.com/EdJoPaTo/silfani-eve-tools)
+
+
+## Install Stuff
 ```
 sudo apt-get install nginx mysql-server php5-curl php5-fpm php5-mysql
 ```
 
-Init DB
+## Init DB
 ```
 CREATE USER 'yourusername'@'localhost' IDENTIFIED BY 'yourpassword';
 
@@ -16,7 +21,7 @@ GRANT ALL PRIVILEGES ON eve.* TO 'yourusername'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-Get EVE Dump
+## Get EVE Dump
 ```
 https://www.fuzzwork.co.uk/dump/
 
